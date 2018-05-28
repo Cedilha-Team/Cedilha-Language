@@ -1,0 +1,19 @@
+BlocoPrincipal {
+	Inteiro resultado;
+	Funcao somarPara (Inteiro max) retorna Inteiro {}
+	
+	Inteiro resu = #somarPara(10);
+	Imprime(resu);
+}
+
+BlocoFuncoes {
+
+	Funcao somarPara (Inteiro max) retorna Inteiro {
+		Inteiro resultado;
+		para(Inteiro i de 0 a max){
+			resultado = resultado+i;
+		}
+		retorna resultado;
+	}
+	
+}

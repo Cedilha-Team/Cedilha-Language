@@ -55,7 +55,7 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 "--"                    { return(DEC);}
 "&&"					{ return (E_LOG); }
 "||"					{ return (OU_LOG); }
-"!"						{ return (NEGACAO)}
+"!"						{ return (NEGACAO);}
 "*"                     { return(MULT);}
 "-"                     { return(SUB);}
 "+"                     { return(SOMA);}

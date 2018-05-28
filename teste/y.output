@@ -1,0 +1,586 @@
+Terminals unused in grammar
+
+   BFUNCOES
+   FUNCAO
+   MEU_TIPO
+   SE
+   LEIA
+   INCLUIR
+   PARE
+   ENQUANTO
+   PROC
+   PARA
+   EXECUTE
+   SENAO
+   CONSTANTE
+   RETORNE
+   ASPAS_DUPLAS
+   ASPAS_SIMPLES
+   LCOLCHETE
+   RCOLCHETE
+   MENORIGUAL
+   MAIORIQUAL
+   IGUAL
+   DIFERENTE
+   MAIOR
+   MENOR
+   ATRIB_SOMA
+   ATRIB_SUB
+   ATRIB_MULT
+   ATRIB_DIV
+   ATRIB_MOD
+   NEGACAO
+   INC
+   DEC
+   E_LOG
+   OU_LOG
+   ARROBA
+   VIRGULA
+   MENOS
+
+
+Grammar
+
+    0 $accept: programa $end
+
+    1 programa: bloco_principal
+
+    2 bloco_principal: BPRINCIPAL LCHAVE sentencas RCHAVE
+
+    3 sentencas: sentenca PONTOVIRGULA
+    4          | sentenca PONTOVIRGULA sentencas
+
+    5 sentenca: comando
+
+    6 comando: declaracao
+    7        | imprime
+
+    8 imprime: IMPRIME LPARENTESES literal RPARENTESES
+    9        | IMPRIME LPARENTESES ID RPARENTESES
+
+   10 declaracao: declaracao_simples
+
+   11 declaracao_simples: tipo ID ATRIB expressao
+   12                   | tipo ID
+
+   13 expressao: termo operador expressao
+   14          | termo
+
+   15 termo: ID
+   16      | literal
+
+   17 literal: LIT_REAL
+   18        | LIT_BOOL
+   19        | LIT_INT
+   20        | LIT_TEXTO
+
+   21 operador: MULT
+   22         | DIV
+   23         | MOD
+   24         | EXP
+   25         | SUB
+   26         | SOMA
+
+   27 tipo: tipo_primitivo
+
+   28 tipo_primitivo: INTEIRO
+   29               | REAL
+   30               | CARACTERE
+   31               | VETOR
+   32               | TEXTO
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+ID (258) 9 11 12 15
+LIT_TEXTO (259) 20
+LIT_INT (260) 19
+LIT_REAL (261) 17
+LIT_BOOL (262) 18
+BPRINCIPAL (263) 2
+BFUNCOES (264)
+FUNCAO (265)
+TEXTO (266) 32
+CARACTERE (267) 30
+REAL (268) 29
+INTEIRO (269) 28
+VETOR (270) 31
+MEU_TIPO (271)
+SE (272)
+IMPRIME (273) 8 9
+LEIA (274)
+INCLUIR (275)
+PARE (276)
+ENQUANTO (277)
+PROC (278)
+PARA (279)
+EXECUTE (280)
+SENAO (281)
+CONSTANTE (282)
+RETORNE (283)
+ASPAS_DUPLAS (284)
+ASPAS_SIMPLES (285)
+LCOLCHETE (286)
+RCOLCHETE (287)
+LCHAVE (288) 2
+RCHAVE (289) 2
+LPARENTESES (290) 8 9
+RPARENTESES (291) 8 9
+MENORIGUAL (292)
+MAIORIQUAL (293)
+IGUAL (294)
+DIFERENTE (295)
+MAIOR (296)
+MENOR (297)
+ATRIB (298) 11
+ATRIB_SOMA (299)
+ATRIB_SUB (300)
+ATRIB_MULT (301)
+ATRIB_DIV (302)
+ATRIB_MOD (303)
+NEGACAO (304)
+INC (305)
+DEC (306)
+E_LOG (307)
+OU_LOG (308)
+ARROBA (309)
+VIRGULA (310)
+PONTOVIRGULA (311) 3 4
+MULT (312) 21
+SUB (313) 25
+SOMA (314) 26
+DIV (315) 22
+MOD (316) 23
+EXP (317) 24
+MENOS (318)
+
+
+Nonterminals, with rules where they appear
+
+$accept (64)
+    on left: 0
+programa (65)
+    on left: 1, on right: 0
+bloco_principal (66)
+    on left: 2, on right: 1
+sentencas (67)
+    on left: 3 4, on right: 2 4
+sentenca (68)
+    on left: 5, on right: 3 4
+comando (69)
+    on left: 6 7, on right: 5
+imprime (70)
+    on left: 8 9, on right: 7
+declaracao (71)
+    on left: 10, on right: 6
+declaracao_simples (72)
+    on left: 11 12, on right: 10
+expressao (73)
+    on left: 13 14, on right: 11 13
+termo (74)
+    on left: 15 16, on right: 13 14
+literal (75)
+    on left: 17 18 19 20, on right: 8 16
+operador (76)
+    on left: 21 22 23 24 25 26, on right: 13
+tipo (77)
+    on left: 27, on right: 11 12
+tipo_primitivo (78)
+    on left: 28 29 30 31 32, on right: 27
+
+
+State 0
+
+    0 $accept: . programa $end
+
+    BPRINCIPAL  shift, and go to state 1
+
+    programa         go to state 2
+    bloco_principal  go to state 3
+
+
+State 1
+
+    2 bloco_principal: BPRINCIPAL . LCHAVE sentencas RCHAVE
+
+    LCHAVE  shift, and go to state 4
+
+
+State 2
+
+    0 $accept: programa . $end
+
+    $end  shift, and go to state 5
+
+
+State 3
+
+    1 programa: bloco_principal .
+
+    $default  reduce using rule 1 (programa)
+
+
+State 4
+
+    2 bloco_principal: BPRINCIPAL LCHAVE . sentencas RCHAVE
+
+    TEXTO      shift, and go to state 6
+    CARACTERE  shift, and go to state 7
+    REAL       shift, and go to state 8
+    INTEIRO    shift, and go to state 9
+    VETOR      shift, and go to state 10
+    IMPRIME    shift, and go to state 11
+
+    sentencas           go to state 12
+    sentenca            go to state 13
+    comando             go to state 14
+    imprime             go to state 15
+    declaracao          go to state 16
+    declaracao_simples  go to state 17
+    tipo                go to state 18
+    tipo_primitivo      go to state 19
+
+
+State 5
+
+    0 $accept: programa $end .
+
+    $default  accept
+
+
+State 6
+
+   32 tipo_primitivo: TEXTO .
+
+    $default  reduce using rule 32 (tipo_primitivo)
+
+
+State 7
+
+   30 tipo_primitivo: CARACTERE .
+
+    $default  reduce using rule 30 (tipo_primitivo)
+
+
+State 8
+
+   29 tipo_primitivo: REAL .
+
+    $default  reduce using rule 29 (tipo_primitivo)
+
+
+State 9
+
+   28 tipo_primitivo: INTEIRO .
+
+    $default  reduce using rule 28 (tipo_primitivo)
+
+
+State 10
+
+   31 tipo_primitivo: VETOR .
+
+    $default  reduce using rule 31 (tipo_primitivo)
+
+
+State 11
+
+    8 imprime: IMPRIME . LPARENTESES literal RPARENTESES
+    9        | IMPRIME . LPARENTESES ID RPARENTESES
+
+    LPARENTESES  shift, and go to state 20
+
+
+State 12
+
+    2 bloco_principal: BPRINCIPAL LCHAVE sentencas . RCHAVE
+
+    RCHAVE  shift, and go to state 21
+
+
+State 13
+
+    3 sentencas: sentenca . PONTOVIRGULA
+    4          | sentenca . PONTOVIRGULA sentencas
+
+    PONTOVIRGULA  shift, and go to state 22
+
+
+State 14
+
+    5 sentenca: comando .
+
+    $default  reduce using rule 5 (sentenca)
+
+
+State 15
+
+    7 comando: imprime .
+
+    $default  reduce using rule 7 (comando)
+
+
+State 16
+
+    6 comando: declaracao .
+
+    $default  reduce using rule 6 (comando)
+
+
+State 17
+
+   10 declaracao: declaracao_simples .
+
+    $default  reduce using rule 10 (declaracao)
+
+
+State 18
+
+   11 declaracao_simples: tipo . ID ATRIB expressao
+   12                   | tipo . ID
+
+    ID  shift, and go to state 23
+
+
+State 19
+
+   27 tipo: tipo_primitivo .
+
+    $default  reduce using rule 27 (tipo)
+
+
+State 20
+
+    8 imprime: IMPRIME LPARENTESES . literal RPARENTESES
+    9        | IMPRIME LPARENTESES . ID RPARENTESES
+
+    ID         shift, and go to state 24
+    LIT_TEXTO  shift, and go to state 25
+    LIT_INT    shift, and go to state 26
+    LIT_REAL   shift, and go to state 27
+    LIT_BOOL   shift, and go to state 28
+
+    literal  go to state 29
+
+
+State 21
+
+    2 bloco_principal: BPRINCIPAL LCHAVE sentencas RCHAVE .
+
+    $default  reduce using rule 2 (bloco_principal)
+
+
+State 22
+
+    3 sentencas: sentenca PONTOVIRGULA .
+    4          | sentenca PONTOVIRGULA . sentencas
+
+    TEXTO      shift, and go to state 6
+    CARACTERE  shift, and go to state 7
+    REAL       shift, and go to state 8
+    INTEIRO    shift, and go to state 9
+    VETOR      shift, and go to state 10
+    IMPRIME    shift, and go to state 11
+
+    $default  reduce using rule 3 (sentencas)
+
+    sentencas           go to state 30
+    sentenca            go to state 13
+    comando             go to state 14
+    imprime             go to state 15
+    declaracao          go to state 16
+    declaracao_simples  go to state 17
+    tipo                go to state 18
+    tipo_primitivo      go to state 19
+
+
+State 23
+
+   11 declaracao_simples: tipo ID . ATRIB expressao
+   12                   | tipo ID .
+
+    ATRIB  shift, and go to state 31
+
+    $default  reduce using rule 12 (declaracao_simples)
+
+
+State 24
+
+    9 imprime: IMPRIME LPARENTESES ID . RPARENTESES
+
+    RPARENTESES  shift, and go to state 32
+
+
+State 25
+
+   20 literal: LIT_TEXTO .
+
+    $default  reduce using rule 20 (literal)
+
+
+State 26
+
+   19 literal: LIT_INT .
+
+    $default  reduce using rule 19 (literal)
+
+
+State 27
+
+   17 literal: LIT_REAL .
+
+    $default  reduce using rule 17 (literal)
+
+
+State 28
+
+   18 literal: LIT_BOOL .
+
+    $default  reduce using rule 18 (literal)
+
+
+State 29
+
+    8 imprime: IMPRIME LPARENTESES literal . RPARENTESES
+
+    RPARENTESES  shift, and go to state 33
+
+
+State 30
+
+    4 sentencas: sentenca PONTOVIRGULA sentencas .
+
+    $default  reduce using rule 4 (sentencas)
+
+
+State 31
+
+   11 declaracao_simples: tipo ID ATRIB . expressao
+
+    ID         shift, and go to state 34
+    LIT_TEXTO  shift, and go to state 25
+    LIT_INT    shift, and go to state 26
+    LIT_REAL   shift, and go to state 27
+    LIT_BOOL   shift, and go to state 28
+
+    expressao  go to state 35
+    termo      go to state 36
+    literal    go to state 37
+
+
+State 32
+
+    9 imprime: IMPRIME LPARENTESES ID RPARENTESES .
+
+    $default  reduce using rule 9 (imprime)
+
+
+State 33
+
+    8 imprime: IMPRIME LPARENTESES literal RPARENTESES .
+
+    $default  reduce using rule 8 (imprime)
+
+
+State 34
+
+   15 termo: ID .
+
+    $default  reduce using rule 15 (termo)
+
+
+State 35
+
+   11 declaracao_simples: tipo ID ATRIB expressao .
+
+    $default  reduce using rule 11 (declaracao_simples)
+
+
+State 36
+
+   13 expressao: termo . operador expressao
+   14          | termo .
+
+    MULT  shift, and go to state 38
+    SUB   shift, and go to state 39
+    SOMA  shift, and go to state 40
+    DIV   shift, and go to state 41
+    MOD   shift, and go to state 42
+    EXP   shift, and go to state 43
+
+    $default  reduce using rule 14 (expressao)
+
+    operador  go to state 44
+
+
+State 37
+
+   16 termo: literal .
+
+    $default  reduce using rule 16 (termo)
+
+
+State 38
+
+   21 operador: MULT .
+
+    $default  reduce using rule 21 (operador)
+
+
+State 39
+
+   25 operador: SUB .
+
+    $default  reduce using rule 25 (operador)
+
+
+State 40
+
+   26 operador: SOMA .
+
+    $default  reduce using rule 26 (operador)
+
+
+State 41
+
+   22 operador: DIV .
+
+    $default  reduce using rule 22 (operador)
+
+
+State 42
+
+   23 operador: MOD .
+
+    $default  reduce using rule 23 (operador)
+
+
+State 43
+
+   24 operador: EXP .
+
+    $default  reduce using rule 24 (operador)
+
+
+State 44
+
+   13 expressao: termo operador . expressao
+
+    ID         shift, and go to state 34
+    LIT_TEXTO  shift, and go to state 25
+    LIT_INT    shift, and go to state 26
+    LIT_REAL   shift, and go to state 27
+    LIT_BOOL   shift, and go to state 28
+
+    expressao  go to state 45
+    termo      go to state 36
+    literal    go to state 37
+
+
+State 45
+
+   13 expressao: termo operador expressao .
+
+    $default  reduce using rule 13 (expressao)

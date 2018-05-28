@@ -34,7 +34,7 @@
 # define YY_YY_Y_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
@@ -61,50 +61,51 @@ extern int yydebug;
     MEU_TIPO = 271,
     SE = 272,
     IMPRIME = 273,
-    INCLUIR = 274,
-    PARE = 275,
-    ENQUANTO = 276,
-    PROC = 277,
-    PARA = 278,
-    EXECUTE = 279,
-    SENAO = 280,
-    CONSTANTE = 281,
-    RETORNE = 282,
-    ASPAS_DUPLAS = 283,
-    ASPAS_SIMPLES = 284,
-    LCOLCHETE = 285,
-    RCOLCHETE = 286,
-    LCHAVE = 287,
-    RCHAVE = 288,
-    LPARENTESES = 289,
-    RPARENTESES = 290,
-    MENORIGUAL = 291,
-    MAIORIQUAL = 292,
-    IGUAL = 293,
-    DIFERENTE = 294,
-    MAIOR = 295,
-    MENOR = 296,
-    ATRIB = 297,
-    ATRIB_SOMA = 298,
-    ATRIB_SUB = 299,
-    ATRIB_MULT = 300,
-    ATRIB_DIV = 301,
-    ATRIB_MOD = 302,
-    NEGACAO = 303,
-    INC = 304,
-    DEC = 305,
-    E_LOG = 306,
-    OU_LOG = 307,
-    ARROBA = 308,
-    VIRGULA = 309,
-    PONTOVIRGULA = 310,
-    MULT = 311,
-    SUB = 312,
-    SOMA = 313,
-    DIV = 314,
-    MOD = 315,
-    EXP = 316,
-    MENOS = 317
+    LEIA = 274,
+    INCLUIR = 275,
+    PARE = 276,
+    ENQUANTO = 277,
+    PROC = 278,
+    PARA = 279,
+    EXECUTE = 280,
+    SENAO = 281,
+    CONSTANTE = 282,
+    RETORNE = 283,
+    ASPAS_DUPLAS = 284,
+    ASPAS_SIMPLES = 285,
+    LCOLCHETE = 286,
+    RCOLCHETE = 287,
+    LCHAVE = 288,
+    RCHAVE = 289,
+    LPARENTESES = 290,
+    RPARENTESES = 291,
+    MENORIGUAL = 292,
+    MAIORIQUAL = 293,
+    IGUAL = 294,
+    DIFERENTE = 295,
+    MAIOR = 296,
+    MENOR = 297,
+    ATRIB = 298,
+    ATRIB_SOMA = 299,
+    ATRIB_SUB = 300,
+    ATRIB_MULT = 301,
+    ATRIB_DIV = 302,
+    ATRIB_MOD = 303,
+    NEGACAO = 304,
+    INC = 305,
+    DEC = 306,
+    E_LOG = 307,
+    OU_LOG = 308,
+    ARROBA = 309,
+    VIRGULA = 310,
+    PONTOVIRGULA = 311,
+    MULT = 312,
+    SUB = 313,
+    SOMA = 314,
+    DIV = 315,
+    MOD = 316,
+    EXP = 317,
+    MENOS = 318
   };
 #endif
 /* Tokens.  */
@@ -124,57 +125,58 @@ extern int yydebug;
 #define MEU_TIPO 271
 #define SE 272
 #define IMPRIME 273
-#define INCLUIR 274
-#define PARE 275
-#define ENQUANTO 276
-#define PROC 277
-#define PARA 278
-#define EXECUTE 279
-#define SENAO 280
-#define CONSTANTE 281
-#define RETORNE 282
-#define ASPAS_DUPLAS 283
-#define ASPAS_SIMPLES 284
-#define LCOLCHETE 285
-#define RCOLCHETE 286
-#define LCHAVE 287
-#define RCHAVE 288
-#define LPARENTESES 289
-#define RPARENTESES 290
-#define MENORIGUAL 291
-#define MAIORIQUAL 292
-#define IGUAL 293
-#define DIFERENTE 294
-#define MAIOR 295
-#define MENOR 296
-#define ATRIB 297
-#define ATRIB_SOMA 298
-#define ATRIB_SUB 299
-#define ATRIB_MULT 300
-#define ATRIB_DIV 301
-#define ATRIB_MOD 302
-#define NEGACAO 303
-#define INC 304
-#define DEC 305
-#define E_LOG 306
-#define OU_LOG 307
-#define ARROBA 308
-#define VIRGULA 309
-#define PONTOVIRGULA 310
-#define MULT 311
-#define SUB 312
-#define SOMA 313
-#define DIV 314
-#define MOD 315
-#define EXP 316
-#define MENOS 317
+#define LEIA 274
+#define INCLUIR 275
+#define PARE 276
+#define ENQUANTO 277
+#define PROC 278
+#define PARA 279
+#define EXECUTE 280
+#define SENAO 281
+#define CONSTANTE 282
+#define RETORNE 283
+#define ASPAS_DUPLAS 284
+#define ASPAS_SIMPLES 285
+#define LCOLCHETE 286
+#define RCOLCHETE 287
+#define LCHAVE 288
+#define RCHAVE 289
+#define LPARENTESES 290
+#define RPARENTESES 291
+#define MENORIGUAL 292
+#define MAIORIQUAL 293
+#define IGUAL 294
+#define DIFERENTE 295
+#define MAIOR 296
+#define MENOR 297
+#define ATRIB 298
+#define ATRIB_SOMA 299
+#define ATRIB_SUB 300
+#define ATRIB_MULT 301
+#define ATRIB_DIV 302
+#define ATRIB_MOD 303
+#define NEGACAO 304
+#define INC 305
+#define DEC 306
+#define E_LOG 307
+#define OU_LOG 308
+#define ARROBA 309
+#define VIRGULA 310
+#define PONTOVIRGULA 311
+#define MULT 312
+#define SUB 313
+#define SOMA 314
+#define DIV 315
+#define MOD 316
+#define EXP 317
+#define MENOS 318
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 11 "parsercedilha.y" /* yacc.c:1909  */
+#line 12 "parsercedilhinha.y" /* yacc.c:1909  */
 
 	int    iValue; 	/* integer value */
 	double dValue;  /* double value*/
@@ -182,7 +184,7 @@ union YYSTYPE
 	char * sValue;  /* string value */
 	
 
-#line 186 "y.tab.h" /* yacc.c:1909  */
+#line 188 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

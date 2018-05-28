@@ -1,0 +1,14 @@
+BlocoPrincipal {
+	Inteiro resultado;
+	leia(inteiro);
+	if(inteiro > 5){
+		imprima("Numero menor que 5);
+	}
+	else if(inteiro < 0) {
+		imprima("Numero menor que 0);
+	}
+	else {
+		imprima("Numero não atende");
+	}
+
+}

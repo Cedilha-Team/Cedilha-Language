@@ -48,14 +48,14 @@ biblioteca : ASPAS_DUPLAS ID ASPAS_DUPLAS /*isso deve ser considerado? vi no .l 
 		   ;
 
 
-bloco_principal : BPRINCIPAL LCHAVE sentencas RCHAVE   {}
+bloco_principal : BPRINCIPAL LCHAVE sentencas RCHAVE   {printf("BlocoPrincipal %s %s %s/n",$1,$2,);}
 				;
 
 sentencas : /*vazio*/						   {}
 		  | sentenca PONTOVIRGULA sentencas    {}
 		  ;
 
-sentenca : comando     {}
+sentenca : comando     {$$ = "comando"}
 		 | controle    {}
 		 | repeticao   {}
 		 ;

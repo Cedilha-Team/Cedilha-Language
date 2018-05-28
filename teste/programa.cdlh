@@ -1,0 +1,5 @@
+BlocoPrincipal{
+    Inteiro x =25;
+    Imprime("lala");
+    Imprime(x);
+}
