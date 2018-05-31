@@ -1,13 +1,17 @@
+/* Inpirações:
+*  http://www.learn-c.org/en/Linked_lists		
+*  
+*/ 
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define HASH_SIZE 500
+#define HASH_SIZE 100
 
 const int ERRO1_SYMBOLINFO_JA_FOI_INSERIDO = -1;
 const int ERRO2_NAO_EXISTE_SYMBOLINFO = -2;
-
 const int SUCESSO = 1;
 
 
@@ -31,8 +35,8 @@ typedef struct hash_bucket {
 } HashBucket;
 
 HashBucket hashTable[HASH_SIZE]; 
-struct SymbolInfo* dummyInfo;
-struct SymbolInfo* info;
+SymbolInfo* dummyInfo;
+SymbolInfo* info;
 
 int hashCode(char* str) {
    
@@ -42,32 +46,34 @@ int hashCode(char* str) {
     while (c = *str++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
-    return hash % HASH_SIZE;
+   printf("funcao hashcode: criei o hash %d\n",(int)hash );
+
+    return (int)hash % HASH_SIZE;
 }
 
 
 void initialize(){
 	for (int i=0; i < HASH_SIZE; i++) {
-	  hashtable[i].head = NULL;
-	  hashtable[i].n_elems = 0;
+	  hashTable[i].head = NULL;
+	  hashTable[i].n_elems = 0;
 
 	}
 
 }
 
 
-struct SymbolInfo *search(char* key, char*name, char*scope) {
+SymbolInfo * search(char* key, char*name, char*scope) {
    //get the hash 
    int hashIndex = hashCode(key);  
 	
    //pega na hashtable a linked list
-   if(hashTable[hashIndex] != NULL){
-   		HashList * current = hashTable[hashIndex]->head;
+   if(hashTable[hashIndex].n_elems != 0){
+   		HashList * current = hashTable[hashIndex].head;
 
 	    while (current != NULL) {
-	    	SymbolInfo* info = current->SymbolInfo;
+	    	info = &current->atributes;
 
-	    	if(strcmp(info.name, name) ==0 && strcmp(info.scope, scope) ==0){
+	    	if(strcmp(info->name, name) ==0 && strcmp(info->scope, scope) ==0){
 	    		return info;
 	    	}
 
@@ -79,23 +85,29 @@ struct SymbolInfo *search(char* key, char*name, char*scope) {
    return NULL;        
 }
 
-int insert(char* key, char*name, char*scope, char* type) {
+//int insert(char* key, char*name, char*scope, char* type) {
+int insert(char* key, SymbolInfo atribute) {
+	printf("entrei no insert!\n");
 	//get the hash 
    int hashIndex = hashCode(key);
 
-   SymbolInfo atribute = SymbolInfo malloc(sizeof(SymbolInfo));
-   atribute->name = name;
-   atribute->scope = scope;
-   atribute->type = type;
+   // SymbolInfo atribute = SymbolInfo malloc(sizeof(SymbolInfo));
+   // atribute->name = name;
+   // atribute->scope = scope;
+   // atribute->type = type;
+   HashList * current = hashTable[hashIndex].head;
+   if(current == NULL){
+   	printf("tem nada na hash table no index %d\n",hashIndex );
+   }
 
-   if(hashTable[hashIndex] != NULL){
-   		HashList * current = hashTable[hashIndex]->head;
-
+   if(hashTable[hashIndex].n_elems != 0){
+   	printf("nem devo entrar aqui\n");
+   		
 	    while (current != NULL) {
-	    	SymbolInfo* info = current->atributes;
+	    	info = &current->atributes;
 
 	    	//VERIFICA NA LISTA ENCADEADA SE O NOME JA NAO FOI DECLARADO NO ESCOPO.
-	    	if(strcmp(info.name, name) == 0 && strcmp(info.scope, scope) ==0){
+	    	if(strcmp(info->name, atribute.name) == 0 && strcmp(info->scope, atribute.scope) ==0){
 	    		return ERRO1_SYMBOLINFO_JA_FOI_INSERIDO;
 	    	}
 		    //proximo
@@ -103,46 +115,41 @@ int insert(char* key, char*name, char*scope, char* type) {
 
 	    }
 
-	      /* now we can add a new variable */
-		    current->next = malloc(sizeof(HashList));
-		    current->next->head->atributes = atribute; 
-		   	current->next->head->next = NULL; 
-		   	hashTable[hashIndex]->n_elems++;
-		   	return SUCESSO;
+	      
 	    
-   }else{
-   	
-   	hashTable[hashIndex]->head = malloc(sizeof(HashList));
-   	hashTable[hashIndex]->head->atributes = atribute; 
-   	hashTable[hashIndex]->head->next = NULL; 
-   	hashTable[hashIndex]->n_elems++;
-   	return SUCESSO;
-   }   
-
+   }
+   printf("troca troca\n");
+   /* now we can add a new variable */
+	current = malloc(sizeof(HashList));
+	current->atributes = atribute; 
+	current->next = NULL; 
+	hashTable[hashIndex].n_elems++;
+	printf("terminei de inserir\n");
+	return SUCESSO;
 
 }
 
 int delete(char* key, char*name, char*scope) {
 	//get the hash 
    int hashIndex = hashCode(key);
-   SymbolInfo retAtributes = NULL;
+   SymbolInfo retAtributes;
 
-   if(hashTable[hashIndex] != NULL){
+   if(hashTable[hashIndex].n_elems != 0){
 
-   		HashList * currentNode = hashTable[hashIndex]->head;
+   		HashList * currentNode = hashTable[hashIndex].head;
    		HashList * tempNode = NULL;
 
 
 	    while (currentNode != NULL) {
-	    	SymbolInfo* info = currentNode->atributes;
+	    	info = &currentNode->atributes;
 
 	    	//VERIFICA NA LISTA ENCADEADA SE TEM O SYMBOLINFO ESPECIFICADO PARA EXCLUIR.
-	    	if(strcmp(info.name, name) == 0 && strcmp(info.scope, scope) ==0){
+	    	if(strcmp(info->name, name) == 0 && strcmp(info->scope, scope) ==0){
 	    		tempNode = currentNode->next;
 			    retAtributes = tempNode->atributes;
 			    currentNode->next = tempNode->next;
 			    free(tempNode);
-			    hashTable[hashIndex]->n_elems--;
+			    hashTable[hashIndex].n_elems--;
 	    		return SUCESSO;
 	    	}
 		    //proximo
@@ -163,45 +170,46 @@ void display() {
 	
    for(i = 0; i<HASH_SIZE; i++) {
 	
-      if(hashTable[i] != NULL)
-         printf(" (%d,%d)",hashTable[i]->key,hashTable[i]->data);
+      if(hashTable[i].n_elems != 0)
+         printf(" (%d,%d)\n",i,hashTable[i].n_elems);
       else
-         printf(" ~~ ");
+         printf(" ~~ \n");
    }
 	
    printf("\n");
 }
 
 int main() {
-   dummyItem = (struct DataItem*) malloc(sizeof(struct DataItem));
-   dummyItem->data = -1;  
-   dummyItem->key = -1; 
 
-   insert(1, 20);
-   insert(2, 70);
-   insert(42, 80);
-   insert(4, 25);
-   insert(12, 44);
-   insert(14, 32);
-   insert(17, 11);
-   insert(13, 78);
-   insert(37, 97);
+
+	initialize();
+	SymbolInfo info;
+	info.name = (char *) malloc(sizeof(char*));
+	info.name = "soma";
+	info.scope = (char *) malloc(sizeof(char*));
+	info.scope = "main";
+	info.type = (char *) malloc(sizeof(char*));
+	info.type = "inteiro";
+	printf("symbolinfo criado!\n");
+
+	insert("somamain",info);
+
 
    display();
-   item = search(37);
+   // item = search(37);
 
-   if(item != NULL) {
-      printf("Element found: %d\n", item->data);
-   } else {
-      printf("Element not found\n");
-   }
+   // if(item != NULL) {
+   //    printf("Element found: %d\n", item->data);
+   // } else {
+   //    printf("Element not found\n");
+   // }
 
-   delete(item);
-   item = search(37);
+   // delete(item);
+   // item = search(37);
 
-   if(item != NULL) {
-      printf("Element found: %d\n", item->data);
-   } else {
-      printf("Element not found\n");
-   }
+   // if(item != NULL) {
+   //    printf("Element found: %d\n", item->data);
+   // } else {
+   //    printf("Element not found\n");
+   // }
 }
