@@ -63,17 +63,21 @@ void initialize(){
 
 
 SymbolInfo * search(char* key, char*name, char*scope) {
+   printf("to na funcao search\n");
    //get the hash 
    int hashIndex = hashCode(key);  
-	
+	printf("vou procura no index: %d que tem %d elemento(s)\n",hashIndex, hashTable[hashIndex].n_elems);
    //pega na hashtable a linked list
    if(hashTable[hashIndex].n_elems != 0){
+   		if (hashTable[hashIndex].head == NULL) printf("ta vazio!\n");
    		HashList * current = hashTable[hashIndex].head;
+
 
 	    while (current != NULL) {
 	    	info = &current->atributes;
 
 	    	if(strcmp(info->name, name) ==0 && strcmp(info->scope, scope) ==0){
+	    		printf("encontrei: %s%s\n",name,scope);
 	    		return info;
 	    	}
 
@@ -81,33 +85,41 @@ SymbolInfo * search(char* key, char*name, char*scope) {
 	        current = current->next;
 	    }
    }       
-	
+	printf("nao encontrei!\n");
    return NULL;        
 }
 
-//int insert(char* key, char*name, char*scope, char* type) {
 int insert(char* key, SymbolInfo atribute) {
 	printf("entrei no insert!\n");
 	//get the hash 
    int hashIndex = hashCode(key);
 
-   // SymbolInfo atribute = SymbolInfo malloc(sizeof(SymbolInfo));
-   // atribute->name = name;
-   // atribute->scope = scope;
-   // atribute->type = type;
-   HashList * current = hashTable[hashIndex].head;
-   if(current == NULL){
-   	printf("tem nada na hash table no index %d\n",hashIndex );
-   }
+   HashList * tempNode;
+   tempNode = (HashList *) malloc(sizeof(HashList));
 
-   if(hashTable[hashIndex].n_elems != 0){
-   	printf("nem devo entrar aqui\n");
+   tempNode->atributes.name = atribute.name;
+   tempNode->atributes.scope = atribute.scope;
+   tempNode->atributes.type = atribute.type;
+   tempNode->next=NULL;
+
+    HashList * current = hashTable[hashIndex].head;
+
+   if(current == NULL){
+   		hashTable[hashIndex].head = tempNode;
+   		hashTable[hashIndex].n_elems++;
+   		return SUCESSO;
+   		
+   }else{
+
+   
+   	printf("a linked list nao esta vazia\n");
    		
 	    while (current != NULL) {
 	    	info = &current->atributes;
 
 	    	//VERIFICA NA LISTA ENCADEADA SE O NOME JA NAO FOI DECLARADO NO ESCOPO.
 	    	if(strcmp(info->name, atribute.name) == 0 && strcmp(info->scope, atribute.scope) ==0){
+	    		printf("ja foi inserido: %s%s\n",info->name,info->scope );
 	    		return ERRO1_SYMBOLINFO_JA_FOI_INSERIDO;
 	    	}
 		    //proximo
@@ -115,17 +127,19 @@ int insert(char* key, SymbolInfo atribute) {
 
 	    }
 
-	      
-	    
-   }
-   printf("troca troca\n");
+	    printf("troca troca\n");
    /* now we can add a new variable */
-	current = malloc(sizeof(HashList));
-	current->atributes = atribute; 
-	current->next = NULL; 
+	current = tempNode;
 	hashTable[hashIndex].n_elems++;
-	printf("terminei de inserir\n");
+	printf("terminei de inserir: %s%s\n",current->atributes.name, current->atributes.scope);
 	return SUCESSO;
+
+   }
+
+   
+
+
+   
 
 }
 
@@ -170,10 +184,23 @@ void display() {
 	
    for(i = 0; i<HASH_SIZE; i++) {
 	
-      if(hashTable[i].n_elems != 0)
-         printf(" (%d,%d)\n",i,hashTable[i].n_elems);
-      else
+      if(hashTable[i].n_elems != 0){
+         printf(" (%d,%d) ->",i,hashTable[i].n_elems);
+         HashList * current = hashTable[i].head;
+
+
+         while (current != NULL) {
+         	info = &current->atributes;
+         	printf(" {%s%s}",info->name,info->scope );
+        //proximo
+         	current = current->next;
+         }
+         printf("\n");
+
+      }
+      else{
          printf(" ~~ \n");
+      }
    }
 	
    printf("\n");
@@ -183,19 +210,41 @@ int main() {
 
 
 	initialize();
-	SymbolInfo info;
-	info.name = (char *) malloc(sizeof(char*));
-	info.name = "soma";
-	info.scope = (char *) malloc(sizeof(char*));
-	info.scope = "main";
-	info.type = (char *) malloc(sizeof(char*));
-	info.type = "inteiro";
-	printf("symbolinfo criado!\n");
+	SymbolInfo info1;
+	info1.name = (char *) malloc(sizeof(char*));
+	info1.name = "soma";
+	info1.scope = (char *) malloc(sizeof(char*));
+	info1.scope = "main";
+	info1.type = (char *) malloc(sizeof(char*));
+	info1.type = "inteiro";
+	printf("symbolinfo1 criado!\n");
 
-	insert("somamain",info);
+	insert("somamain",info1);
+
+	SymbolInfo info2;
+	info2.name = (char *) malloc(sizeof(char*));
+	info2.name = "soma";
+	info2.scope = (char *) malloc(sizeof(char*));
+	info2.scope = "funcao1";
+	info2.type = (char *) malloc(sizeof(char*));
+	info2.type = "inteiro";
+	printf("symbolinfo2 criado!\n");
+
+	insert("somafuncao1",info2);
+	insert("somafuncao1",info2);
 
 
-   display();
+    display();
+
+    dummyInfo = search("somamain","soma","main");
+    if(dummyInfo == NULL){
+    	printf("nada encontrado\n");
+    }else{
+    	printf("%s\n", dummyInfo->name);	
+    }
+
+    
+  
    // item = search(37);
 
    // if(item != NULL) {
