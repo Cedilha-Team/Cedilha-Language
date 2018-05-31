@@ -14,9 +14,10 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 
 %%
 
+"/*"                    {comment();}
+#.*\n                   {}
 \"(\\.|[^\\"])*\"       { yylval.sValue = strdup(yytext); return(LIT_TEXTO);}
-#.*                     ; /*tudo que iniciar com # ou seja as bibliotecas*/
-("Verdadeiro"|"Falso")  { return(LIT_BOOL);}
+("Verdadeiro"|"Falso")  { yylval.sValue = strdup(yytext); return(LIT_BOOL);}
 "Se"                    { return(SE);}
 "Inteiro"               { return(INTEIRO);}
 "Imprime"               { return(IMPRIME);}
@@ -41,7 +42,6 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 [0-9]*\.[0-9]+          { yylval.dValue = atof(yytext); return(LIT_REAL);}
 [0-9]+                  { yylval.iValue = atoi(yytext); return(LIT_INT);}
 [a-zA-Z_][a-zA-Z0-9]*   { yylval.sValue = strdup(yytext); return(ID);}
-
 \"                      { return(ASPAS_DUPLAS);}
 "'"                     { return(ASPAS_SIMPLES);}
 "<="                    { return(MENORIGUAL);}
@@ -55,6 +55,7 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 "--"                    { return(DEC);}
 "&&"					{ return (E_LOG); }
 "||"					{ return (OU_LOG); }
+"#"						{ return (CERQUILHA); }
 "!"						{ return (NEGACAO);}
 "*"                     { return(MULT);}
 "-"                     { return(SUB);}
@@ -71,6 +72,7 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 ","                     { return(VIRGULA);}
 ";"                     { return(PONTOVIRGULA);}
 
+
 "["                     { return(LCOLCHETE);}
 "]"                     { return(RCOLCHETE);}
 "{"                     { return (LCHAVE);}
@@ -82,6 +84,23 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 .	                    {yyerror("Caractere inválido");}
 
 %%
+comment()
+{
+	char c, c1;
+
+loop:
+	while ((c = input()) != '*' && c != 0)
+		putchar(c);
+
+	if ((c1 = input()) != '/' && c != 0)
+	{
+		unput(c1);
+		goto loop;
+	}
+
+	if (c != 0)
+		putchar(c1);
+}
 
 #ifndef yywrap
    int yywrap (void) {return 1;}

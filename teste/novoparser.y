@@ -37,18 +37,18 @@ extern char * yytext;
 
 %%
 
-programa : inclusoes bloco_principal bloco_funcoes   {}
+programa :  bloco_principal bloco_funcoes   {} /* inclusoes */
 	     ;
 
-inclusoes : 											{}/*vazio*/
-		  | INCLUIR biblioteca PONTOVIRGULA inclusoes   {}
-		  ;
+//inclusoes : 											{}/*vazio*/
+//		  | INCLUIR biblioteca PONTOVIRGULA inclusoes   {}
+//		  ;
 
-biblioteca : ASPAS_DUPLAS ID ASPAS_DUPLAS /*isso deve ser considerado? vi no .l que bibliotecas sao ignoradas*/
-		   ;
+//biblioteca : # ID /*isso deve ser considerado? vi no .l que bibliotecas sao ignoradas*/
+//		   ;
 
 
-bloco_principal : BPRINCIPAL LCHAVE sentencas RCHAVE   {printf("BlocoPrincipal %s %s %s/n",$1,$2,);}
+bloco_principal : BPRINCIPAL LCHAVE sentencas RCHAVE   {printf("BlocoPrincipal %s %s %s/n","{",$3, "}");}
 				;
 
 sentencas : /*vazio*/						   {}
