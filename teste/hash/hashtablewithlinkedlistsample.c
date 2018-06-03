@@ -2,7 +2,6 @@
 
     #include<stdlib.h>
 
-    #include<conio.h>
 
 
 
@@ -73,6 +72,8 @@ void remove_element(int key);
 void rehash();
 
 void init_array();
+
+int find(struct node *list, int key);
 
 
 
@@ -588,11 +589,11 @@ void main()
 
    int choice, key, value, n, c;
 
-   clrscr();
+   //clrscr();
 
    
 
-   array = (struct arrayitem*) malloc(max * sizeof(struct arrayitem*));
+   array = (struct arrayitem*) malloc(max * sizeof(struct node));
 
    init_array();
 
@@ -706,7 +707,7 @@ void main()
 
   
 
-  getch();
+  //getch();
 
   
 
