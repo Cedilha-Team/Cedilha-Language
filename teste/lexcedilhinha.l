@@ -71,8 +71,6 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 "@"                     { return(ARROBA);}
 ","                     { return(VIRGULA);}
 ";"                     { return(PONTOVIRGULA);}
-
-
 "["                     { return(LCOLCHETE);}
 "]"                     { return(RCOLCHETE);}
 "{"                     { return (LCHAVE);}
