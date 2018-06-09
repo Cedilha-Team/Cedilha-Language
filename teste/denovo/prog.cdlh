@@ -1,5 +1,5 @@
 BlocoPrincipal {
-    Leia(as);
+    /*Leia(as);
     Imprima("lalal");
     Inteiro a;
     Texto texto = 2*("lalalalala" + 5);
@@ -22,5 +22,12 @@ BlocoPrincipal {
     
     Enquanto (vdc > 5) Execute {
         x+1;
-    };
+    };*/
+    
+
+     Execute{
+        Inteiro x = 1;
+        a+b;
+        x = 1+2*3;
+     } Enquanto (vdc > 5 ); 
 }

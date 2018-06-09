@@ -120,10 +120,14 @@ bloco_enquanto : ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE sente
 																							$$ = str; free($3), free($7);}
 			   ;
 			   
-bloco_faca_enquanto : {}
+bloco_faca_enquanto : EXECUTE LCHAVE sentencas RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES {int tamanho = 10 + strlen((char*)$3) + 11 + strlen((char*)$7)+1;
+																								  char * str = (char *) malloc(tamanho); 
+																								  sprintf(str, "%s%s%s%s%s", "Execute {", (char *) $3, "} Enquanto (", 
+																								  (char *) $7, ")"); 
+																								  $$ = str; free($3), free($7);}
 			        ;
 			   
-bloco_para : {}
+bloco_para : PARA LPARENTESES declaracao PONTOVIRGULA expressao PONTOVIRGULA comando RPARENTESES {}
 		   ;			   
 		  
 imprime : IMPRIME LPARENTESES termo RPARENTESES {int tamanho = 9 + strlen((char*)$3)+1;
