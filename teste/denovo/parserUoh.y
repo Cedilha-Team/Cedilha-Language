@@ -113,7 +113,11 @@ repeticao : bloco_enquanto       {$$ = $1;}
 		  | bloco_para           {$$ = $1;}
 		  ;
 
-bloco_enquanto : {}
+bloco_enquanto : ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE sentencas RCHAVE {int tamanho = 10 + strlen((char*)$3) + 11 + strlen((char*)$7)+1;
+																							char * str = (char *) malloc(tamanho); 
+																							sprintf(str, "%s%s%s%s%s", "Enquanto (", (char *) $3, ") Execute {", 
+																							(char *) $7, "}"); 
+																							$$ = str; free($3), free($7);}
 			   ;
 			   
 bloco_faca_enquanto : {}

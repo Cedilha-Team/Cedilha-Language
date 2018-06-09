@@ -19,5 +19,8 @@ BlocoPrincipal {
       c=10;
       a = 20;
     };
-  
+    
+    Enquanto (vdc > 5) Execute {
+        x+1;
+    };
 }
