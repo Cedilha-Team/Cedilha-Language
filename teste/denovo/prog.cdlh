@@ -1,14 +1,24 @@
-Leia(as);
-Imprima("lalal");
-Inteiro a;
-Texto texto = 2*("lalalalala" + 5);
-Inteiro x;
-Real z;
-Booleano afirmacao;
-
-/*afirmacao = Verdadeiro;*/
-
-/*Imprima(!afirmacao);*/
-
-
-x>y;
+BlocoPrincipal {
+    /*Leia(as);
+    Imprima("lalal");
+    Inteiro a;
+    Texto texto = 2*("lalalalala" + 5);
+    Inteiro c;
+    Inteiro b;
+    
+    Real z;
+    Booleano afirmacao;
+    
+    /*afirmacao = Verdadeiro;*/
+    
+    /*Imprima(!afirmacao);*/
+    
+    /*a = 3;
+    b = 1;
+    c = 9162 + a || (13);*/
+    Inteiro b;
+    Se (a > b) Execute {
+      c=10;
+    };
+  
+}
