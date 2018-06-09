@@ -1,5 +1,5 @@
 BlocoPrincipal {
-    /*Leia(as);
+    Leia(as);
     Imprima("lalal");
     Inteiro a;
     Texto texto = 2*("lalalalala" + 5);
@@ -9,16 +9,15 @@ BlocoPrincipal {
     Real z;
     Booleano afirmacao;
     
-    /*afirmacao = Verdadeiro;*/
+    verdadeiro = Verdadeiro;
     
-    /*Imprima(!afirmacao);*/
-    
-    /*a = 3;
+    a = 3;
     b = 1;
-    c = 9162 + a || (13);*/
+    c = 9162 + a || (13);
     Inteiro b;
     Se (a > b) Execute {
       c=10;
+      a = 20;
     };
   
 }

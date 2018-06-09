@@ -7,7 +7,7 @@ extern void yyerror(const char *);  /* prints grammar violation message */
 extern int sym_type(const char *);  /* returns type from symbol table */
 
 #define sym_type(identifier) IDENTIFIER /* with no symbol table, fake it */
-
+void comment();
 
 %}
 
@@ -84,23 +84,20 @@ extern int sym_type(const char *);  /* returns type from symbol table */
 .	                    {/*yyerror(" Símbolo inválido");*/}
 
 %%
-comment()
+
+void comment(void)
 {
-	char c, c1;
-
-loop:
-	while ((c = input()) != '*' && c != 0)
-	//	putchar(c);
-
-	if ((c1 = input()) != '/' && c != 0)
+	char c, prev = 0;
+  
+	while ((c = input()) != 0)      /* (EOF maps to 0) */
 	{
-		unput(c1);
-		goto loop;
+		if (c == '/' && prev == '*')
+			return;
+		prev = c;
 	}
-
-	if (c != 0)
-	//	putchar(c1);
+	error("unterminated comment");
 }
+
 
 #ifndef yywrap
    int yywrap (void) {return 1;}

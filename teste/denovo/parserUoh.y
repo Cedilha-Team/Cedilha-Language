@@ -44,7 +44,7 @@ bloco_principal : BPRINCIPAL LCHAVE sentencas RCHAVE   {printf("BlocoPrincipal {
 
 
 
-sentencas: {$$ = "";}
+sentencas: {$$="";}
 		 | sentenca PONTOVIRGULA sentencas {int tamanho = strlen((char*)$1)+ 3 + strlen((char*)$3);
 											char * str = (char *) malloc(tamanho); 
 											sprintf(str, "%s%s\n%s", (char*)$1, ";", (char *) $3); 

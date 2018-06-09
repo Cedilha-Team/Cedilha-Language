@@ -1436,7 +1436,7 @@ yyreduce:
 
   case 4:
 #line 47 "parserUoh.y" /* yacc.c:1646  */
-    {(yyval.sValue) = "";}
+    {(yyval.sValue)="";}
 #line 1441 "y.tab.c" /* yacc.c:1646  */
     break;
 
