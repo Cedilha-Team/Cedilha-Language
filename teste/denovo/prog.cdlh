@@ -1,3 +1,5 @@
+Funcao Inteiro teste(Inteiro i);
+
 BlocoPrincipal {
     /*Leia(as);
     Imprima("lalal");
@@ -18,11 +20,11 @@ BlocoPrincipal {
     Se (a > b) Execute {
       c=10;
       a = 20;
-    };
+    };*/
     
     Enquanto (vdc > 5) Execute {
         x+1;
-    };*/
+    };
     
 
      Execute{
@@ -30,4 +32,8 @@ BlocoPrincipal {
         a+b;
         x = 1+2*3;
      } Enquanto (vdc > 5 ); 
+     
+    Para ( Inteiro j = 10; j < 15; j++ ) Execute {
+        c = 10;
+    };
 }

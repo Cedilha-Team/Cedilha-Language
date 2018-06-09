@@ -31,14 +31,39 @@ extern char * yytext;
 
 %type <sValue> termo literal imprime leia sentencas sentenca tipo tipo_primitivo declaracao expressao 
 operador_unario operador_binario operador_relacional operador_aritmetico operador_booleano comando atribuicao
-bloco_principal atribuicao_binaria atribuicao_unaria controle bloco_se se_simplificado
+atribuicao_binaria atribuicao_unaria controle bloco_se se_simplificado
 bloco_enquanto bloco_faca_enquanto bloco_para repeticao
+assinatura_funcoes assinatura_funcao parametro parametros bloco_principal bloco_funcoes declaracao_para
+comando_para
 		   ;
 %%
 
-programa : bloco_principal
+programa : assinatura_funcoes bloco_principal bloco_funcoes
          ;
 
+assinatura_funcoes  :														{$$ = "";}
+					| assinatura_funcao PONTOVIRGULA assinatura_funcoes 	{char * str = (char *) malloc(strlen($1) + 1 + strlen(";\n\n") + 1 +  strlen($3)); 
+																			sprintf(str, "%s %s %s", (char *) $1, ";\n\n", (char *) $3); 
+																			printf("%s", str);}
+					;
+					
+assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{char * str = (char *) malloc(7 + strlen($2) + strlen($3) + 6 + strlen($5) + 12 ); 
+																			 sprintf(str, "%s %s %s %s %s %s", "Funcao",(char *) $2, (char *) $3, "(", (char*)$5, ")" ); 
+																			 $$ = str;} 
+parametros :											{$$ = "";}
+           | parametro VIRGULA parametros				{char * str = (char *) malloc(strlen($1) + 2 + strlen($3)); 
+														sprintf(str, "%s%s %s", (char *) $1, ",", (char *) $3); 
+														$$ = str;}
+           | parametro {$$ = $1;}
+           ;
+
+parametro  : tipo ID   {char * str = (char *) malloc(strlen($1) + 1 + strlen($2)); 
+						sprintf(str, "%s %s", (char *) $1, (char *) $2); 
+						$$ = str; }
+					
+bloco_funcoes  : {printf("BlocoFuncoes {\n}\n");}
+				;
+					
 bloco_principal : BPRINCIPAL LCHAVE sentencas RCHAVE   {printf("BlocoPrincipal {\n%s}\n",$3);}
 				;
 
@@ -127,9 +152,22 @@ bloco_faca_enquanto : EXECUTE LCHAVE sentencas RCHAVE ENQUANTO LPARENTESES expre
 																								  $$ = str; free($3), free($7);}
 			        ;
 			   
-bloco_para : PARA LPARENTESES declaracao PONTOVIRGULA expressao PONTOVIRGULA comando RPARENTESES {}
+bloco_para : PARA LPARENTESES declaracao_para PONTOVIRGULA
+expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE {int tamanho = 7 + strlen((char *)$3) + strlen((char *)$5) + 1 + strlen((char *)$7) + 13 + strlen((char *)$11) + 2;
+																				char * str = (char *) malloc(tamanho); 
+																				sprintf(str, "%s %s %s %s %s %s %s %s %s", "Para (", (char *) $3, ";", 
+																						(char *)  $5, ";", (char *)$7, ") Execute {", (char *)$11, "}"); 
+																				$$ = str; }
 		   ;			   
-		  
+
+declaracao_para:			{}
+				| declaracao {$$ = $1;}
+				;
+
+comando_para :	{}
+			 | comando {$$ = $1;}
+			 ;
+
 imprime : IMPRIME LPARENTESES termo RPARENTESES {int tamanho = 9 + strlen((char*)$3)+1;
 													 char * str = (char *) malloc(tamanho); 
 													 sprintf(str, "%s%s%s", "Imprima (", (char *) $3, ")"); 
