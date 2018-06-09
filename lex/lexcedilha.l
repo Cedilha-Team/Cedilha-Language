@@ -27,6 +27,8 @@
 "Imprima"               {printf("<%s : %s> ", yytext, "IMPRIMA");}
 "Pare"                  {printf("<%s : %s> ", yytext, "PARE");}
 "Enquanto"              {printf("<%s : %s> ", yytext, "ENQUANTO");}
+"Retorna"								{printf("<%s : %s> ", yytext, "RETORNA");}
+"Retorne"								{printf("<%s : %s> ", yytext, "RETORNE");}
 "Procedimento"          {printf("<%s : %s> ", yytext, "PROC");}
 "Para"                  {printf("<%s : %s> ", yytext, "PARA");}
 "Execute"               {printf("<%s : %s> ", yytext, "EXECUTE");}

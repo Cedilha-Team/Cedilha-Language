@@ -1,14 +1,15 @@
-BlocoPrincipal {
-	Inteiro resultado;
-	leia(inteiro);
-	if(inteiro > 5){
-		imprima("Numero menor que 5);
-	}
-	else if(inteiro < 0) {
-		imprima("Numero menor que 0);
-	}
-	else {
-		imprima("Numero não atende");
-	}
-
-}
+BlocoPrincipal{ 	
+    Inteiro resultado;
+    leia(resultado);
+    Se(resultado > 5) Execute {
+        Imprima("Numero maior que 5");
+    }
+    /*Senao Se(resultado < 0) Execute {
+        Imprima("Numero menor que 0");
+    }
+    Senao {
+        Imprima("Numero não atende");
+    }
+    
+    Imprima("asd");*/
+}	

@@ -1,8 +1,8 @@
 BlocoPrincipal {
 	Inteiro resultado;
-	Funcao somarEquanto (Inteiro max) retorna Inteiro {}
+	/*Funcao somarEquanto (Inteiro max) retorna Inteiro {}*/
 	
-	Inteiro resu = #somarEquanto(10);
+	/*Inteiro resu = #somarEquanto(10);*/
 	Imprime(resu);
 }
 

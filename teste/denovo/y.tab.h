@@ -180,16 +180,11 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 12 "parsernovoprofessor.y" /* yacc.c:1909  */
+#line 12 "parserUoh.y" /* yacc.c:1909  */
 
-	//int    iValue; 	/* integer value */
-	// double dValue;  /* double value*/
-	// char   cValue; 	/* char value */
 	char * sValue;  /* string value */
-	// bool   bValue;  /* bool value */
-	
 
-#line 193 "y.tab.h" /* yacc.c:1909  */
+#line 188 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

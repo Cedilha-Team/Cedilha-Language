@@ -10,16 +10,18 @@ extern char * yytext;
 %}
 
 %union {
-	int    iValue; 	/* integer value */
-	double dValue;  /* double value*/
-	char   cValue; 	/* char value */
+	//int    iValue; 	/* integer value */
+	// double dValue;  /* double value*/
+	// char   cValue; 	/* char value */
 	char * sValue;  /* string value */
+	// bool   bValue;  /* bool value */
 	};
 
-%token <sValue> ID LIT_TEXTO
-%token <iValue> LIT_INT
-%token <dValue> LIT_REAL
-%token LIT_BOOL BPRINCIPAL BFUNCOES FUNCAO BOOL
+%token <sValue> ID LIT_TEXTO LIT_BOOL LIT_REAL LIT_INT
+//%token <iValue> LIT_INT
+//%token <dValue> LIT_REAL
+//%token <bValue> LIT_BOOL 
+%token BPRINCIPAL BFUNCOES FUNCAO BOOL
 %token TEXTO CARACTERE REAL INTEIRO VETOR MEU_TIPO CERQUILHA
 %token SE IMPRIME LEIA INCLUIR PARE ENQUANTO PROC PARA EXECUTE SENAO CONSTANTE RETORNE
 %token ASPAS_DUPLAS ASPAS_SIMPLES LCOLCHETE RCOLCHETE LCHAVE RCHAVE LPARENTESES RPARENTESES
@@ -34,11 +36,11 @@ extern char * yytext;
 
 %start programa
 
-%type <sValue> bloco_principal sentencas sentenca tipo_primitivo tipo operador termo expressao literal comando declaracao declaracao_simples 
+%type <sValue> bloco_principal sentencas sentenca tipo_primitivo tipo termo expressao literal comando declaracao 
 imprime bloco_funcoes funcoes_proc definicoes_funcoes definicoes_procedimentos definicao_funcao definicao_procedimento parametros parametro
-controle bloco_se se_simplificado operador_relacional operador_logico booleano repeticao bloco_enquanto bloco_faca_enquanto
+controle bloco_se se_simplificado operador_relacional repeticao bloco_enquanto bloco_faca_enquanto
 bloco_para chamada_funcao parametros_chamada parametro_chamada atribuicao atribuicao_binaria atribuicao_unaria tipo_estruturado tipos_estruturados
-leia assinatura_funcoes assinatura_funcao expressao_relacional expressao_logica
+leia assinatura_funcoes assinatura_funcao operador_unario operador_booleano operador_aritmetico operador_binario
 
 %%
 
@@ -64,13 +66,13 @@ assinatura_funcoes :														{$$ = "";}
 					| assinatura_funcao PONTOVIRGULA assinatura_funcoes		{char * str = (char *) malloc(strlen($1) + 1 + strlen(";\n\n") + 1 +  strlen($3)); 
 																			sprintf(str, "%s %s %s", (char *) $1, ";\n\n", (char *) $3); 
 																			$$ = str; free ($1);}
-
-assinatura_funcao : FUNCAO tipo ID LPARENTESES parametro RPARENTESES		{char * str = (char *) malloc(7 + strlen($2) + strlen($3) + 6 + strlen($5) + 12 ); 
+                    ;
+                    
+assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{char * str = (char *) malloc(7 + strlen($2) + strlen($3) + 6 + strlen($5) + 12 ); 
 																									sprintf(str, "%s %s %s %s %s %s", "Funcao",	(char *) $2, (char *) $3, "(", (char*)$5, ")" ); 
 																									$$ = str;} 
 					;
 
-	/*Funcao1 Inteiro2 somarPara3 (4 Inteiro5 max6 )7 {8 retorna9 }10 ;11*/
 
 sentenca : comando  		{$$ = $1;}
 		 | controle 		{$$ = $1;} 
@@ -107,12 +109,9 @@ se_simplificado : SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE sentencas 
 			  ;
 		
 			  
-imprime : IMPRIME LPARENTESES literal RPARENTESES 	{char * str = (char *) malloc(9 + strlen($3) + 1); 
+imprime : IMPRIME LPARENTESES expressao RPARENTESES 	{char * str = (char *) malloc(9 + strlen($3) + 1); 
 													 sprintf(str, "%s %s %s", "Imprima (", (char *) $3, ")"); 
 													 $$ = str; free($3);} /* malloc */
-		| IMPRIME LPARENTESES ID RPARENTESES 		{char * str = (char *) malloc(100); 
-													 sprintf(str, "%s %s %s", "Imprime (", (char *) $3, ")"); 
-													 $$ = str;}
 		;
 		
 leia	: LEIA LPARENTESES termo RPARENTESES			{char * str = (char *) malloc(100); 
@@ -145,22 +144,20 @@ bloco_para : PARA LPARENTESES declaracao PONTOVIRGULA expressao PONTOVIRGULA exp
 
 
 
-declaracao : declaracao_simples 			{$$ = $1;}
-
-declaracao_simples : tipo ID ATRIB expressao  {char * str = (char *) malloc(100); sprintf(str, "%s %s %s %s", (char*) $1, (char*) $2," = ", (char*) $4);$$ = str;}
+declaracao :  tipo ID ATRIB expressao  {char * str = (char *) malloc(strlen($1) + 1 + strlen($2) + 3 + strlen( $4 ));
+												sprintf(str, "%s %s %s %s", (char*) $1, (char*) $2," = ", (char*) $4);$$ = str;}
 				   | tipo ID                  {char * str = (char *) malloc(10); sprintf(str, "%s %s", (char*) $1, (char*) $2); $$ = str;}
 				   ;
 				   
 				   
-atribuicao : ID atribuicao_binaria expressao   {char * str = (char *) malloc(strlen($1) + 1 + strlen($2) + 1 + strlen( $3 )); 
+atribuicao : ID atribuicao_binaria expressao   {char * str = (char *) malloc(strlen($1) + 2 + strlen($2) + 1 + strlen( $3 )); 
 												sprintf(str, "%s %s %s", (char *) $1, (char *) $2, (char *) $3); }
 		   | ID atribuicao_unaria              {char * str = (char *) malloc(strlen($1) + 1 + strlen($2)); 
 												sprintf(str, "%s %s", (char *) $1, (char *) $2); }
-		   | ID atribuicao_binaria expressao   {char * str = (char *) malloc(strlen($1) + 1 + strlen($2) + 1 + strlen( $3 )); 
-												sprintf(str, "%s %s %s", (char *) $1, (char *) $2, (char *) $3); }
 		   ;
 		   
-atribuicao_binaria : ATRIB_SOMA {$$ = "+=";}
+atribuicao_binaria : ATRIB		{$$ = "=";}
+				   | ATRIB_SOMA {$$ = "+=";}
 				   | ATRIB_SUB  {$$ = "-=";}
 				   | ATRIB_MULT {$$ = "*=";}
 				   | ATRIB_DIV  {$$ = "/=";}
@@ -171,63 +168,8 @@ atribuicao_unaria : INC {$$ = "++";}
 				  | DEC {$$ = "--";}
                   ;
 
-expressao : termo operador expressao  {char * str = (char *) malloc(100); sprintf(str, "%s %s %s", (char*) $1, (char*) $2, (char*) $3); $$ = str;}
-		  | termo                     {$$ = $1;}
-		  | expressao_logica		  {$$ = $1;}
-		  | expressao_relacional	  {$$ = $1;}
-		  ;
-
-termo : ID       {$$ = $1;}
-      | literal  {$$ = $1;}
-      ;
-
-literal : LIT_REAL  {char * str = (char *) malloc(10); sprintf(str, "%f", (double) $1); $$ = str;}
-		| LIT_BOOL  { $$ = "booleano literal";}
-		| LIT_INT   {char * str = (char *) malloc(10); sprintf(str, "%d", (int) $1); $$ = str;}
- 		| LIT_TEXTO {$$ = $1;}
-		;
-
-
-expressao_logica : termo operador_logico expressao_logica		{}
-				 | termo operador_logico expressao_logica		{}
-				 | termo operador_logico expressao_relacional	{}
-				 | booleano										{}
-				 ;
-				 
-expressao_relacional : termo operador_relacional expressao_relacional		{}
-					 | termo operador_relacional expressao_logica			{}
-					 ;
-
-
-operador : MULT                  {$$ = "*";}
-		 | DIV                   {$$ = "/";}
-		 | MOD                   {$$ = "%";}
-		 | EXP                   {$$ = "^";}
-		 | SUB                   {$$ = "-";}
-		 | SOMA                  {$$ = "+";}
-		 ;
-		 
-operador_relacional : MENORIGUAL    {$$ = "<=";}
-					| MAIORIQUAL    {$$ = ">=";} 
-					| IGUAL         {$$ = "==";}
-					| DIFERENTE     {$$ = "!=";}
-					
-					| MAIOR         {$$ = "<";}
-					| MENOR         {$$ = ">";}
-                    ;
-                    
-operador_logico : E_LOG		{$$ = "&&";}
-				| OU_LOG	{$$ = "||";}
-				;
-				
-booleano : LIT_BOOL					{$$ = "Verdadeiro";}
-         | ID						{$$ = $1;}
-         | NEGACAO booleano			{char * str = (char *) malloc(2 + strlen($2)); 
-									sprintf(str, "%s%s", "!", (char *) $2); 
-									$$ = str; free($2);}  /*TODO VERIFICAR O NEGACAO WESLEY */
-         ;
-
 tipo : tipo_primitivo	{$$ = $1;}
+     | tipo_estruturado {$$ = $1;}
 	 ;
 
 tipo_primitivo : INTEIRO 	{$$ = "Inteiro";}
@@ -241,7 +183,9 @@ tipo_primitivo : INTEIRO 	{$$ = "Inteiro";}
 tipo_estruturado : MEU_TIPO ID LPARENTESES parametros RPARENTESES		{char * str = (char *) malloc(8 + 2 + strlen($2) + 2 + strlen($4)+ 2); 
 																	     sprintf(str, "%s %s %s %s %s", "MeuTipo", (char *) $2, "(", (char *) $4, ")" ); 
 																	     $$ = str; free($2);free($4);}
-				 /*| VETOR LCOLCHETE LIT_INT RCOLCHETE				{} /*ver com professor*/
+				 | VETOR LCOLCHETE LIT_INT RCOLCHETE				    {char * str = (char *) malloc(6+ strlen($3) + 2); 
+																	     sprintf(str, "%s%s%s", "Vetor[", (char *) $3, "]" ); 
+																	     $$ = str; free($3);}
 				 ;
 				 
 		
@@ -323,6 +267,57 @@ chamada_funcao : ID  LPARENTESES parametros_chamada RPARENTESES	{char * str = (c
 																 $$ = str; free($1); free($3);} 
 			   ;
 
+
+expressao : termo								 {$$ = $1;}
+		  | operador_unario expressao			 {char * str = (char *) malloc(strlen($1) + 1 + strlen($2)); 
+																 sprintf(str, "%s %s", (char *) $1, (char *) $2); 
+																 $$ = str; free($1); free($2); }
+		  | termo operador_binario expressao	 {char * str = (char *) malloc(strlen($1) + 1 + strlen($2) + 1 + strlen($3)); 
+																 sprintf(str, "%s %s %s", (char *) $1, (char *) $2, (char *) $3); 
+																 $$ = str; free($1); free($2); free($3);}
+		  ;
+
+
+termo : ID       {$$ = $1;}
+      | literal  {$$ = $1;}
+      ;
+
+literal : LIT_REAL  {$$ = $1;}
+		| LIT_BOOL  {$$ = $1;}
+		| LIT_INT   {$$ = $1;}
+ 		| LIT_TEXTO {$$ = $1;}
+		;
+
+operador_unario :	MENOS				{$$ = "-";}
+				|	NEGACAO				{$$ = "!";}
+				|	ARROBA				{$$ = "@";}
+				;
+
+operador_binario	: operador_booleano    {$$ = $1;}
+					| operador_relacional  {$$ = $1;}
+					| operador_aritmetico  {$$ = $1;}
+		            ;
+
+
+operador_relacional  : MENORIGUAL   		 {$$ = "<=";}
+					 | MAIORIQUAL            {$$ = ">=";} 
+					 | IGUAL                 {$$ = "==";}
+					 | DIFERENTE             {$$ = "!=";}
+					 | MAIOR                 {$$ = "<";}
+					 | MENOR                 {$$ = ">";}
+					 ;
+					 
+operador_aritmetico : MULT                  {$$ = "*";}
+				    | DIV                   {$$ = "/";}
+				    | MOD                   {$$ = "%";}
+				    | EXP                   {$$ = "^";}
+				    | SUB                   {$$ = "-";}
+				    | SOMA                  {$$ = "+";}
+				    ;
+				 
+operador_booleano : E_LOG		        	{$$ = "&&";}
+					| OU_LOG	            {$$ = "||";}
+					;
 
 
 %%

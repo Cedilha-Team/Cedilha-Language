@@ -1,0 +1,14 @@
+Leia(as);
+Imprima("lalal");
+Inteiro a;
+Texto texto = 2*("lalalalala" + 5);
+Inteiro x;
+Real z;
+Booleano afirmacao;
+
+/*afirmacao = Verdadeiro;*/
+
+/*Imprima(!afirmacao);*/
+
+
+x>y;

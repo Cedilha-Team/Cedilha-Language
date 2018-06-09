@@ -1,9 +1,0 @@
-BlocoPrincipal {
-	Inteiro resultado;
-	
-	para(Inteiro i de 0 a 10) execute {
-		resultado = resultado + i;
-	}
-	
-	Imprime(resultado);
-}

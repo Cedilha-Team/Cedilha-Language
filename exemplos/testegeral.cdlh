@@ -1,0 +1,7 @@
+BlocoPrincipal{
+   Inteiro resultado;
+    leia(resultado);
+    Se(resultado > 5) Execute {
+        Imprima("Numero maior que 5");
+    }
+}

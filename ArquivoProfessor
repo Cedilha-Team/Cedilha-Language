@@ -1,0 +1,13 @@
+<ebaux> -> True | False | ID | <er> 
+<eb> -> <ebaux> | <ebaux> <opl> <eb>
+
+<er> -> ID <opr> ID | LIT 
+-----------
+
+
+<e> -> ID | LIT | <opunario> <e> |  <e> <op> <e> | ...
+
+<op> -> <opr> | <opb> | <opa> ...
+
+
+if <e> 

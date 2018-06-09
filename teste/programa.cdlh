@@ -1,5 +1,6 @@
 BlocoPrincipal{
     Inteiro x =25;
-    Imprime("lala");
-    Imprime(x);
+    Imprime(3);
+    
+    x = 13;
 }
