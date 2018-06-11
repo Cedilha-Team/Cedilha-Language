@@ -69,21 +69,7 @@ int hashcode(char* key, int max){
 }
 
 Symbol * createSymbol(char* key, char* name, char* scope, char* type){
-    
-    return ;
-}
-
-void insert(HashTable* hashTable, char* key, char* name, char* scope, char* type){
-
-   float n = 0.0; /* n => Load Factor, keeps check on whether rehashing is required or not */
-
-   int index = hashcode(key, hashTable->max);  
-
-    /* Extracting Linked List at a given index */
-   Symbol *list = (Symbol*) hashTable->array[index].head;
-
-    /* Creating an item to insert in the Hash Table */
-   Symbol *item = (Symbol*) malloc(sizeof(Symbol));
+    Symbol *item = (Symbol*) malloc(sizeof(Symbol));
    item->key = (char *) malloc(sizeof(char)*strlen(key) + 1);
    strcpy(item->key, key);
    item->name = (char *) malloc(sizeof(char)*strlen(name) + 1);
@@ -93,18 +79,29 @@ void insert(HashTable* hashTable, char* key, char* name, char* scope, char* type
    item->type = (char *) malloc(sizeof(char)*strlen(type) + 1);
    strcpy(item->type, type);
    item->next = NULL;
+    return item;
+}
 
+void insert(HashTable* hashTable, Symbol *item){
 
+   float n = 0.0; /* n => Load Factor, keeps check on whether rehashing is required or not */
+
+   int index = hashcode(item->key, hashTable->max);  
+
+    /* Extracting Linked List at a given index */
+   Symbol *list = (Symbol*) hashTable->array[index].head;
+
+    
     if (list == NULL) {
 
     /* Absence of Linked List at a given Index of Hash Table */
-        printf("Inserting %s(key) and %s(type) \n", key, type);
+        printf("Inserting %s(key) and %s(type) \n", item->key, item->type);
         hashTable->array[index].head = item;
         hashTable->array[index].tail = item;
         hashTable->size++;
     } else {
     /* A Linked List is present at given index of Hash Table */
-        int find_index = find(list, key);
+        int find_index = find(list, item->key);
 
         if (find_index == -1){
             /*
@@ -168,7 +165,7 @@ void rehash(HashTable* hashTable){
 		*/
 
             while (list != NULL) {
-                insert(hashTable,list->key, list->name, list->scope, list->type);
+                insert(hashTable,createSymbol(list->key, list->name, list->scope, list->type));
                 list = list->next;
             }
         }
@@ -280,7 +277,7 @@ void remove_element(HashTable* hashTable,char* key){
 
                 temp->next = temp->next->next;
             }
-
+        
             printf("This key has been removed\n");
 
         }
@@ -322,132 +319,3 @@ void display(HashTable* hashTable){
 
 
 
-void main() 
-
-{
-
-   int choice, value, n, c;
-   char key[50];
-   char name[30];
-   char scope[20];
-   char type[10];
-   //clrscr();
-    HashTable* hashTable;
-
-
-   hashTable = (HashTable*) malloc(sizeof(HashTable));
-
-   init_array(hashTable,10);
-
-
-
-   do {
-
-      printf("Implementation of Hash Table in C chaining with Singly Linked List \n\n");
-
-      printf("MENU-: \n1.Inserting item in the Hash Table"
-
-        "\n2.Removing item from the Hash Table"
-
-        "\n3.Check the size of Hash Table" 
-
-        "\n4.To display a Hash Table"
-
-        "\n\n Please enter your choice -: ");
-
-
-
-      scanf("%d", &choice);
-
-
-
-      switch(choice) 
-
-      {
-
-
-
-        case 1:
-
-
-
-        printf("Inserting element in Hash Table\n");
-
-        printf("Enter key and values(name, scope and type)-:\t");
-
-        scanf("%s %s %s %s", key, name, scope, type);
-
-        insert(hashTable,key, name, scope, type);
-
-
-
-        break;
-
-
-
-        case 2:
-
-
-
-        printf("Deleting in Hash Table \nEnter the key to delete-:");
-
-        scanf("%s", key);
-
-        remove_element(hashTable,key);
-
-
-
-        break;
-
-
-
-        case 3:
-
-
-
-        n = size_of_array(hashTable);
-
-        printf("Size of Hash Table is-:%d\n", n);
-
-
-
-        break;
-
-
-
-        case 4:
-
-
-
-        display(hashTable);
-
-
-
-        break;
-
-
-
-        default:
-
-
-
-        printf("Wrong Input\n");
-
-
-
-    }
-
-
-
-    printf("\nDo you want to continue-:(press 1 for yes)\t");
-
-    scanf("%d", &c);
-
-
-
-}while(c == 1);
-
-
-
-  //getch();
-}
