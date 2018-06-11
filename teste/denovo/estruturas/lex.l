@@ -7,7 +7,7 @@ extern void yyerror(const char *);  /* prints grammar violation message */
 extern int sym_type(const char *);  /* returns type from symbol table */
 
 #define sym_type(identifier) IDENTIFIER /* with no symbol table, fake it */
-void comment();
+
 
 %}
 
@@ -15,13 +15,12 @@ void comment();
 %%
 
 "/*"                    {comment();}
+#.*\n                   {}
 \"(\\.|[^\\"])*\"       { yylval.sValue = strdup(yytext); return(LIT_TEXTO);}
 ("Verdadeiro"|"Falso")  { yylval.sValue = strdup(yytext); return(LIT_BOOL);}
-#.*\n                   {}
 "Se"                    { return(SE);}
 "Inteiro"               { return(INTEIRO);}
-"Booleano"				{ return(BOOL);}
-"Imprima"               { return(IMPRIME);}
+"Imprime"               { return(IMPRIME);}
 "Leia"            		{ return(LEIA);}
 "Vetor"                 { return(VETOR);}
 "Incluir"               { return(INCLUIR);}
@@ -37,13 +36,13 @@ void comment();
 "Real"					{ return(REAL);}
 "MeuTipo"				{ return(MEU_TIPO);}
 "Retorne"				{ return(RETORNE);}
+"Retorna"				{ return(RETORNE);}
 "Texto"					{ return(TEXTO);}
-"Funcao"				{ return(FUNCAO);}
 "BlocoPrincipal"		{ return(BPRINCIPAL);}
 "BlocoFuncoes"			{ return(BFUNCOES);}
-[0-9]*\.[0-9]+          { yylval.sValue = strdup(yytext); return(LIT_REAL);}
-[0-9]+                  { yylval.sValue = strdup(yytext); return(LIT_INT);}
-[a-zA-Z_][a-zA-Z0-9_]*   { yylval.sValue = strdup(yytext); return(ID);}
+[0-9]*\.[0-9]+          { yylval.dValue = atof(yytext); return(LIT_REAL);}
+[0-9]+                  { yylval.iValue = atoi(yytext); return(LIT_INT);}
+[a-zA-Z_][a-zA-Z0-9]*   { yylval.sValue = strdup(yytext); return(ID);}
 \"                      { return(ASPAS_DUPLAS);}
 "'"                     { return(ASPAS_SIMPLES);}
 "<="                    { return(MENORIGUAL);}
@@ -57,7 +56,7 @@ void comment();
 "--"                    { return(DEC);}
 "&&"					{ return (E_LOG); }
 "||"					{ return (OU_LOG); }
-"#"						{ return (CERQUILHA); }
+
 "!"						{ return (NEGACAO);}
 "*"                     { return(MULT);}
 "-"                     { return(SUB);}
@@ -73,31 +72,36 @@ void comment();
 "@"                     { return(ARROBA);}
 ","                     { return(VIRGULA);}
 ";"                     { return(PONTOVIRGULA);}
+
+
 "["                     { return(LCOLCHETE);}
 "]"                     { return(RCOLCHETE);}
 "{"                     { return (LCHAVE);}
 "}"                     { return (RCHAVE);}
 "("                     { return(LPARENTESES);}
 ")"                     { return(RPARENTESES);}
-(\ |\t|\n)+                {}
-[\v\f]					{}
-.	                    {/*yyerror(" Símbolo inválido");*/}
+
+[ \t\v\n\f]             {/* ignorar */}
+.	                    {yyerror("Caractere inválido");}
 
 %%
-
-void comment(void)
+comment()
 {
-	char c, prev = 0;
-  
-	while ((c = input()) != 0)      /* (EOF maps to 0) */
-	{
-		if (c == '/' && prev == '*')
-			return;
-		prev = c;
-	}
-	error("unterminated comment");
-}
+	char c, c1;
 
+loop:
+	while ((c = input()) != '*' && c != 0)
+		putchar(c);
+
+	if ((c1 = input()) != '/' && c != 0)
+	{
+		unput(c1);
+		goto loop;
+	}
+
+	if (c != 0)
+		putchar(c1);
+}
 
 #ifndef yywrap
    int yywrap (void) {return 1;}

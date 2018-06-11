@@ -1,0 +1,35 @@
+BlocoPrincipal {
+
+    Inteiro intervalo_a = 0;
+    Inteiro intervalo_b = 0;
+    Inteiro intervalo_c = 0;
+    Inteiro intervalo_d = 0;
+    Inteiro leitura = 0;
+    
+    Enquanto ( leitura >= 0 ) Execute {
+        Imprima("Digite um número para ser analisado: \n");
+        Leia(leitura);
+        
+        Se (leitura >= 0 && leitura <= 25) Execute {
+            intervalo_a++;
+        }
+        Senao Se (leitura >= 26 && leitura <= 50) Execute {
+                intervalo_b++;
+        }
+        Senao Se (leitura >= 51 && leitura <= 75) Execute {
+            intervalo_c++;
+        }
+        Senao Se (leitura >= 76 && leitura <= 100) Execute {
+            intervalo_d++;
+        };
+      
+    };   
+    
+    Imprima("Houveram ", intervalo_a, " valores entre 0 e 25\n");
+    Imprima("Houveram ", intervalo_b, " valores entre 26 e 50\n");
+    Imprima("Houveram ", intervalo_c, " valores entre 51 e 75\n");
+    Imprima("Houveram ", intervalo_d, " valores entre 76 e 100\n");
+
+    Vetor<Inteiro>(1, 2) matriz_a;
+    Inteiro Vetor (1, 2) matriz_a;
+}

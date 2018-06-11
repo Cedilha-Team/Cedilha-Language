@@ -2,3 +2,8 @@ flex example4.l
 yacc -dvt example4.y 
 gcc lex.yy.c y.tab.c -o compilador.exe 
 ./compilador < programa.cdlh
+
+
+flex lexcedilhinha.l
+yacc -dvt parserUoh.y  
+gcc lex.yy.c y.tab.c estruturas/pilha/pilha.c -o parser

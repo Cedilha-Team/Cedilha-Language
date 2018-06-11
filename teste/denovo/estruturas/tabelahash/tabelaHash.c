@@ -4,7 +4,7 @@
 
 
 /* Node for storing an item in a Linked List */
-struct simbolo {
+typedef struct symbol {
 
    char* key;
 
@@ -12,25 +12,53 @@ struct simbolo {
    char* scope;
    char* type;
 
-   struct simbolo *next;
+   struct symbol *next;
 
-};
+}Symbol;
 
 
 /* For storing a Linked List at each index of Hash Table  */
-struct linkedList {
+typedef struct linkedList {
 
-   struct simbolo *head; /* head pointing the first element of Linked List at an index of Hash Table */
-   struct simbolo *tail; /* tail pointing the last element of Linked List at an index of Hash Table */
+   Symbol *head; /* head pointing the first element of Linked List at an index of Hash Table */
+   Symbol *tail; /* tail pointing the last element of Linked List at an index of Hash Table */
 
-};
+}LinkedList;
 
-struct linkedList *array;
-int size = 0;         /* Determines the no. of elements present in Hash Table */
-int max = 10;	      /* Determines the maximum capacity of Hash Table array */
+typedef struct hashTable{
+    int size;         /* Determines the no. of elements present in Hash Table */
+    int max;	      /* Determines the maximum capacity of Hash Table array */
+    LinkedList *array;
+}HashTable;
+
+
+
+Symbol* get_element(Symbol *list, int find_index);
+void remove_element(HashTable* hashTable, char* key);
+void rehash(HashTable* hashTable);
+void init_array(HashTable* hashTable, int max);
+int find(Symbol *list, char* key);
+
+/* For initializing the Hash Table */
+void init_array(HashTable* hashTable, int max){
+    int i = 0;
+    hashTable->size= 0;
+    hashTable->max=max;
+    hashTable->array = (LinkedList*) malloc(hashTable->max * sizeof(Symbol));
+    
+    for (i = 0; i < max; i++){
+        hashTable->array[i].head = NULL;
+        hashTable->array[i].tail = NULL;
+    }
+}
+
+/* Returns size of Hash Table */ 
+int size_of_array(HashTable* hashTable){
+    return hashTable->size;
+}
 
 /* This function creates an index corresponding to the every given key */
-int hashcode(char* key){
+int hashcode(char* key, int max){
     unsigned long hash = 5381;
     int c;
 
@@ -40,24 +68,22 @@ int hashcode(char* key){
     return (int)hash % max;
 }
 
-struct simbolo* get_element(struct simbolo *list, int find_index);
-void remove_element(char* key);
-void rehash();
-void init_array();
-int find(struct simbolo *list, char* key);
+Symbol * createSymbol(char* key, char* name, char* scope, char* type){
+    
+    return ;
+}
 
-
-void insert(char* key, char* name, char* scope, char* type){
+void insert(HashTable* hashTable, char* key, char* name, char* scope, char* type){
 
    float n = 0.0; /* n => Load Factor, keeps check on whether rehashing is required or not */
 
-   int index = hashcode(key);  
+   int index = hashcode(key, hashTable->max);  
 
     /* Extracting Linked List at a given index */
-   struct simbolo *list = (struct simbolo*) array[index].head;
+   Symbol *list = (Symbol*) hashTable->array[index].head;
 
     /* Creating an item to insert in the Hash Table */
-   struct simbolo *item = (struct simbolo*) malloc(sizeof(struct simbolo));
+   Symbol *item = (Symbol*) malloc(sizeof(Symbol));
    item->key = (char *) malloc(sizeof(char)*strlen(key) + 1);
    strcpy(item->key, key);
    item->name = (char *) malloc(sizeof(char)*strlen(name) + 1);
@@ -73,9 +99,9 @@ void insert(char* key, char* name, char* scope, char* type){
 
     /* Absence of Linked List at a given Index of Hash Table */
         printf("Inserting %s(key) and %s(type) \n", key, type);
-        array[index].head = item;
-        array[index].tail = item;
-        size++;
+        hashTable->array[index].head = item;
+        hashTable->array[index].tail = item;
+        hashTable->size++;
     } else {
     /* A Linked List is present at given index of Hash Table */
         int find_index = find(list, key);
@@ -85,9 +111,9 @@ void insert(char* key, char* name, char* scope, char* type){
             *Key not found in existing linked list
             *Adding the key at the end of the linked list
             */
-            array[index].tail->next = item;
-            array[index].tail = item;
-            size++;
+            hashTable->array[index].tail->next = item;
+            hashTable->array[index].tail = item;
+            hashTable->size++;
          }else {
     		/*
     		 *Key already present in linked list
@@ -98,36 +124,36 @@ void insert(char* key, char* name, char* scope, char* type){
     }
     //Calculating Load factor
 
-    n = (1.0 * size) / max;
+    n = (1.0 * hashTable->size) / hashTable->max;
 
     if (n >= 0.75){
     //rehashing
         printf("going to rehash\n");
-        rehash(); 
+        rehash(hashTable); 
     }
 }
 
 
 
-void rehash(){
+void rehash(HashTable* hashTable){
 
-   struct linkedList *temp = array;     
+   LinkedList *temp = hashTable->array;     
 
     /* temp pointing to the current Hash Table array */
-    int i = 0, n = max;
-    size = 0;
-    max = 2 * max;
+    int i = 0, n = hashTable->max;
+    hashTable->size = 0;
+    hashTable->max = 2 * hashTable->max;
 
 	/*
 	 *array variable is assigned with newly created Hash Table
 	 *with double of previous array size
 	*/
 
-    array = (struct linkedList*) malloc(max * sizeof(struct simbolo));
-    init_array();
+    hashTable->array = (LinkedList*) malloc(hashTable->max * sizeof(Symbol));
+    init_array(hashTable, hashTable->max);
     for (i = 0; i < n; i++){
     	/* Extracting the Linked List at position i of Hash Table array */
-        struct simbolo* list = (struct simbolo*) temp[i].head;
+        Symbol* list = (Symbol*) temp[i].head;
 
         if (list == NULL) {
         /* if there is no Linked List, then continue */
@@ -142,7 +168,7 @@ void rehash(){
 		*/
 
             while (list != NULL) {
-                insert(list->key, list->name, list->scope, list->type);
+                insert(hashTable,list->key, list->name, list->scope, list->type);
                 list = list->next;
             }
         }
@@ -159,11 +185,11 @@ void rehash(){
  *Returns it's index
  *Returns -1 in case key is not present
 */
-int find(struct simbolo *list, char* key){
+int find(Symbol *list, char* key){
 
     int retval = 0;
 
-    struct simbolo *temp = list;
+    Symbol *temp = list;
 
     while (temp != NULL) {
 
@@ -185,11 +211,11 @@ int find(struct simbolo *list, char* key){
 
 
 /* Returns the node (Linked List item) located at given find_index  */
-struct simbolo* get_element(struct simbolo *list, int find_index){
+Symbol* get_element(Symbol *list, int find_index){
 
     int i = 0;
 
-    struct simbolo *temp = list;
+    Symbol *temp = list;
 
     while (i != find_index) 
 
@@ -208,11 +234,11 @@ struct simbolo* get_element(struct simbolo *list, int find_index){
 
 
 /* To remove an element from Hash Table */ 
-void remove_element(char* key){
+void remove_element(HashTable* hashTable,char* key){
 
-    int index = hashcode(key);
+    int index = hashcode(key,hashTable->max);
 
-    struct simbolo *list = (struct simbolo*) array[index].head;
+    Symbol *list = (Symbol*) hashTable->array[index].head;
 
     if (list == NULL){
 
@@ -228,11 +254,11 @@ void remove_element(char* key){
 
         } else {
 
-            struct simbolo *temp = list;
+            Symbol *temp = list;
 
             if (strcmp(temp->key, key)==0){
 
-                array[index].head = temp->next;
+                hashTable->array[index].head = temp->next;
 
                 printf("This key has been removed\n");
 
@@ -244,11 +270,11 @@ void remove_element(char* key){
                 temp = temp->next;
             }
 
-            if (array[index].tail == temp->next){
+            if (hashTable->array[index].tail == temp->next){
 
                 temp->next = NULL;
 
-                array[index].tail = temp;
+                hashTable->array[index].tail = temp;
 
             } else {
 
@@ -264,13 +290,13 @@ void remove_element(char* key){
 
 
 /* To display the contents of Hash Table */
-void display(){
+void display(HashTable* hashTable){
 
     int i = 0;
 
-    for (i = 0; i < max; i++){
+    for (i = 0; i < hashTable->max; i++){
 
-        struct simbolo *temp = array[i].head;
+        Symbol *temp = hashTable->array[i].head;
 
         if (temp == NULL){
 
@@ -293,25 +319,7 @@ void display(){
 }
 
 
-/* For initializing the Hash Table */
-void init_array(){
 
-    int i = 0;
-
-    for (i = 0; i < max; i++){
-        array[i].head = NULL;
-        array[i].tail = NULL;
-    }
-}
-
-
-
-/* Returns size of Hash Table */ 
-
-int size_of_array(){
-
-    return size;
-}
 
 
 void main() 
@@ -324,12 +332,12 @@ void main()
    char scope[20];
    char type[10];
    //clrscr();
+    HashTable* hashTable;
 
 
+   hashTable = (HashTable*) malloc(sizeof(HashTable));
 
-   array = (struct linkedList*) malloc(max * sizeof(struct simbolo));
-
-   init_array();
+   init_array(hashTable,10);
 
 
 
@@ -369,7 +377,7 @@ void main()
 
         scanf("%s %s %s %s", key, name, scope, type);
 
-        insert(key, name, scope, type);
+        insert(hashTable,key, name, scope, type);
 
 
 
@@ -385,7 +393,7 @@ void main()
 
         scanf("%s", key);
 
-        remove_element(key);
+        remove_element(hashTable,key);
 
 
 
@@ -397,7 +405,7 @@ void main()
 
 
 
-        n = size_of_array();
+        n = size_of_array(hashTable);
 
         printf("Size of Hash Table is-:%d\n", n);
 
@@ -411,7 +419,7 @@ void main()
 
 
 
-        display();
+        display(hashTable);
 
 
 

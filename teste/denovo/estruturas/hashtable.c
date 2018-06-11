@@ -4,7 +4,7 @@
 
 
 /* Node for storing an item in a Linked List */
-struct simbolo {
+struct node {
 
    char* key;
 
@@ -12,20 +12,20 @@ struct simbolo {
    char* scope;
    char* type;
 
-   struct simbolo *next;
+   struct node *next;
 
 };
 
 
 /* For storing a Linked List at each index of Hash Table  */
-struct linkedList {
+struct arrayitem {
 
-   struct simbolo *head; /* head pointing the first element of Linked List at an index of Hash Table */
-   struct simbolo *tail; /* tail pointing the last element of Linked List at an index of Hash Table */
+   struct node *head; /* head pointing the first element of Linked List at an index of Hash Table */
+   struct node *tail; /* tail pointing the last element of Linked List at an index of Hash Table */
 
 };
 
-struct linkedList *array;
+struct arrayitem *array;
 int size = 0;         /* Determines the no. of elements present in Hash Table */
 int max = 10;	      /* Determines the maximum capacity of Hash Table array */
 
@@ -40,11 +40,11 @@ int hashcode(char* key){
     return (int)hash % max;
 }
 
-struct simbolo* get_element(struct simbolo *list, int find_index);
+struct node* get_element(struct node *list, int find_index);
 void remove_element(char* key);
 void rehash();
 void init_array();
-int find(struct simbolo *list, char* key);
+int find(struct node *list, char* key);
 
 
 void insert(char* key, char* name, char* scope, char* type){
@@ -54,10 +54,10 @@ void insert(char* key, char* name, char* scope, char* type){
    int index = hashcode(key);  
 
     /* Extracting Linked List at a given index */
-   struct simbolo *list = (struct simbolo*) array[index].head;
+   struct node *list = (struct node*) array[index].head;
 
     /* Creating an item to insert in the Hash Table */
-   struct simbolo *item = (struct simbolo*) malloc(sizeof(struct simbolo));
+   struct node *item = (struct node*) malloc(sizeof(struct node));
    item->key = (char *) malloc(sizeof(char)*strlen(key) + 1);
    strcpy(item->key, key);
    item->name = (char *) malloc(sizeof(char)*strlen(name) + 1);
@@ -111,7 +111,7 @@ void insert(char* key, char* name, char* scope, char* type){
 
 void rehash(){
 
-   struct linkedList *temp = array;     
+   struct arrayitem *temp = array;     
 
     /* temp pointing to the current Hash Table array */
     int i = 0, n = max;
@@ -123,11 +123,11 @@ void rehash(){
 	 *with double of previous array size
 	*/
 
-    array = (struct linkedList*) malloc(max * sizeof(struct simbolo));
+    array = (struct arrayitem*) malloc(max * sizeof(struct node));
     init_array();
     for (i = 0; i < n; i++){
     	/* Extracting the Linked List at position i of Hash Table array */
-        struct simbolo* list = (struct simbolo*) temp[i].head;
+        struct node* list = (struct node*) temp[i].head;
 
         if (list == NULL) {
         /* if there is no Linked List, then continue */
@@ -159,11 +159,11 @@ void rehash(){
  *Returns it's index
  *Returns -1 in case key is not present
 */
-int find(struct simbolo *list, char* key){
+int find(struct node *list, char* key){
 
     int retval = 0;
 
-    struct simbolo *temp = list;
+    struct node *temp = list;
 
     while (temp != NULL) {
 
@@ -185,11 +185,11 @@ int find(struct simbolo *list, char* key){
 
 
 /* Returns the node (Linked List item) located at given find_index  */
-struct simbolo* get_element(struct simbolo *list, int find_index){
+struct node* get_element(struct node *list, int find_index){
 
     int i = 0;
 
-    struct simbolo *temp = list;
+    struct node *temp = list;
 
     while (i != find_index) 
 
@@ -212,7 +212,7 @@ void remove_element(char* key){
 
     int index = hashcode(key);
 
-    struct simbolo *list = (struct simbolo*) array[index].head;
+    struct node *list = (struct node*) array[index].head;
 
     if (list == NULL){
 
@@ -228,7 +228,7 @@ void remove_element(char* key){
 
         } else {
 
-            struct simbolo *temp = list;
+            struct node *temp = list;
 
             if (strcmp(temp->key, key)==0){
 
@@ -270,7 +270,7 @@ void display(){
 
     for (i = 0; i < max; i++){
 
-        struct simbolo *temp = array[i].head;
+        struct node *temp = array[i].head;
 
         if (temp == NULL){
 
@@ -327,7 +327,7 @@ void main()
 
 
 
-   array = (struct linkedList*) malloc(max * sizeof(struct simbolo));
+   array = (struct arrayitem*) malloc(max * sizeof(struct node));
 
    init_array();
 
