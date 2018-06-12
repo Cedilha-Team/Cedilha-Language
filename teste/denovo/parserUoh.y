@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "./estruturas/pilha/pilha.h"
+#include "./estruturas/pilha/tabelaHash.h"
 
 int yylex(void);
 int yyerror(char *s);
@@ -108,9 +109,9 @@ definicoes_funcoes_proc : definicao_funcao			{$$ = $1;}
 						| definicao_procedimento	{$$ = $1;}
 						;
 
-definicao_funcao : assinatura_funcao LCHAVE sentencas RETORNE expressao PONTOVIRGULA RCHAVE	{int tamanho = strlen((char *)$1) + 2 + strlen((char *)$3) + 8 + strlen((char *)$5) + 4;
+definicao_funcao : assinatura_funcao LCHAVE sentencas PONTOVIRGULA RCHAVE	{int tamanho = strlen((char *)$1) + 2 + strlen((char *)$3) + 4;
 																						 char * str = (char *) malloc(tamanho); 
-																						 sprintf(str, "%s %s %s %s %s %s", (char *) $1, "{\n", (char *) $3, "Retorne ", (char *) $5, ";\n}\n"); 
+																						 sprintf(str, "%s %s %s %s", (char *) $1, "{\n", (char *) $3,";\n}\n"); 
 																						 $$ = str;}
 				 ;
 				
