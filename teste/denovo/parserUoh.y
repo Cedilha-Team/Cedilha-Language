@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "./estruturas/pilha/pilha.h"
-#include "./estruturas/pilha/tabelaHash.h"
+#include "./estruturas/tabelahash/tabelaHash.h"
 
 int yylex(void);
 int yyerror(char *s);
@@ -346,14 +346,14 @@ tipo : tipo_primitivo	{$$ = $1;}
 	 ;
 	 
 
-tipo_vetor : VETOR tamanho_vetor tamanho_vetor		 {int tamanho = 6+strlen((char*)$2)+strlen((char*)$3);
+tipo_vetor : VETOR tipo_primitivo LPARENTESES tamanho_vetor VIRGULA tamanho_vetor RPARENTESES		 {int tamanho = 6+strlen((char*)$2)+ 3 +strlen((char*)$4) + 3 +strlen((char*)$6) + 1;
 													 char* str = (char*)malloc(tamanho);
-													 sprintf(str, "%s%s%s","Vetor ", (char*)$2,(char*)$3);
-													 $$ = str; free($2);free($3);}
-			| VETOR tamanho_vetor				    {int tamanho = 6+strlen((char*)$2);
-													 char* str = (char*)malloc(tamanho);
-													 sprintf(str, "%s%s","Vetor ",(char*)$2);
-													 $$ = str; free($2);}
+													 sprintf(str, "%s %s (%s,%s)","Vetor ", (char*)$2, (char*)$4, (char*)$6);
+													 $$ = str; free($2);free($4); free($6);}
+			| VETOR tipo_primitivo LPARENTESES tamanho_vetor RPARENTESES	{int tamanho = 6+strlen((char*)$2) + 2 + strlen((char*)$4) +1;
+																			char* str = (char*)malloc(tamanho);
+																			sprintf(str, "%s %s (%s)","Vetor ",(char*)$2, (char*)$4);
+																			$$ = str; free($2);free($4);}
 			;
 
 tamanho_vetor : LCOLCHETE LIT_INT RCOLCHETE {int tamanho = 1+strlen((char*)$2)+1;
