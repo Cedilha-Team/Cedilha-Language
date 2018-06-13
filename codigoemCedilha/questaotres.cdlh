@@ -17,14 +17,14 @@ BlocoPrincipal {
         Leia(linhaB);
         
         
-        vetor Inteiro MatrizA(linhaA, colunaA);
-        vetor Inteiro MatrizB(linhaB, colunaB);
+        vetor Inteiro MatrizA[linhaA][colunaA];
+        vetor Inteiro MatrizB[linhaB][colunaB];
         Inteiro i;
         Inteiro j;
         Enquanto (i < linhaA) Execute {
             Enquanto(j < colunaA) Execute {
                 Imprima("Digite Elemento ", i, j, ": ")
-                Leia(MatrizA(i,j));
+                Leia(MatrizA[i][j]);
                 j++;
             }
             i++;
@@ -34,7 +34,7 @@ BlocoPrincipal {
         Enquanto (i < linhaB) Execute {
             Enquanto(j < colunaB) Execute {
                 Imprima("Digite Elemento ", i, j, ": ")
-                Leia(MatrizB(i,j));
+                Leia(MatrizB[i][j]);
                 j++;
             }
             i++;
@@ -57,7 +57,7 @@ BlocoPrincipal {
             
             Para(Inteiro i = 0; i< linhaA; i++) Execute {
                 Para(Inteiro j = 0; j< linhaA; j++) Execute {
-                    Imprima(MatrizC(i,j));
+                    Imprima(MatrizC[i][j]);
                 }
                 Imprima("/n");
             }
@@ -72,13 +72,13 @@ BlocoPrincipal {
             
             Para(Inteiro i = 0; i< linhaA; i++) Execute {
                 Para(Inteiro j = 0; j< linhaA; j++) Execute {
-                    MatrizD(i, j) = MatrizA(i,j)+MatrizC(i,j);
+                    MatrizD[i][j] = MatrizA[i][j]+MatrizC[i][j];
                 }
             }
             
             Para(Inteiro i = 0; i< linhaA; i++) Execute {
                 Para(Inteiro j = 0; j< linhaA; j++) Execute {
-                    Imprima(MatrizD(i,j));
+                    Imprima(MatrizD[i][j]);
                 }
                 Imprima("/n");
             }

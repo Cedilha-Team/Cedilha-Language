@@ -3,21 +3,16 @@
 #include <string.h>
 #include "./estruturas/pilha/pilha.h"
 #include "./estruturas/tabelahash/tabelaHash.h"
-
 int yylex(void);
 int yyerror(char *s);
 extern int yylineno;
 extern char * yytext;
-
-
 Pilha scope_stack;
 HashTable symbol_table;
-
 /*usado para contarqual bloco está*/
 int forCounter;
 int ifCounter;
 int whileCounter;
-
 %}
 
 %union {
@@ -75,7 +70,7 @@ declaracao_registro : tipo_registro LCHAVE parametros RCHAVE	{int tamanho = strl
 assinatura_funcoes  :														{$$ = "";}
 					| assinaturas PONTOVIRGULA assinatura_funcoes 	{char * str = (char *) malloc(strlen($1) + 1 + strlen(";\n\n") + 1 +  strlen($3)); 
 																			sprintf(str, "%s %s %s", (char *) $1, ";\n\n", (char *) $3); 
-																			printf("%s", str);}
+																			printf("%s", str); free($1);}
 					;
 
 assinaturas : assinatura_proc   {$$ = $1;}
@@ -85,13 +80,13 @@ assinaturas : assinatura_proc   {$$ = $1;}
 assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{int tamanho = 11 + strlen((char *)$2) + strlen((char *)$3) +strlen((char *)$5);
 																			char * str = (char *) malloc(tamanho); 
 																			 sprintf(str, "Funcao %s %s (%s)", (char *) $2, (char *) $3, (char*)$5 ); 
-																			 $$ = str;}
+																			 $$ = str; free($3); free($5);}
 				  ;
 				  
 assinatura_proc : PROC ID LPARENTESES parametros RPARENTESES		{int tamanho = 10 + strlen((char *)$2) + strlen((char *)$4);
 																	char * str = (char *) malloc(tamanho); 
 																	 sprintf(str, "Proc %s ( %s)", (char *) $2,(char *) $4); 
-																	 $$ = str;}
+																	 $$ = str; free($2);free($4);}
 				;
 				
 parametros :											{$$ = "";}
@@ -381,17 +376,17 @@ tipo_registro : MEU_TIPO ID		{int tamanho = 8+strlen((char*)$2);
 								$$ = str;}
 			  ;
 
-tipo_vetor : VETOR tipo_primitivo LPARENTESES tamanho_vetor VIRGULA tamanho_vetor RPARENTESES		 {int tamanho = 6+strlen((char*)$2)+ 3 +strlen((char*)$4) + 3 +strlen((char*)$6) + 1;
+tipo_vetor : VETOR tipo_primitivo tamanho_vetor tamanho_vetor		 {int tamanho = 6+strlen((char*)$2)+ 1 +strlen((char*)$3) +strlen((char*)$4);
 													 char* str = (char*)malloc(tamanho);
-													 sprintf(str, "%s %s (%s,%s)","Vetor ", (char*)$2, (char*)$4, (char*)$6);
-													 $$ = str; free($2);free($4); free($6);}
-			| VETOR tipo_primitivo LPARENTESES tamanho_vetor RPARENTESES	{int tamanho = 6+strlen((char*)$2) + 2 + strlen((char*)$4) +1;
-																			char* str = (char*)malloc(tamanho);
-																			sprintf(str, "%s %s (%s)","Vetor ",(char*)$2, (char*)$4);
-																			$$ = str; free($2);free($4);}
+													 sprintf(str, "Vetor %s %s%s", (char*)$2, (char*)$3, (char*)$4);
+													 $$ = str; free($3); free($4);}
+			| VETOR tipo_primitivo tamanho_vetor 	{int tamanho = 6+strlen((char*)$2) + 2 + strlen((char*)$3);
+													char* str = (char*)malloc(tamanho);
+													sprintf(str, "Vetor %s %s", (char*)$2, (char*)$3);
+													$$ = str; free($3);}
 			;
 
-tamanho_vetor : LCOLCHETE LIT_INT RCOLCHETE {int tamanho = 1+strlen((char*)$2)+1;
+tamanho_vetor : LCOLCHETE termo RCOLCHETE {int tamanho = 1+strlen((char*)$2)+1;
 											 char* str = (char*)malloc(tamanho);
 											 sprintf(str, "%s%s%s","[",(char*)$2,"]");
 											 $$ = str;}
@@ -400,7 +395,6 @@ tamanho_vetor : LCOLCHETE LIT_INT RCOLCHETE {int tamanho = 1+strlen((char*)$2)+1
 tipo_primitivo : INTEIRO 	{$$ = "Inteiro";}
 			   | REAL 		{$$ = "Real";}
 			   | CARACTERE	{$$ = "Caractere";}
-			   | VETOR		{$$ = "Vetor";}
 			   | TEXTO		{$$ = "Texto";}
 			   | BOOL		{$$ = "Booleano";}
 			   ;

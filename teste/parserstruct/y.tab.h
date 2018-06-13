@@ -180,9 +180,9 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 18 "parserUoh.y" /* yacc.c:1909  */
+#line 30 "parserstruct.y" /* yacc.c:1909  */
 
-	char * sValue;  /* string value */
+	allValues * allvalues;  /* string value */
 
 #line 188 "y.tab.h" /* yacc.c:1909  */
 };

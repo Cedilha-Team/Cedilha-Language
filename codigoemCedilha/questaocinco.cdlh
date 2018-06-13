@@ -1,0 +1,35 @@
+Proc mdc(Inteiro n, Inteiro m, Interio @r);
+
+BlocoPrincipal{
+    Inteiro a;
+    Inteiro b;
+    Inteiro c;
+    
+    Imprima("Digite o primeiro numero Inteiro e Natural:");
+    Leia(a);
+    Se (a<1) Execute {
+        Imprima("O numero deveria ser positivo");
+        Retorne 0;
+    }
+    
+    Imprima("Digite o segundo numero Inteiro e Natural:");
+    Leia(b);
+    Se (b<1) Execute {
+        Imprima("O numero deveria ser positivo");
+        Retorne 0;
+    }
+    
+    mdc(a, b, @c);
+    
+}
+
+BlocoFuncoes {
+    Proc mdc(Inteiro n, Inteiro m, Inteiro @r){
+        Se(m == 0){
+            r = n;
+        }
+        Senao {
+            mdc(m, n%m, r);
+        }
+    }
+}
