@@ -82,7 +82,7 @@ Symbol * createSymbol(char* key, char* name, char* scope, char* type){
     return item;
 }
 
-void insert(HashTable* hashTable, Symbol *item){
+int insert(HashTable* hashTable, Symbol *item){
 
    float n = 0.0; /* n => Load Factor, keeps check on whether rehashing is required or not */
 
@@ -114,9 +114,9 @@ void insert(HashTable* hashTable, Symbol *item){
          }else {
     		/*
     		 *Key already present in linked list
-    		 *Updating the value of already existing key
     		*/
             printf("elemento já inserido na estrutura!\n");
+            return 0;
          }
     }
     //Calculating Load factor
@@ -128,6 +128,8 @@ void insert(HashTable* hashTable, Symbol *item){
         printf("going to rehash\n");
         rehash(hashTable); 
     }
+    
+    return 1;
 }
 
 

@@ -6,4 +6,4 @@ gcc lex.yy.c y.tab.c -o compilador.exe
 
 flex lexcedilhinha.l
 yacc -dvt parserUoh.y  
-gcc lex.yy.c y.tab.c estruturas/pilha/pilha.c -o parser
+gcc lex.yy.c y.tab.c estruturas/pilha/pilha.c estruturas/tabelahash/tabelaHash.c -o parser

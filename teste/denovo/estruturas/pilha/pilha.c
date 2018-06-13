@@ -7,11 +7,11 @@ typedef struct Elemento_da_lista{
     char *scopeName;
     char* scopeType;
     struct Elemento_da_lista *proximo;
-}Elemento;
+}ElementoTipoNome;
 
 
 typedef struct Elemento_da_pilha{
-  Elemento *inicio;
+  ElementoTipoNome *inicio;
   int tamanho;
 } Pilha;
 
@@ -21,8 +21,8 @@ void iniciar (Pilha *monte){
 }
 
 int empilhar(Pilha * monte, char *scopeName, char* scopeType){
-  Elemento *novo_elemento;
-  if ((novo_elemento = (Elemento *) malloc (sizeof (Elemento))) == NULL)
+  ElementoTipoNome *novo_elemento;
+  if ((novo_elemento = (ElementoTipoNome *) malloc (sizeof (ElementoTipoNome))) == NULL)
     return -1;
   if ((novo_elemento->scopeName = (char *) malloc (50 * sizeof (char)))
       == NULL)
@@ -39,7 +39,7 @@ int empilhar(Pilha * monte, char *scopeName, char* scopeType){
 }
 
 int desempilhar (Pilha *monte){
-  Elemento *p_elemento;
+  ElementoTipoNome *p_elemento;
   if (monte->tamanho == 0)
     return -1;
   p_elemento = monte->inicio;
@@ -51,7 +51,7 @@ int desempilhar (Pilha *monte){
   return 0;
 }
 
-Elemento* mostrarTopo (Pilha *monte){
+ElementoTipoNome* mostrarTopo (Pilha *monte){
 
   if (monte->tamanho == 0)
     return NULL;
@@ -60,7 +60,7 @@ Elemento* mostrarTopo (Pilha *monte){
 }
 
 void mostrar(Pilha * monte){
-  Elemento *atual;
+  ElementoTipoNome *atual;
   int i;
   atual = monte->inicio;
   
@@ -71,7 +71,7 @@ void mostrar(Pilha * monte){
 }
 
 int procurar(Pilha * monte, char* scopeName, char* scopeType){
-  Elemento *atual;
+  ElementoTipoNome *atual;
   int i;
   atual = monte->inicio;
   for(i=0;i<monte->tamanho;++i){
@@ -85,12 +85,12 @@ int procurar(Pilha * monte, char* scopeName, char* scopeType){
   return -1;
 }
 
-Elemento* topo(Pilha * monte, int n){
+ElementoTipoNome* topo(Pilha * monte, int n){
   if(n > monte->tamanho || n > 0){
     return NULL;
   }
   
-  Elemento *atual;
+  ElementoTipoNome *atual;
   int i;
   atual = monte->inicio;
   

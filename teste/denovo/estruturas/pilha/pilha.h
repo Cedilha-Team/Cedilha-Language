@@ -1,13 +1,15 @@
 #ifndef PILHA
 #define PILHA
+
 typedef struct Elemento_da_lista{
-    char *dados;
+    char *scopeName;
+    char* scopeType;
     struct Elemento_da_lista *proximo;
-}Elemento;
+}ElementoTipoNome;
 
 
 typedef struct Elemento_da_pilha{
-  Elemento *inicio;
+  ElementoTipoNome *inicio;
   int tamanho;
 } Pilha;
 
@@ -17,13 +19,13 @@ int empilhar(Pilha * monte, char *scopeName, char* scopeType);
 
 int desempilhar (Pilha *monte);
 
-Elemento* mostrarTopo (Pilha *monte);
+ElementoTipoNome* mostrarTopo (Pilha *monte);
 
 void mostrar(Pilha * monte);
 
 int procurar(Pilha * monte, char* scopeName, char* scopeType);
 
-Elemento* topo(Pilha * monte, int n);
+ElementoTipoNome* topo(Pilha * monte, int n);
 
 
 #endif

@@ -1,3 +1,9 @@
+
+MeuTipo coisaUoh { 
+        Inteiro qtde,
+        Texto descricao
+};
+
 Funcao Inteiro teste(Inteiro i);
 Proc teste (Inteiro j);
 
@@ -8,7 +14,7 @@ BlocoPrincipal {
     Texto texto = 2*("lalalalala" + 5);
     Inteiro c;
     Inteiro b;
-    
+    coisinha
     Real z;
     Booleano afirmacao;
     
@@ -18,11 +24,13 @@ BlocoPrincipal {
     b = 1;
     c = 9162 + a || (13);
     Inteiro b;
+    */
+    
     Se (a > b) Execute {
       c=10;
       a = 20;
     };
-    
+    /*
     Enquanto (vdc > 5) Execute {
         x+1;
     };
@@ -36,18 +44,25 @@ BlocoPrincipal {
      
     Para ( Inteiro j = 10; j < 15; j++ ) Execute {
         c = 10;
-    };*/
-    
-    Vetor[1][2] vetorzinho;
+    };
+
+  Vetor Inteiro ([1],[2]) vetorzinho;*/
     
     x = teste(i,2,56) + 1;
     Inteiro j = teste(i,"txt") + 1;
     
 }
-/*
+
 BlocoFuncoes {
-    Funcao Inteiro teste(Inteiro i){ 
+ 
+    Proc teste(Inteiro i){ 
         x = 2 + i;
         Retorne x;
-    };
-}*/
+    }
+    
+    Funcao Inteiro teste1(Inteiro i){ 
+        x = 2 + i;
+        Retorne x;
+    }
+
+}

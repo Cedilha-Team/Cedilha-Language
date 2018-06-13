@@ -54,7 +54,7 @@ int find(Symbol *list, char* key);
 /* Returns the node (Linked List item) located at given find_index  */
 Symbol* get_element(Symbol *list, int find_index);
 
-void insert(HashTable* hashTable, Symbol *item);
+int insert(HashTable* hashTable, Symbol *item);
 
 /* To remove an element from Hash Table */ 
 void remove_element(HashTable* hashTable,char* key);

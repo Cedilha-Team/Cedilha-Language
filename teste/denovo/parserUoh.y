@@ -8,7 +8,15 @@ int yylex(void);
 int yyerror(char *s);
 extern int yylineno;
 extern char * yytext;
+
+
 Pilha scope_stack;
+HashTable symbol_table;
+
+/*usado para contarqual bloco está*/
+int forCounter;
+int ifCounter;
+int whileCounter;
 
 %}
 
@@ -38,20 +46,31 @@ atribuicao_binaria atribuicao_unaria controle bloco_se se_simplificado
 bloco_enquanto bloco_faca_enquanto bloco_para repeticao declaracao_para comando_para
 assinaturas assinatura_funcoes assinatura_funcao assinatura_proc parametro parametros   
 bloco_funcoes funcoes_proc definicoes_funcoes_proc definicao_funcao definicao_procedimento
-chamada_funcao parametros_chamada parametro_chamada declaracoes
-tamanho_vetor tipo_vetor termos ids retorne
-		   
+chamada_funcao parametros_chamada parametro_chamada declaracoes declaracao_global
+tamanho_vetor tipo_vetor termos ids retorne tipo_registro declaracao_registro
 %%
 
-programa : declaracoes assinatura_funcoes bloco_principal bloco_funcoes {}
+programa : {pushScope("global","void");} declaracoes assinatura_funcoes bloco_principal bloco_funcoes {popScope(&scope_stack,"global");}
          ;
 
-declaracoes :										{}
-			| declaracao PONTOVIRGULA declaracoes	{int tamanho = strlen((char*)$1)+3+strlen((char*)$3);
-													char* str = (char*)malloc(tamanho);
-													sprintf(str, "%s;\n%s",(char*)$1,(char*)$3);
-													printf("%s", str); free($1);}
+declaracoes :												{$$ = "";}
+			| declaracao_global PONTOVIRGULA declaracoes	{int tamanho = strlen((char*)$1)+3+strlen((char*)$3);
+															char* str = (char*)malloc(tamanho);
+															sprintf(str, "%s;\n%s",(char*)$1,(char*)$3);
+															printf("%s", str);}
 			;
+			
+declaracao_global : declaracao				{$$ = $1;}
+				  | declaracao_registro 	{$$ = $1;}
+				  ;
+				
+
+declaracao_registro : tipo_registro LCHAVE parametros RCHAVE	{int tamanho = strlen((char*)$1)+3+strlen((char*)$3);
+															char* str = (char*)malloc(tamanho);
+															sprintf(str, "%s { %s\n}",(char*)$1,(char*)$3);
+															$$ = str;}
+					;										
+
 
 assinatura_funcoes  :														{$$ = "";}
 					| assinaturas PONTOVIRGULA assinatura_funcoes 	{char * str = (char *) malloc(strlen($1) + 1 + strlen(";\n\n") + 1 +  strlen($3)); 
@@ -63,16 +82,16 @@ assinaturas : assinatura_proc   {$$ = $1;}
 			| assinatura_funcao {$$ = $1;}
 			;
 					
-assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{
-																			char * str = (char *) malloc(7 + strlen((char *)$2) + strlen((char *)$3) + 6 + strlen((char *)$5) + 12 ); 
-																			 sprintf(str, "%s %s %s %s %s %s", "Funcao",(char *) $2, (char *) $3, "(", (char*)$5, ")" ); 
+assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{int tamanho = 11 + strlen((char *)$2) + strlen((char *)$3) +strlen((char *)$5);
+																			char * str = (char *) malloc(tamanho); 
+																			 sprintf(str, "Funcao %s %s (%s)", (char *) $2, (char *) $3, (char*)$5 ); 
 																			 $$ = str;}
 				  ;
 				  
-assinatura_proc : PROC ID LPARENTESES parametros RPARENTESES		{
-																			char * str = (char *) malloc(10 + strlen((char *)$2) + strlen((char *)$4)); 
-																			 sprintf(str, "Proc %s ( %s)", (char *) $2,(char *) $4); 
-																			 $$ = str;}
+assinatura_proc : PROC ID LPARENTESES parametros RPARENTESES		{int tamanho = 10 + strlen((char *)$2) + strlen((char *)$4);
+																	char * str = (char *) malloc(tamanho); 
+																	 sprintf(str, "Proc %s ( %s)", (char *) $2,(char *) $4); 
+																	 $$ = str;}
 				;
 				
 parametros :											{$$ = "";}
@@ -87,16 +106,16 @@ parametro  : tipo ID   {char * str = (char *) malloc(strlen($1) + 1 + strlen($2)
 						$$ = str; }
 					
 bloco_funcoes  : {$$ = "";}
-               | BFUNCOES LCHAVE funcoes_proc RCHAVE   {int tamanho = 14 + strlen($3) + 2;
+               | BFUNCOES LCHAVE funcoes_proc RCHAVE   {int tamanho = 17 + strlen((char *)$3);
             											char * str = (char *) malloc(tamanho); 
-													   sprintf(str, "%s %s %s", "BlocoFuncoes {", (char *) $3, " }"); 
-													   printf("%s\n",str); free($3);}
+													   sprintf(str, "%s%s\n}", "BlocoFuncoes {\n", (char *) $3); 
+													   printf("%s\n",str); }
 				;
 				
 funcoes_proc :										{$$="";}
 			 | definicoes_funcoes_proc funcoes_proc {char * str = (char *) malloc(1+strlen((char *)$1) + strlen((char *)$2)); 
 												    sprintf(str, "%s %s", (char *) $1, (char *) $2); 
-											        $$ = str; }
+											        $$ = str;free($1);}
 			 ;
 			 
 /*definicoes_funcoes :									{$$ = "";}
@@ -109,10 +128,12 @@ definicoes_funcoes_proc : definicao_funcao			{$$ = $1;}
 						| definicao_procedimento	{$$ = $1;}
 						;
 
-definicao_funcao : assinatura_funcao LCHAVE sentencas PONTOVIRGULA RCHAVE	{int tamanho = strlen((char *)$1) + 2 + strlen((char *)$3) + 4;
-																						 char * str = (char *) malloc(tamanho); 
-																						 sprintf(str, "%s %s %s %s", (char *) $1, "{\n", (char *) $3,";\n}\n"); 
-																						 $$ = str;}
+definicao_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES LCHAVE {pushScope((char*)$3,(char*)$2);} sentencas {popScope();} RCHAVE	
+																			
+																			{int tamanho = 13+strlen((char *)$2) + strlen((char *)$3) + strlen((char *)$5)+strlen((char *)$9);
+																			char * str = (char *) malloc(tamanho); 
+																			 sprintf(str, "Func %s %s (%s) {\n%s\n}", (char *) $2, (char *) $3,  (char *) $5, (char *) $9); 
+																			 $$ = str; /*free($3);free($5);free($9);*/}
 				 ;
 				
 /*definicoes_procedimentos : {$$ = "";}
@@ -121,10 +142,13 @@ definicao_funcao : assinatura_funcao LCHAVE sentencas PONTOVIRGULA RCHAVE	{int t
 																	$$ = str; free($1);}
 					     ;*/
 
-definicao_procedimento : assinatura_proc LCHAVE sentencas  RCHAVE	{int tamanho = 4 + strlen((char *)$1) + strlen((char *)$3);
-																	 char * str = (char *) malloc(tamanho); 
-																	 sprintf(str, "%s {\n%s\n}", (char *) $1,  (char *) $3); 
-																	 $$ = str;}
+
+definicao_procedimento : PROC ID LPARENTESES parametros RPARENTESES LCHAVE {pushScope((char*)$2,"void");} sentencas {popScope();} RCHAVE	
+																			
+																			{int tamanho = 13+strlen((char *)$2) + strlen((char *)$4) + strlen((char *)$8);
+																			char * str = (char *) malloc(tamanho); 
+																			 sprintf(str, "Proc %s (%s) {\n%s\n}", (char *) $2, (char *) $4,  (char *) $8); 
+																			 $$ = str; /*free($2);free($4);free($8);*/}
 				 ;
 				 
 /*chamada_procedimento:  ID  LPARENTESES parametros_chamada RPARENTESES	{int tamanho = strlen((char*)$1) + 1 + strlen((char*)$3) + 1;
@@ -162,7 +186,7 @@ parametro_chamada: ARROBA termo {char * str = (char *) malloc(1 + strlen((char*)
 		  
 
 					
-bloco_principal : BPRINCIPAL LCHAVE sentencas RCHAVE   {printf("BlocoPrincipal {\n%s}\n",$3);}
+bloco_principal : BPRINCIPAL LCHAVE {pushScope("main","void");} sentencas {popScope();} RCHAVE   {printf("BlocoPrincipal {\n%s}\n",$4);}
 				;
 
 
@@ -184,9 +208,10 @@ controle : bloco_se 		{$$ = $1;}
 		 ;
 		 
 bloco_se : se_simplificado		{$$ = $1;}
-		| se_simplificado SENAO LCHAVE sentencas RCHAVE {int tamanho = strlen((char*)$1)+ 10 + strlen((char*)$4) + 2;
+		| se_simplificado SENAO LCHAVE {pushScope("Senao","void");} sentencas {popScope();}RCHAVE 
+														{int tamanho = strlen((char*)$1)+ 10 + strlen((char*)$5) + 2;
 														char * str = (char *) malloc(tamanho); 
-														sprintf(str, "%s%s %s %s", (char*)$1, "\nSenao {", (char *) $4, "}"); 
+														sprintf(str, "%s%s %s %s", (char*)$1, "\nSenao {", (char *) $5, "}"); 
 														$$ = str; free($1);}
 		| se_simplificado SENAO bloco_se			{int tamanho = strlen((char*)$1)+ 9 + strlen((char*)$3);
 														char * str = (char *) malloc(tamanho); 
@@ -194,11 +219,12 @@ bloco_se : se_simplificado		{$$ = $1;}
 														$$ = str; free($1);}
 		;		 
 
-se_simplificado : SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE sentencas RCHAVE	{ int tamanho = 5 + strlen((char *) $3) + 13 + strlen((char *) $7) + 2;
-																						char * str = (char *) malloc(tamanho); 
-																						sprintf(str, "%s %s %s %s %s", 
-																						"Se (", (char *) $3, ") Execute {", (char *) $7, "}"); 
-																						$$ = str; free($3);}
+se_simplificado : SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE {pushScope("Se","void");} sentencas {popScope();}RCHAVE	
+																	{	int tamanho = 5 + strlen((char *) $3) + 13 + strlen((char *) $8) + 2;
+																		char * str = (char *) malloc(tamanho); 
+																		sprintf(str, "%s %s %s %s %s", 
+																		"Se (", (char *) $3, ") Execute {", (char *) $8, "}"); 
+																		$$ = str; free($3);}
 			  ;
 
 comando:   declaracao 	{$$ = $1;}
@@ -238,26 +264,29 @@ repeticao : bloco_enquanto       {$$ = $1;}
 		  | bloco_para           {$$ = $1;}
 		  ;
 
-bloco_enquanto : ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE sentencas RCHAVE {int tamanho = 10 + strlen((char*)$3) + 11 + strlen((char*)$7)+1;
+bloco_enquanto : ENQUANTO LPARENTESES {pushScope("Enquanto","void");} expressao {popScope();} RPARENTESES EXECUTE LCHAVE sentencas RCHAVE {int tamanho = 10 + strlen((char*)$4) + 11 + strlen((char*)$9)+1;
 																							char * str = (char *) malloc(tamanho); 
-																							sprintf(str, "%s%s%s%s%s", "Enquanto (", (char *) $3, ") Execute {", 
-																							(char *) $7, "}"); 
-																							$$ = str; free($3), free($7);}
+																							sprintf(str, "%s%s%s%s%s", "Enquanto (", (char *) $4, ") Execute {", 
+																							(char *) $9, "}"); 
+																							$$ = str; free($4), free($9);}
 			   ;
 			   
-bloco_faca_enquanto : EXECUTE LCHAVE sentencas RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES {int tamanho = 10 + strlen((char*)$3) + 11 + strlen((char*)$7)+1;
+bloco_faca_enquanto : EXECUTE LCHAVE {pushScope("FacaEnquanto","void");} sentencas {popScope();} RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES 
+																								{int tamanho = 10 + strlen((char*)$4) + 11 + strlen((char*)$9)+1;
 																								  char * str = (char *) malloc(tamanho); 
-																								  sprintf(str, "%s%s%s%s%s", "Execute {", (char *) $3, "} Enquanto (", 
-																								  (char *) $7, ")"); 
-																								  $$ = str; free($3), free($7);}
+																								  sprintf(str, "%s%s%s%s%s", "Execute {", (char *) $4, "} Enquanto (", 
+																								  (char *) $9, ")"); 
+																								  $$ = str; free($4), free($9);}
 			        ;
 			   
-bloco_para : PARA LPARENTESES declaracao_para PONTOVIRGULA
-expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE {int tamanho = 6 + strlen((char *)$3) + strlen((char *)$5) + 1 + strlen((char *)$7) + 11 + strlen((char *)$11) + 1;
-																				char * str = (char *) malloc(tamanho); 
-																				sprintf(str, "%s%s%s%s%s%s%s%s%s", "Para (", (char *) $3, ";", 
-																						(char *)  $5, ";", (char *)$7, ") Execute {", (char *)$11, "}"); 
-																				$$ = str; }
+bloco_para : PARA LPARENTESES {pushScope("Para","void");} declaracao_para {popScope();} PONTOVIRGULA
+			expressao PONTOVIRGULA comando_para RPARENTESES 
+			EXECUTE LCHAVE sentencas RCHAVE 
+											{int tamanho = 6 + strlen((char *)$4) + strlen((char *)$7) + 1 + strlen((char *)$9) + 11 + strlen((char *)$13) + 1;
+												char * str = (char *) malloc(tamanho); 
+												sprintf(str, "%s%s%s%s%s%s%s%s%s", "Para (", (char *) $4, ";", 
+														(char *)  $7, ";", (char *)$9, ") Execute {", (char *)$13, "}"); 
+												$$ = str; }
 		   ;			   
 
 declaracao_para:			{}
@@ -269,7 +298,7 @@ comando_para :	{}
 			 ;
 
 imprime : IMPRIME LPARENTESES termos RPARENTESES {int tamanho = 9 + strlen((char*)$3)+1;
-													 char * str = (char *) malloc(tamanho); 
+												char * str = (char *) malloc(tamanho); 
 													 sprintf(str, "%s%s%s", "Imprima (", (char *) $3, ")"); 
 													 $$ = str; free($3);} /* malloc */
 		;
@@ -285,7 +314,7 @@ declaracao : tipo ID				{int tamanho = strlen((char*)$1)+ 1 + strlen((char*)$2);
 									 sprintf(str, "%s %s", (char*)$1, (char *) $2); 
 									 $$ = str;free($2);}  //TIPO Não pode ser free
 			| tipo ID ATRIB expressao	{int tamanho = strlen((char*)$1)+ 1 + strlen((char*)$2) + 3 + strlen((char*)$4);
-								     char * str = (char *) malloc(tamanho); 
+								 ;    char * str = (char *) malloc(tamanho); 
 									 sprintf(str, "%s %s %s %s", (char*)$1, (char *) $2, "=", (char *) $4); 
 									 $$ = str;free($2); free($4);}
 			
@@ -343,8 +372,14 @@ operador_booleano : E_LOG		        	{$$ = "&&";}
 
 tipo : tipo_primitivo	{$$ = $1;}
 	 | tipo_vetor       {$$ = $1;}
+	 | tipo_registro	{$$ = $1;}
 	 ;
 	 
+tipo_registro : MEU_TIPO ID		{int tamanho = 8+strlen((char*)$2);
+								char* str = (char*)malloc(tamanho);
+								sprintf(str, "MeuTipo %s", (char*)$2);
+								$$ = str;}
+			  ;
 
 tipo_vetor : VETOR tipo_primitivo LPARENTESES tamanho_vetor VIRGULA tamanho_vetor RPARENTESES		 {int tamanho = 6+strlen((char*)$2)+ 3 +strlen((char*)$4) + 3 +strlen((char*)$6) + 1;
 													 char* str = (char*)malloc(tamanho);
@@ -397,6 +432,11 @@ literal : LIT_REAL  {$$ = $1;}
 %%
 
 int main (void) {
+	forCounter = 0;
+	ifCounter =0;
+	whileCounter = 0;
+	iniciar(&scope_stack);
+	init_array(&symbol_table,50);
 	return yyparse ( );
 }
 
@@ -405,9 +445,8 @@ int yyerror (char *msg) {
 	return 0;
 }
 
-int pushScope(char* scope, char* type){
 
-	iniciar(&scope_stack);
+int pushScope(char* scope, char* type){
 		
 	if(procurar(&scope_stack, scope, type)<0){
 		empilhar(&scope_stack,scope,type);
@@ -424,12 +463,29 @@ int popScope(){
 		printf("pop com sucesso\n");
 		printf("tamanho:%d \n",scope_stack.tamanho);
 	}
-
-	
 }
 
+char* formarNome(char* escopoPai, char*nome, char*ordem){
+	char* str = (char*) malloc(strlen(escopoPai)+strlen(nome)+strlen(ordem));
+	strcpy(str,escopoPai);
+	strcat(str,nome);
+	strcat(str,ordem);
+	
+	return str;
+}
+
+/*
+int insertSymbolTable(HashTable* hashTable,char*name, char*scope,char*type){
+	char* key = (char*) malloc(strlen(scope)+strlen(id));
+	strcpy(key,scope);
+	strcat(key,name);
+	Symbol *item = createSymbol(key,name,scope,type);
+	return insert(&symbol_table,&item);
+}
+*/
+
 /*void check_type(char* identifier, char* scope){
-	char* key = (char*) malloc(strlen(identifier)+strlen(scope);
+	char* key = (char*) malloc( strlen(identifier) + strlen(scope) );
 	
 	strcpy(key,identifier);
 	strcat(key,scope);
