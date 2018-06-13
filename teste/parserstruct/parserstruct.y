@@ -53,7 +53,7 @@ typedef struct {
 programa : {pushScope("global","void");} termo {popScope(&scope_stack,"global");}
          ;
 
-termo : ID       { struct allValues coisa;
+termo : ID       { allValues coisa;
 					coisa.scope = "escopinho";
 					coisa.sValue = $1.sValue;
 					coisa.type = $1.type;

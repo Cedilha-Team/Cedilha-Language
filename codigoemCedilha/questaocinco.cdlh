@@ -1,4 +1,4 @@
-Proc mdc(Inteiro n, Inteiro m, Interio @r);
+Proc mdc(Inteiro n, Inteiro m, Inteiro @r);
 
 BlocoPrincipal{
     Inteiro a;

@@ -1,18 +1,26 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "./estruturas/pilha/pilha.h"
 #include "./estruturas/tabelahash/tabelaHash.h"
+
 int yylex(void);
 int yyerror(char *s);
 extern int yylineno;
 extern char * yytext;
 Pilha scope_stack;
 HashTable symbol_table;
-/*usado para contarqual bloco está*/
+
+/*usado para contar qual bloco está*/
 int forCounter;
 int ifCounter;
 int whileCounter;
+int elseCounter;
+int doWhileCounter;
+
+void pushBlockScope(char* escopoPai, char*nome, int ordem);
+void inicializaContadores();
 %}
 
 %union {
@@ -60,9 +68,12 @@ declaracao_global : declaracao				{$$ = $1;}
 				  ;
 				
 
-declaracao_registro : tipo_registro LCHAVE parametros RCHAVE	{int tamanho = strlen((char*)$1)+3+strlen((char*)$3);
+declaracao_registro : MEU_TIPO ID LCHAVE parametros RCHAVE	{if(!insertSymbolTable(symbol_table,(char*)$2, strdup(mostrarTopo(&scope_stack)->scopeName),"MeuTipo")){
+																					yyerror("Função já foi declarada!\n");
+															}
+															int tamanho = 13 + strlen((char*)$2) + strlen((char*)$4);
 															char* str = (char*)malloc(tamanho);
-															sprintf(str, "%s { %s\n}",(char*)$1,(char*)$3);
+															sprintf(str, "MeuTipo %s {\n%s\n}",(char*)$2,(char*)$4);
 															$$ = str;}
 					;										
 
@@ -77,7 +88,11 @@ assinaturas : assinatura_proc   {$$ = $1;}
 			| assinatura_funcao {$$ = $1;}
 			;
 					
-assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{int tamanho = 11 + strlen((char *)$2) + strlen((char *)$3) +strlen((char *)$5);
+assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{if(!insertSymbolTable(symbol_table,(char*)$3, strdup(mostrarTopo(&scope_stack)->scopeName),(char*)$2)){
+																					yyerror("Função já foi declarada!\n");
+																			 }
+																			 
+																			int tamanho = 11 + strlen((char *)$2) + strlen((char *)$3) +strlen((char *)$5);
 																			char * str = (char *) malloc(tamanho); 
 																			 sprintf(str, "Funcao %s %s (%s)", (char *) $2, (char *) $3, (char*)$5 ); 
 																			 $$ = str; free($3); free($5);}
@@ -123,7 +138,8 @@ definicoes_funcoes_proc : definicao_funcao			{$$ = $1;}
 						| definicao_procedimento	{$$ = $1;}
 						;
 
-definicao_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES LCHAVE {pushScope((char*)$3,(char*)$2);} sentencas {popScope();} RCHAVE	
+definicao_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES LCHAVE {inicializaContadores();
+																			pushScope((char*)$3,(char*)$2);} sentencas {popScope();} RCHAVE	
 																			
 																			{int tamanho = 13+strlen((char *)$2) + strlen((char *)$3) + strlen((char *)$5)+strlen((char *)$9);
 																			char * str = (char *) malloc(tamanho); 
@@ -181,7 +197,7 @@ parametro_chamada: ARROBA termo {char * str = (char *) malloc(1 + strlen((char*)
 		  
 
 					
-bloco_principal : BPRINCIPAL LCHAVE {pushScope("main","void");} sentencas {popScope();} RCHAVE   {printf("BlocoPrincipal {\n%s}\n",$4);}
+bloco_principal : BPRINCIPAL LCHAVE {inicializaContadores(); pushScope("main","void");} sentencas {popScope();} RCHAVE   {printf("BlocoPrincipal {\n%s}\n",$4);}
 				;
 
 
@@ -203,23 +219,30 @@ controle : bloco_se 		{$$ = $1;}
 		 ;
 		 
 bloco_se : se_simplificado		{$$ = $1;}
-		| se_simplificado SENAO LCHAVE {pushScope("Senao","void");} sentencas {popScope();}RCHAVE 
-														{int tamanho = strlen((char*)$1)+ 10 + strlen((char*)$5) + 2;
-														char * str = (char *) malloc(tamanho); 
-														sprintf(str, "%s%s %s %s", (char*)$1, "\nSenao {", (char *) $5, "}"); 
-														$$ = str; free($1);}
+		| se_simplificado SENAO LCHAVE {char* scopeFather = strdup(mostrarTopo(&scope_stack)->scopeName);
+										char * senaoC = strdup("senao");
+										pushBlockScope(scopeFather,senaoC,elseCounter);
+										elseCounter++;
+										} sentencas {popScope();}RCHAVE 
+																				{int tamanho = strlen((char*)$1)+ 10 + strlen((char*)$5) + 2;
+																				char * str = (char *) malloc(tamanho); 
+																				sprintf(str, "%s%s %s %s", (char*)$1, "\nSenao {", (char *) $5, "}"); 
+																				$$ = str; free($1);}
 		| se_simplificado SENAO bloco_se			{int tamanho = strlen((char*)$1)+ 9 + strlen((char*)$3);
 														char * str = (char *) malloc(tamanho); 
 														sprintf(str, "%s%s %s", (char*)$1, "\nSenao", (char *) $3); 
 														$$ = str; free($1);}
 		;		 
 
-se_simplificado : SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE {pushScope("Se","void");} sentencas {popScope();}RCHAVE	
-																	{	int tamanho = 5 + strlen((char *) $3) + 13 + strlen((char *) $8) + 2;
-																		char * str = (char *) malloc(tamanho); 
-																		sprintf(str, "%s %s %s %s %s", 
-																		"Se (", (char *) $3, ") Execute {", (char *) $8, "}"); 
-																		$$ = str; free($3);}
+se_simplificado : SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE {char* scopeFather = strdup(mostrarTopo(&scope_stack)->scopeName);
+																		char * se = strdup("se");
+																		pushBlockScope(scopeFather,se,ifCounter);
+																		ifCounter++;} sentencas {popScope();}RCHAVE	
+																													{	int tamanho = 5 + strlen((char *) $3) + 13 + strlen((char *) $8) + 2;
+																														char * str = (char *) malloc(tamanho); 
+																														sprintf(str, "%s %s %s %s %s", 
+																														"Se (", (char *) $3, ") Execute {", (char *) $8, "}"); 
+																														$$ = str; free($3);}
 			  ;
 
 comando:   declaracao 	{$$ = $1;}
@@ -259,14 +282,21 @@ repeticao : bloco_enquanto       {$$ = $1;}
 		  | bloco_para           {$$ = $1;}
 		  ;
 
-bloco_enquanto : ENQUANTO LPARENTESES {pushScope("Enquanto","void");} expressao {popScope();} RPARENTESES EXECUTE LCHAVE sentencas RCHAVE {int tamanho = 10 + strlen((char*)$4) + 11 + strlen((char*)$9)+1;
-																							char * str = (char *) malloc(tamanho); 
-																							sprintf(str, "%s%s%s%s%s", "Enquanto (", (char *) $4, ") Execute {", 
-																							(char *) $9, "}"); 
-																							$$ = str; free($4), free($9);}
+bloco_enquanto : ENQUANTO LPARENTESES {char* scopeFather = strdup(mostrarTopo(&scope_stack)->scopeName);
+										char * enquanto = strdup("enquanto");
+										pushBlockScope(scopeFather,enquanto,whileCounter);
+										whileCounter++;} expressao {popScope();} 
+										RPARENTESES EXECUTE LCHAVE sentencas RCHAVE {int tamanho = 10 + strlen((char*)$4) + 11 + strlen((char*)$9)+1;
+																															char * str = (char *) malloc(tamanho); 
+																															sprintf(str, "%s%s%s%s%s", "Enquanto (", (char *) $4, ") Execute {", 
+																															(char *) $9, "}"); 
+																															$$ = str; free($4), free($9);}
 			   ;
 			   
-bloco_faca_enquanto : EXECUTE LCHAVE {pushScope("FacaEnquanto","void");} sentencas {popScope();} RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES 
+bloco_faca_enquanto : EXECUTE LCHAVE {char* scopeFather = strdup(mostrarTopo(&scope_stack)->scopeName);
+										char * facaenquanto = strdup("facaenquanto");
+										pushBlockScope(scopeFather,facaenquanto,doWhileCounter);
+										doWhileCounter++;} sentencas {popScope();} RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES 
 																								{int tamanho = 10 + strlen((char*)$4) + 11 + strlen((char*)$9)+1;
 																								  char * str = (char *) malloc(tamanho); 
 																								  sprintf(str, "%s%s%s%s%s", "Execute {", (char *) $4, "} Enquanto (", 
@@ -274,13 +304,16 @@ bloco_faca_enquanto : EXECUTE LCHAVE {pushScope("FacaEnquanto","void");} sentenc
 																								  $$ = str; free($4), free($9);}
 			        ;
 			   
-bloco_para : PARA LPARENTESES {pushScope("Para","void");} declaracao_para {popScope();} PONTOVIRGULA
-			expressao PONTOVIRGULA comando_para RPARENTESES 
-			EXECUTE LCHAVE sentencas RCHAVE 
-											{int tamanho = 6 + strlen((char *)$4) + strlen((char *)$7) + 1 + strlen((char *)$9) + 11 + strlen((char *)$13) + 1;
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "%s%s%s%s%s%s%s%s%s", "Para (", (char *) $4, ";", 
-														(char *)  $7, ";", (char *)$9, ") Execute {", (char *)$13, "}"); 
+bloco_para : PARA LPARENTESES {char* scopeFather = strdup(mostrarTopo(&scope_stack)->scopeName);
+								char * para = strdup("para");
+								pushBlockScope(scopeFather,para,forCounter);
+								forCounter++;} declaracao_para {popScope();} PONTOVIRGULA
+									expressao PONTOVIRGULA comando_para RPARENTESES 
+											EXECUTE LCHAVE sentencas RCHAVE 
+																			{int tamanho = 6 + strlen((char *)$4) + strlen((char *)$7) + 1 + strlen((char *)$9) + 11 + strlen((char *)$13) + 1;
+																				char * str = (char *) malloc(tamanho); 
+																				sprintf(str, "%s%s%s%s%s%s%s%s%s", "Para (", (char *) $4, ";", 
+																						(char *)  $7, ";", (char *)$9, ") Execute {", (char *)$13, "}"); 
 												$$ = str; }
 		   ;			   
 
@@ -426,9 +459,7 @@ literal : LIT_REAL  {$$ = $1;}
 %%
 
 int main (void) {
-	forCounter = 0;
-	ifCounter =0;
-	whileCounter = 0;
+	
 	iniciar(&scope_stack);
 	init_array(&symbol_table,50);
 	return yyparse ( );
@@ -459,24 +490,39 @@ int popScope(){
 	}
 }
 
-char* formarNome(char* escopoPai, char*nome, char*ordem){
-	char* str = (char*) malloc(strlen(escopoPai)+strlen(nome)+strlen(ordem));
-	strcpy(str,escopoPai);
-	strcat(str,nome);
-	strcat(str,ordem);
+void pushBlockScope(char* escopoPai, char*nome, int ordem){
 	
-	return str;
+	char ordemStr [10];
+	sprintf(ordemStr, "%d", ordem);
+	
+	int tamanho = strlen(escopoPai) + strlen(nome)+strlen(ordemStr)+1;
+	char* resultado = (char*) malloc(tamanho);
+	strcpy(resultado,escopoPai);
+	strcat(resultado,nome);
+	strcat(resultado,ordemStr);
+	strcat(resultado,"\0");
+	//coloca na pilha
+	pushScope(resultado,"void");
+	
 }
 
-/*
+void inicializaContadores(){
+	forCounter = 0;
+	ifCounter= 0;
+	whileCounter= 0;
+	elseCounter = 0;
+	doWhileCounter = 0;
+}
 int insertSymbolTable(HashTable* hashTable,char*name, char*scope,char*type){
-	char* key = (char*) malloc(strlen(scope)+strlen(id));
+	char* key = (char*) malloc(strlen(scope)+strlen(name));
 	strcpy(key,scope);
 	strcat(key,name);
 	Symbol *item = createSymbol(key,name,scope,type);
-	return insert(&symbol_table,&item);
+	int result = insert(&symbol_table,item);
+	printf("tamanho da hash: %d\n",symbol_table.size);
+	return result;
 }
-*/
+
 
 /*void check_type(char* identifier, char* scope){
 	char* key = (char*) malloc( strlen(identifier) + strlen(scope) );

@@ -17,8 +17,8 @@ BlocoPrincipal {
         Leia(linhaB);
         
         
-        vetor Inteiro MatrizA[linhaA][colunaA];
-        vetor Inteiro MatrizB[linhaB][colunaB];
+        Vetor Inteiro [linhaA][colunaA] MatrizA;
+        Vetor Inteiro [linhaB][colunaB] MatrizB;
         Inteiro i;
         Inteiro j;
         Enquanto (i < linhaA) Execute {
@@ -29,7 +29,7 @@ BlocoPrincipal {
             }
             i++;
         }
-        
+        /*
         i = 0; j=0;
         Enquanto (i < linhaB) Execute {
             Enquanto(j < colunaB) Execute {
@@ -85,6 +85,6 @@ BlocoPrincipal {
         }
         Senao {
             Imprima("Nao eh possivel somar matrizes");
-        }
+        }*/
         
 }

@@ -1382,7 +1382,7 @@ yyreduce:
 
   case 4:
 #line 56 "parserstruct.y" /* yacc.c:1646  */
-    { struct allValues coisa;
+    { allValues coisa;
 					coisa.scope = "escopinho";
 					coisa.sValue = (yyvsp[0].sValue).sValue;
 					coisa.type = (yyvsp[0].sValue).type;

@@ -30,6 +30,4 @@ BlocoPrincipal {
     Imprima("Houveram ", intervalo_c, " valores entre 51 e 75\n");
     Imprima("Houveram ", intervalo_d, " valores entre 76 e 100\n");
 
-    Vetor<Inteiro>(1, 2) matriz_a;
-    Inteiro Vetor (1, 2) matriz_a;
 }

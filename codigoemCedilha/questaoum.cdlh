@@ -1,6 +1,8 @@
-BlocoPrincipal{
-    Real x, y, resultado;
-    Inteiro c;
+BlocoPrincipal {
+    Real x;
+    Real y;
+    Real resultado;
+    Real c;
     
     Imprima("Digite o numero Real X:");
     Leia(x);
