@@ -1,0 +1,180 @@
+MeuTipo rational_t {
+    Inteiro numerador,
+    Inteiro denominador
+};
+
+Funcao rational_t novaFracao(Inteiro a, Inteiro b);
+
+Funcao Booleano mesmoValor(rational_t fracaoUm, rational_t fracaoDois);
+
+Funcao rational_t subtracao(rational_t fracaoUm, rational_t fracaoDois);
+ 
+Funcao rational_t adicao(rational_t fracaoUm, rational_t fracaoDois);
+
+Funcao rational_t multiplicacao(rational_t fracaoUm, rational_t fracaoDois);
+
+Funcao rational_t divisor(rational_t fracaoUm, rational_t fracaoDois);
+
+Funcao rational_t inversor(rational_t fracao);
+
+Funcao rational_t negacao(rational_t fracao);
+
+Funcao Inteiro mmc(Inteiro x, Inteiro y);
+
+Funcao Inteiro mdc(Inteiro x, Inteiro y);
+
+BlocoPrincipal {
+    rational_t fracao;
+    racional_t outraFracao;
+    Inteiro num;
+    Inteiro den;
+    Inteiro outroNum;
+    Inteiro outroDen;
+    
+    Escreva("Digite o numerador Um:");
+    Leia(num);
+    
+    Escreva("Digite o denominador Um:");
+    Leia(den);
+    Enquanto(den ==0) Execute{
+        Escreva("O denominador nao pode ser 0");
+        Leia(den);
+    }
+    
+    fracao = novaFracao(num, den);
+    
+    
+    Escreva("Digite o numerador Dois:");
+    Leia(outraFracao.numerador);
+    
+    Escreva("Digite o denominador Dois:");
+    Leia(outraFracao.denominador);
+    Enquanto(outraFracao.denominador ==0) Execute{
+        Escreva("O denominador nao pode ser 0");
+        Leia(outraFracao.denominador);
+    }
+    
+    
+    
+    
+}
+
+BlocoFuncoes {
+    Funcao rational_t novaFracao(Inteiro a, Inteiro b){
+        rational_t racional;
+        racional.numerador = a;
+        racional.denominador = b;
+        
+        Retorne racional;
+    };
+    
+    
+    
+    
+    Funcao Booleano mesmoValor(rational_t fracaoUm, rational_t fracaoDois){
+        Real valorUm;
+        Real valorDois;
+        Booleano retorno;
+        
+        valorUm = fracaoUm.numerador/valorUm.denominador;
+        valorDois = fracaoDois.numerador/valorDois.denominador;
+        
+        Se (valorUm == valorDois) Execute {
+            Retorne Verdadeiro;
+        }
+        Senao {
+            Retorne Falso;
+        };
+    }
+    
+    Funcao rational_t subtracao(rational_t fracaoUm, rational_t fracaoDois){
+        rational_t retorno;
+        Inteiro base;
+        
+        base = mmc(fracaoUm.denominador, fracaoDois.denominador);
+        
+        retorno.denominador = base;
+        
+        retorno.numerador = ((base /fracaoUm.denominador) * fracaoUm.numerador) - ( (base/fracaoDois.denominador) * fracaoDois.numerador);
+        
+        Retorne retorno;
+    }
+    
+    Funcao rational_t adicao(rational_t fracaoUm, rational_t fracaoDois){
+        rational_t retorno;
+        Inteiro base;
+        
+        base = mmc(fracaoUm.denominador, fracaoDois.denominador);
+        
+        retorno.denominador = base;
+        
+        retorno.numerador = ((base /fracaoUm.denominador) * fracaoUm.numerador) + ( (base/fracaoDois.denominador) * fracaoDois.numerador);
+        
+        Retorne retorno;
+    }
+    
+    Funcao rational_t multiplicacao(rational_t fracaoUm, rational_t fracaoDois){
+        rational_t retorno;
+       
+        retorno.denominador = fracaoUm.denominador *  fracaoDois.denominador;
+        
+        retorno.numerador = fracaoUm.numerador * fracaoDois.numerador;
+        
+        Retorne retorno;
+    }
+    
+    
+    Funcao rational_t divisor(rational_t fracaoUm, rational_t fracaoDois){
+        rational_t retorno;
+       
+        retorno.denominador = fracaoUm.denominador *  fracaoDois.numerador;
+        
+        retorno.numerador = fracaoUm.numerador * fracaoDois.denominador;
+        
+        Retorne retorno;
+    }
+    
+    
+    Funcao rational_t inversor(rational_t fracao){
+        rational_t retorno;
+       
+        retorno.denominador = fracao.numerador;
+        retorno.numerador = fracao.denominador;
+        
+        Retorne retorno;
+    }
+    
+    Funcao rational_t negacao(rational_t fracao){
+        rational_t retorno;
+       
+        retorno.numerador = (-1)* fracao.numerador;
+        retorno.denominador = fracao.denominador;
+        
+        Retorne retorno;
+    }
+    
+    
+    Funcao Inteiro mdc(Inteiro x, Inteiro y){
+        Inteiro i;
+        Inteiro menor;
+        
+        Se(x < 0) Execute {
+            menor = x;
+        } Senao {
+            menor =y;
+        }
+        
+        Para(i = menor; i>=1; i--){
+            if(!(x%i) && !(y%i)) {
+                Retorne i;
+            }
+        }
+        
+        Retorne 0;
+    }
+ 
+    Funcao Inteiro mmc(Inteiro x, Inteiro y){
+        Retorne (x*y)/mdc(x,y);
+    }
+    
+}

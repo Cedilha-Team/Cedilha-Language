@@ -1,0 +1,90 @@
+BlocoPrincipal {
+        Inteiro linhaA; 
+        Inteiro colunaA;
+        Inteiro linhaB;
+        Inteiro colunaB;
+        
+        Imprima("Digite a quantidade Linhas para Matriz A: \n");
+        Leia(linhaA);
+        
+        Imprima("Digite a quantidade Colunas para Matriz A: \n");
+        Leia(colunaA);
+        
+        Imprima("Digite a quantidade Linhas para Matriz B: \n");
+        Leia(linhaB);
+        
+        Imprima("Digite a quantidade Colunas para Matriz B: \n");
+        Leia(linhaB);
+        
+        
+        Vetor Inteiro [linhaA][colunaA] MatrizA;
+        Vetor Inteiro [linhaB][colunaB] MatrizB;
+        Inteiro i;
+        Inteiro j;
+        Enquanto (i < linhaA) Execute {
+            Enquanto(j < colunaA) Execute {
+                Imprima("Digite Elemento ", i, j, ": ")
+                Leia(MatrizA[i][j]);
+                j++;
+            }
+            i++;
+        }
+        /*
+        i = 0; j=0;
+        Enquanto (i < linhaB) Execute {
+            Enquanto(j < colunaB) Execute {
+                Imprima("Digite Elemento ", i, j, ": ")
+                Leia(MatrizB[i][j]);
+                j++;
+            }
+            i++;
+        }
+        
+        
+        Se(colunaA == linhaB){
+            Vetor Inteiro MatrizC(linhaA, colunaB);
+        
+            Para (Inteiro i = 0; i < linhaA; j++) Execute {
+                Para (Inteiro j = 0; j < colunaB; j++) Execute {
+                    Para (Inteiro k = 0; k < linhaB; k++) Execute {
+                        sum = sum + MatrizA[i][k]*MatrizB[k][j];
+                    }
+ 
+                    MatrizC[i][j] = sum;
+                    sum = 0;
+                }
+            }
+            
+            Para(Inteiro i = 0; i< linhaA; i++) Execute {
+                Para(Inteiro j = 0; j< linhaA; j++) Execute {
+                    Imprima(MatrizC[i][j]);
+                }
+                Imprima("/n");
+            }
+        } 
+        Senao {
+            Imprima("Nao sao multiplicaveis");
+        }
+        
+        Se(colunaA == colunaB E linhaA == linhaB){
+            
+            Vetor Inteiro MatrizD(linhaA, colunaA);
+            
+            Para(Inteiro i = 0; i< linhaA; i++) Execute {
+                Para(Inteiro j = 0; j< linhaA; j++) Execute {
+                    MatrizD[i][j] = MatrizA[i][j]+MatrizC[i][j];
+                }
+            }
+            
+            Para(Inteiro i = 0; i< linhaA; i++) Execute {
+                Para(Inteiro j = 0; j< linhaA; j++) Execute {
+                    Imprima(MatrizD[i][j]);
+                }
+                Imprima("/n");
+            }
+        }
+        Senao {
+            Imprima("Nao eh possivel somar matrizes");
+        }*/
+        
+}

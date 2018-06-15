@@ -11,3 +11,4 @@ gcc lex.yy.c y.tab.c estruturas/pilha/pilha.c estruturas/tabelahash/tabelaHash.c
 flex lexcedilhinha.l
 yacc -dvt parserstruct.y  
 gcc lex.yy.c y.tab.c estruturas/pilha/pilha.c estruturas/tabelahash/tabelaHash.c -o parser
+

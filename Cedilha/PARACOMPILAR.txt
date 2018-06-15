@@ -1,0 +1,3 @@
+flex scannerVdc.l
+yacc -dvt parserVdc.y  
+gcc -I include/ *.c -o bin/compilador.exe

@@ -2,13 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "./estruturas/pilha/pilha.h"
-#include "./estruturas/tabelahash/tabelaHash.h"
+#include <assert.h>
+#include "./include/pilha.h"
+#include "./include/tabelaHash.h"
+#include "./include/attrib.h"
+#include "./include/memoryBank.h"
 
 int yylex(void);
 int yyerror(char *s);
 extern int yylineno;
 extern char * yytext;
+
 Pilha scope_stack;
 HashTable symbol_table;
 
@@ -18,6 +22,7 @@ int ifCounter;
 int whileCounter;
 int elseCounter;
 int doWhileCounter;
+
 
 void pushBlockScope(char*nome, int ordem);
 void inicializaContadores();
@@ -48,19 +53,20 @@ bloco_enquanto bloco_faca_enquanto bloco_para repeticao declaracao_para comando_
 assinaturas assinatura_funcoes assinatura_funcao assinatura_proc parametro parametros   
 bloco_funcoes funcoes_proc definicoes_funcoes_proc definicao_funcao definicao_procedimento
 chamada_funcao parametros_chamada parametro_chamada declaracoes declaracao_global
-tamanho_vetor termos ids retorne declaracao_registro
-tipo_vetor tipo_registro
+tamanho_vetor termos ids retorne declaracao_registro tipo_vetor tipo_registro
 %%
 
 programa : {pushScope("global","void");} declaracoes assinatura_funcoes bloco_principal bloco_funcoes {popScope();}
          ;
 
-declaracoes :												{printf("passei en declaracoes\n");char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
+declaracoes :												{$$ = strdup(" ");}
 			| declaracao_global PONTOVIRGULA declaracoes	{int tamanho = 4 + strlen($1) + strlen($3);
-	        												char * str = (char *) malloc(tamanho); 
-															sprintf(str, "%s;\n %s", $1, $3); 
-															$$ = str;
-															free($1);free($3);}
+															create_pointer(char,str,tamanho);
+															test(str){
+																sprintf(str, "%s;\n %s", $1, $3); 
+																$$ = str;
+															}
+	        												}
 			;
 			
 declaracao_global : declaracao				{$$ = $1;}
@@ -68,87 +74,102 @@ declaracao_global : declaracao				{$$ = $1;}
 				  ;
 				
 
-declaracao_registro : MEU_TIPO ID LCHAVE parametros RCHAVE	{//if(!insertSymbolTable(symbol_table,(char*)$2, strdup(mostrarTopo(&scope_stack)->scopeName),"MeuTipo")){
-															//	yyerror("nome de variável já foi declarada!\n");
-														//	}else{
+declaracao_registro : MEU_TIPO ID LCHAVE parametros RCHAVE	{if(!insertSymbolTable(symbol_table,$2, strdup(mostrarTopo(&scope_stack)->scopeName),"MeuTipo")){
+																yyerror("nome de variável já foi declarada!\n");
+															}else{
 																
 																int tamanho = 13 + strlen($2) + strlen($4);
-																char* str = (char*)malloc(tamanho);
-																sprintf(str, "MeuTipo %s {\n%s\n}",$2,$4);
-																$$ = str;
-																printf("passei en meu tipo: %s %s\n",$2,$4);
-														//	}
-															free($2); free($4);
+																create_pointer(char,str,tamanho);
+																test(str){
+																	sprintf(str, "MeuTipo %s {\n%s\n}",$2,$4);
+																	$$ = str;
+																}
+															}
+														
 															}
 					;										
 
 
-assinatura_funcoes  :												{char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
+assinatura_funcoes  :												{$$ = strdup(" ");}
 					| assinaturas PONTOVIRGULA assinatura_funcoes 	{int tamanho = 4 + strlen($1) + strlen($3);
-			        												char * str = (char *) malloc(tamanho); 
-																	sprintf(str, "%s;\n %s", $1, $3); 
-																	$$ = str;
-																	free($1);free($3);}
+			        												create_pointer(char,str,tamanho);
+																	test(str){
+																		sprintf(str, "%s;\n %s", $1, $3);
+																		$$ = str;
+																	}
+																	}
 					;
 
 assinaturas : assinatura_proc   {$$ = $1;}
 			| assinatura_funcao {$$ = $1;}
 			;
 					
-assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES		{//if(!insertSymbolTable(symbol_table,(char*)$3, strdup(mostrarTopo(&scope_stack)->scopeName),(char*)$2)){
-																			//		yyerror("nome de variável já foi declarada!\n");
-																		//	 }else{
+assinatura_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES	{	if(!insertSymbolTable(symbol_table,(char*)$3, strdup(mostrarTopo(&scope_stack)->scopeName),(char*)$2)){
+																					yyerror("nome de variável já foi declarada!\n");
+																			 }else{
 																				int tamanho = 12 + strlen($2) + strlen($3) +strlen($5);
-																				char * str = (char *) malloc(tamanho); 
-																				sprintf(str, "Funcao %s %s (%s)", $2, $3, $5 ); 
-																				$$ = str; 
+																				create_pointer(char,str,tamanho);
+																				test(str){
+																					sprintf(str, "Funcao %s %s (%s)", $2, $3, $5 );
+																					$$ = str;
+																				}
 																				
-																		//	 }
-																			 free($2); free($3); free($5);}
+																			 }
+																		}
 				  ;
 				  
-assinatura_proc : PROC ID LPARENTESES parametros RPARENTESES		{//if(!insertSymbolTable(symbol_table,$2, strdup(mostrarTopo(&scope_stack)->scopeName),"void") ){
-																	//				yyerror("nome de variável já foi declarada!\n");
-																	//}else{
+assinatura_proc : PROC ID LPARENTESES parametros RPARENTESES	{	if(!insertSymbolTable(symbol_table,$2, strdup(mostrarTopo(&scope_stack)->scopeName),"void") ){
+																					yyerror("nome de variável já foi declarada!\n");
+																	}else{
 																		int tamanho = 9 + strlen($2) + strlen($4);
-																		char * str = (char *) malloc(tamanho); 
-																		 sprintf(str, "Proc %s (%s)", $2,$4); 
-																		 $$ = str;
-																		 
-																//	}
-																	free($2);free($4);}
+																		create_pointer(char,str,tamanho);
+																		test(str){
+																			sprintf(str, "Proc %s (%s)", $2,$4); 
+																			$$ = str;
+																		} 
+																	
+																	}
+																}
 				;
 				
-parametros :											{char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
-           | parametro VIRGULA parametros				{int tamanho = 3 + strlen($1) + strlen($3);
-        												char * str = (char *) malloc(tamanho); 
-														sprintf(str, "%s, %s", $1, $3); 
-														$$ = str;
-														free($1);free($3);}
+parametros :								{	$$ = strdup(" ");}
+           | parametro VIRGULA parametros	{	int tamanho = 3 + strlen($1) + strlen($3);
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "%s, %s", $1, $3); 
+													$$ = str;
+												}
+												
+											}
            | parametro {$$ = $1;}
            ;
 
-parametro  : tipo ID   {//if(!insertSymbolTable(symbol_table,$2, strdup(mostrarTopo(&scope_stack)->scopeName),$1) ){
-						//	yyerror("nome de variável já foi declarada!\n");
-					//	}else{
-							int  tamanho = 1+strlen($1)+strlen($2);
-							char * str = (char *) malloc(tamanho);
-							sprintf(str, "%s%s",$1,$2);
-							 $$ = str;
-							 free($1);free($2);
-					//	} 
-						
+parametro  : tipo ID   {	if(!insertSymbolTable(symbol_table,$2, strdup(mostrarTopo(&scope_stack)->scopeName),$1) ){
+								yyerror("nome de variável já foi declarada!\n");
+							}else{
+								int  tamanho = 1+strlen($1)+strlen($2);
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "%s%s",$1,$2);
+									$$ = str;
+								}
+							} 
 						}
 			;
 					
-bloco_funcoes  : {char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
-               | BFUNCOES LCHAVE funcoes_proc RCHAVE   {int tamanho = 17 + strlen((char *)$3);
-            											char * str = (char *) malloc(tamanho); 
-													   sprintf(str, "%s%s\n}", "BlocoFuncoes {\n", (char *) $3); 
-													   printf("%s\n",str); }
+bloco_funcoes  : {$$ = strdup(" ");}
+            	| BFUNCOES LCHAVE funcoes_proc RCHAVE  {	int tamanho = 17 + strlen((char *)$3);
+	            											create_pointer(char,str,tamanho);
+															test(str){
+																sprintf(str, "%s%s\n}", "BlocoFuncoes {\n", (char *) $3); 
+																printf("%s\n",str); 
+															}
+														} 
+													   
+													   
 				;
 				
-funcoes_proc :										{char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
+funcoes_proc :										{$ = strdup(" ");}
 			 | definicoes_funcoes_proc funcoes_proc {int  tamanho = 1+strlen($1)+strlen($2);
 													char * str = (char *) malloc(tamanho);
 													sprintf(str, "%s%s",$1,$2);
@@ -192,7 +213,7 @@ retorne : RETORNE expressao		{int tamanho = 9 + strlen($2);
 								$$ = str;
 								free($2);}
 
-parametros_chamada: {char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
+parametros_chamada: {$$ = strdup(" ");}
 		           | parametro_chamada VIRGULA parametros_chamada	{int tamanho = 3 + strlen($1)+ strlen($3);
 																	char * str = (char *) malloc(tamanho); 
 																	sprintf(str, "%s, %s", $1, $3); 
@@ -221,7 +242,7 @@ bloco_principal : BPRINCIPAL LCHAVE
 
 
 
-sentencas:									{char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
+sentencas:									{$$ = strdup(" ");}
 		 | sentenca PONTOVIRGULA sentencas {int tamanho = 3 + strlen($1)+ strlen($3);
 											char * str = (char *) malloc(tamanho); 
 											sprintf(str, "%s;\n%s", $1, $3); 
@@ -333,11 +354,11 @@ bloco_para : PARA LPARENTESES {pushBlockScope("para",forCounter);
 													free($4); free($7); free($9); free($13);}
 		   ;			   
 
-declaracao_para:			 {char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
+declaracao_para:			 {$$ = strdup(" ");}
 				| declaracao {$$ = $1;}
 				;
 
-comando_para :			{char * str = (char *) malloc(2); str = strdup(" "); $$ = str;}
+comando_para :			{$$ = strdup(" ");}
 			 | comando	{$$ = $1;}
 			 ;
 
@@ -493,7 +514,9 @@ int main (void) {
 	
 	iniciar(&scope_stack);
 	init_array(&symbol_table,50);
-	int resultado =yyparse ( );
+	startMemoryBank();
+	int resultado = yyparse ( );
+	stopMemoryBank();
 	return resultado;
 }
 
