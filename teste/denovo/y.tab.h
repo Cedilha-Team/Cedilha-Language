@@ -50,64 +50,62 @@ extern int yydebug;
     LIT_BOOL = 260,
     LIT_REAL = 261,
     LIT_INT = 262,
-    BPRINCIPAL = 263,
-    BFUNCOES = 264,
-    FUNCAO = 265,
-    BOOL = 266,
-    TEXTO = 267,
-    CARACTERE = 268,
-    REAL = 269,
-    INTEIRO = 270,
-    VETOR = 271,
-    MEU_TIPO = 272,
-    CERQUILHA = 273,
-    SE = 274,
-    IMPRIME = 275,
-    LEIA = 276,
-    INCLUIR = 277,
-    PARE = 278,
-    ENQUANTO = 279,
-    PROC = 280,
-    PARA = 281,
-    EXECUTE = 282,
-    SENAO = 283,
-    CONSTANTE = 284,
-    RETORNE = 285,
-    ASPAS_DUPLAS = 286,
-    ASPAS_SIMPLES = 287,
-    LCOLCHETE = 288,
-    RCOLCHETE = 289,
-    LCHAVE = 290,
-    RCHAVE = 291,
-    LPARENTESES = 292,
-    RPARENTESES = 293,
-    MENORIGUAL = 294,
-    MAIORIQUAL = 295,
-    IGUAL = 296,
-    DIFERENTE = 297,
-    MAIOR = 298,
-    MENOR = 299,
-    ATRIB = 300,
-    ATRIB_SOMA = 301,
-    ATRIB_SUB = 302,
-    ATRIB_MULT = 303,
-    ATRIB_DIV = 304,
-    ATRIB_MOD = 305,
-    NEGACAO = 306,
-    INC = 307,
-    DEC = 308,
-    E_LOG = 309,
-    OU_LOG = 310,
-    ARROBA = 311,
-    VIRGULA = 312,
-    PONTOVIRGULA = 313,
-    MULT = 314,
-    SUB = 315,
-    SOMA = 316,
-    DIV = 317,
-    MOD = 318,
-    EXP = 319,
-    MENOS = 320
+    MENORIGUAL = 263,
+    MAIORIQUAL = 264,
+    IGUAL = 265,
+    DIFERENTE = 266,
+    MAIOR = 267,
+    MENOR = 268,
+    ATRIB = 269,
+    ATRIB_SOMA = 270,
+    ATRIB_SUB = 271,
+    ATRIB_MULT = 272,
+    ATRIB_DIV = 273,
+    ATRIB_MOD = 274,
+    NEGACAO = 275,
+    INC = 276,
+    DEC = 277,
+    E_LOG = 278,
+    OU_LOG = 279,
+    ARROBA = 280,
+    MULT = 281,
+    SUB = 282,
+    SOMA = 283,
+    DIV = 284,
+    MOD = 285,
+    EXP = 286,
+    BOOL = 287,
+    TEXTO = 288,
+    CARACTERE = 289,
+    REAL = 290,
+    INTEIRO = 291,
+    PARE = 292,
+    ASPAS_DUPLAS = 293,
+    ASPAS_SIMPLES = 294,
+    LCOLCHETE = 295,
+    RCOLCHETE = 296,
+    LCHAVE = 297,
+    RCHAVE = 298,
+    LPARENTESES = 299,
+    RPARENTESES = 300,
+    SE = 301,
+    IMPRIMA = 302,
+    LEIA = 303,
+    ENQUANTO = 304,
+    PARA = 305,
+    EXECUTE = 306,
+    SENAO = 307,
+    CONSTANTE = 308,
+    RETORNE = 309,
+    VIRGULA = 310,
+    PONTOVIRGULA = 311,
+    MEU_TIPO = 312,
+    BPRINCIPAL = 313,
+    BFUNCOES = 314,
+    FUNCAO = 315,
+    PROC = 316,
+    VETOR = 317,
+    CERQUILHA = 318
   };
 #endif
 /* Tokens.  */
@@ -116,64 +114,62 @@ extern int yydebug;
 #define LIT_BOOL 260
 #define LIT_REAL 261
 #define LIT_INT 262
-#define BPRINCIPAL 263
-#define BFUNCOES 264
-#define FUNCAO 265
-#define BOOL 266
-#define TEXTO 267
-#define CARACTERE 268
-#define REAL 269
-#define INTEIRO 270
-#define VETOR 271
-#define MEU_TIPO 272
-#define CERQUILHA 273
-#define SE 274
-#define IMPRIME 275
-#define LEIA 276
-#define INCLUIR 277
-#define PARE 278
-#define ENQUANTO 279
-#define PROC 280
-#define PARA 281
-#define EXECUTE 282
-#define SENAO 283
-#define CONSTANTE 284
-#define RETORNE 285
-#define ASPAS_DUPLAS 286
-#define ASPAS_SIMPLES 287
-#define LCOLCHETE 288
-#define RCOLCHETE 289
-#define LCHAVE 290
-#define RCHAVE 291
-#define LPARENTESES 292
-#define RPARENTESES 293
-#define MENORIGUAL 294
-#define MAIORIQUAL 295
-#define IGUAL 296
-#define DIFERENTE 297
-#define MAIOR 298
-#define MENOR 299
-#define ATRIB 300
-#define ATRIB_SOMA 301
-#define ATRIB_SUB 302
-#define ATRIB_MULT 303
-#define ATRIB_DIV 304
-#define ATRIB_MOD 305
-#define NEGACAO 306
-#define INC 307
-#define DEC 308
-#define E_LOG 309
-#define OU_LOG 310
-#define ARROBA 311
-#define VIRGULA 312
-#define PONTOVIRGULA 313
-#define MULT 314
-#define SUB 315
-#define SOMA 316
-#define DIV 317
-#define MOD 318
-#define EXP 319
-#define MENOS 320
+#define MENORIGUAL 263
+#define MAIORIQUAL 264
+#define IGUAL 265
+#define DIFERENTE 266
+#define MAIOR 267
+#define MENOR 268
+#define ATRIB 269
+#define ATRIB_SOMA 270
+#define ATRIB_SUB 271
+#define ATRIB_MULT 272
+#define ATRIB_DIV 273
+#define ATRIB_MOD 274
+#define NEGACAO 275
+#define INC 276
+#define DEC 277
+#define E_LOG 278
+#define OU_LOG 279
+#define ARROBA 280
+#define MULT 281
+#define SUB 282
+#define SOMA 283
+#define DIV 284
+#define MOD 285
+#define EXP 286
+#define BOOL 287
+#define TEXTO 288
+#define CARACTERE 289
+#define REAL 290
+#define INTEIRO 291
+#define PARE 292
+#define ASPAS_DUPLAS 293
+#define ASPAS_SIMPLES 294
+#define LCOLCHETE 295
+#define RCOLCHETE 296
+#define LCHAVE 297
+#define RCHAVE 298
+#define LPARENTESES 299
+#define RPARENTESES 300
+#define SE 301
+#define IMPRIMA 302
+#define LEIA 303
+#define ENQUANTO 304
+#define PARA 305
+#define EXECUTE 306
+#define SENAO 307
+#define CONSTANTE 308
+#define RETORNE 309
+#define VIRGULA 310
+#define PONTOVIRGULA 311
+#define MEU_TIPO 312
+#define BPRINCIPAL 313
+#define BFUNCOES 314
+#define FUNCAO 315
+#define PROC 316
+#define VETOR 317
+#define CERQUILHA 318
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -184,7 +180,7 @@ union YYSTYPE
 
 	char * sValue;  /* string value */
 
-#line 188 "y.tab.h" /* yacc.c:1909  */
+#line 184 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

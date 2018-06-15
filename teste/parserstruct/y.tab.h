@@ -180,11 +180,12 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 30 "parserstruct.y" /* yacc.c:1909  */
+#line 26 "parserstruct.y" /* yacc.c:1909  */
 
-	allValues * allvalues;  /* string value */
+	struct AllAttributes * value;
+	char* sValue; /* string value */
 
-#line 188 "y.tab.h" /* yacc.c:1909  */
+#line 189 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

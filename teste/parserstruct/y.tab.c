@@ -68,6 +68,7 @@
 #include <string.h>
 #include "./estruturas/pilha/pilha.h"
 #include "./estruturas/tabelahash/tabelaHash.h"
+#include "attrib.h"
 
 int yylex(void);
 int yyerror(char *s);
@@ -83,15 +84,10 @@ int forCounter;
 int ifCounter;
 int whileCounter;
 
-typedef struct {
-	char * scope;
-	char * sValue;
-	char * type;
-
-} allValues;
+static struct AllAttributes *value;
 
 
-#line 95 "y.tab.c" /* yacc.c:339  */
+#line 91 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -261,11 +257,12 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 30 "parserstruct.y" /* yacc.c:355  */
+#line 26 "parserstruct.y" /* yacc.c:355  */
 
-	allValues * allvalues;  /* string value */
+	struct AllAttributes * value;
+	char* sValue; /* string value */
 
-#line 269 "y.tab.c" /* yacc.c:355  */
+#line 266 "y.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -280,7 +277,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 284 "y.tab.c" /* yacc.c:358  */
+#line 281 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -584,7 +581,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    53,    53,    53,    56,    61,    65,    66,    67,    68
+       0,    50,    50,    50,    53,    57,    63,    66,    69,    72
 };
 #endif
 
@@ -1369,59 +1366,67 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 53 "parserstruct.y" /* yacc.c:1646  */
+#line 50 "parserstruct.y" /* yacc.c:1646  */
     {pushScope("global","void");}
-#line 1375 "y.tab.c" /* yacc.c:1646  */
+#line 1372 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 53 "parserstruct.y" /* yacc.c:1646  */
+#line 50 "parserstruct.y" /* yacc.c:1646  */
     {popScope(&scope_stack,"global");}
-#line 1381 "y.tab.c" /* yacc.c:1646  */
+#line 1378 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 56 "parserstruct.y" /* yacc.c:1646  */
-    { allValues coisa;
-					coisa.scope = "escopinho";
-					coisa.sValue = (yyvsp[0].sValue).sValue;
-					coisa.type = (yyvsp[0].sValue).type;
-					(yyval.sValue) = coisa;}
-#line 1391 "y.tab.c" /* yacc.c:1646  */
+#line 53 "parserstruct.y" /* yacc.c:1646  */
+    { struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  (yyvsp[0].sValue));
+					(yyval.value) = info;}
+#line 1386 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 61 "parserstruct.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1397 "y.tab.c" /* yacc.c:1646  */
+#line 57 "parserstruct.y" /* yacc.c:1646  */
+    { struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  (yyvsp[0].value)->code);
+					(yyval.value) = info;}
+#line 1394 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 65 "parserstruct.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1403 "y.tab.c" /* yacc.c:1646  */
+#line 63 "parserstruct.y" /* yacc.c:1646  */
+    {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  (yyvsp[0].sValue));
+					(yyval.value) = info;}
+#line 1402 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 66 "parserstruct.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1409 "y.tab.c" /* yacc.c:1646  */
+    {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  (yyvsp[0].sValue));
+					(yyval.value) = info;}
+#line 1410 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 67 "parserstruct.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1415 "y.tab.c" /* yacc.c:1646  */
+#line 69 "parserstruct.y" /* yacc.c:1646  */
+    {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  (yyvsp[0].sValue));
+					(yyval.value) = info;}
+#line 1418 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 68 "parserstruct.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1421 "y.tab.c" /* yacc.c:1646  */
+#line 72 "parserstruct.y" /* yacc.c:1646  */
+    {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  (yyvsp[0].sValue));
+					(yyval.value) = info;}
+#line 1426 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1425 "y.tab.c" /* yacc.c:1646  */
+#line 1430 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1649,7 +1654,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 70 "parserstruct.y" /* yacc.c:1906  */
+#line 76 "parserstruct.y" /* yacc.c:1906  */
 
 
 int main (void) {

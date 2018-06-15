@@ -19,58 +19,56 @@ void comment();
 ("Verdadeiro"|"Falso")  { yylval.sValue = strdup(yytext); return(LIT_BOOL);}
 #.*\n                   {}
 "Se"                    { return(SE);}
-"Inteiro"               { return(INTEIRO);}
-"Booleano"				{ return(BOOL);}
-"Imprima"               { return(IMPRIME);}
+"Inteiro"               { yylval.sValue = strdup(yytext); return(INTEIRO);}
+"Booleano"				{ yylval.sValue = strdup(yytext); return(BOOL);}
+"Imprima"               { return(IMPRIMA);}
 "Leia"            		{ return(LEIA);}
-"Vetor"                 { return(VETOR);}
-"Incluir"               { return(INCLUIR);}
-"Pare"                  { return(PARE);}
+"Vetor"                 { yylval.sValue = strdup(yytext); return(VETOR);}
+"Pare"                  { yylval.sValue = strdup(yytext); return(PARE);}
 "Enquanto"              { return(ENQUANTO);}
 "Proc"		            { return(PROC);}
-"Func"					{ return(FUNCAO);}
 "Para"                  { return(PARA);}
 "Execute"               { return(EXECUTE);}
 "Senao"                 { return(SENAO);}
-"Caractere"				{ return(CARACTERE);}
+"Caractere"				{ yylval.sValue = strdup(yytext); return(CARACTERE);}
 "Constante"				{ return(CONSTANTE);}
-"Real"					{ return(REAL);}
+"Real"					{ yylval.sValue = strdup(yytext); return(REAL);}
 "MeuTipo"				{ return(MEU_TIPO);}
 "Retorne"				{ return(RETORNE);}
-"Texto"					{ return(TEXTO);}
+"Texto"					{ yylval.sValue = strdup(yytext); return(TEXTO);}
 "Funcao"				{ return(FUNCAO);}
 "BlocoPrincipal"		{ return(BPRINCIPAL);}
 "BlocoFuncoes"			{ return(BFUNCOES);}
 [0-9]*\.[0-9]+          { yylval.sValue = strdup(yytext); return(LIT_REAL);}
 [0-9]+                  { yylval.sValue = strdup(yytext); return(LIT_INT);}
-[a-zA-Z_][a-zA-Z0-9_]*   { yylval.sValue = strdup(yytext); return(ID);}
-\"                      { return(ASPAS_DUPLAS);}
-"'"                     { return(ASPAS_SIMPLES);}
-"<="                    { return(MENORIGUAL);}
-">="                    { return(MAIORIQUAL);}
-"+="                    { return(ATRIB_SOMA);}
-"-="                    { return(ATRIB_SUB);}
-"*="					{ return (ATRIB_MULT); }
-"/="					{ return (ATRIB_DIV); }
-"%="					{ return (ATRIB_MOD); }
-"++"                    { return(INC);}
-"--"                    { return(DEC);}
-"&&"					{ return (E_LOG); }
-"||"					{ return (OU_LOG); }
+[a-zA-Z_][a-zA-Z0-9_]*  { yylval.sValue = strdup(yytext); return(ID);}
+\"                      { yylval.sValue = strdup(yytext); return(ASPAS_DUPLAS);}
+"'"                     { yylval.sValue = strdup(yytext); return(ASPAS_SIMPLES);}
+"<="                    { yylval.sValue = strdup(yytext); return(MENORIGUAL);}
+">="                    { yylval.sValue = strdup(yytext); return(MAIORIQUAL);}
+"+="                    { yylval.sValue = strdup(yytext); return(ATRIB_SOMA);}
+"-="                    { yylval.sValue = strdup(yytext); return(ATRIB_SUB);}
+"*="					{ yylval.sValue = strdup(yytext); return (ATRIB_MULT); }
+"/="					{ yylval.sValue = strdup(yytext); return (ATRIB_DIV); }
+"%="					{ yylval.sValue = strdup(yytext); return (ATRIB_MOD); }
+"++"                    { yylval.sValue = strdup(yytext); return(INC);}
+"--"                    { yylval.sValue = strdup(yytext);  return(DEC);}
+"&&"					{ yylval.sValue = strdup(yytext); return (E_LOG); }
+"||"					{ yylval.sValue = strdup(yytext); return (OU_LOG); }
 "#"						{ return (CERQUILHA); }
-"!"						{ return (NEGACAO);}
-"*"                     { return(MULT);}
-"-"                     { return(SUB);}
-"+"                     { return(SOMA);}
-"/"                     { return(DIV);}
-"%"                     { return(MOD);}
-"^"                     { return(EXP);}
-">"                     { return(MAIOR);}
-"<"                     { return(MENOR);}
-"="                     { return(ATRIB);}
-"=="					{ return (IGUAL); }
-"!="					{ return (DIFERENTE); }
-"@"                     { return(ARROBA);}
+"!"						{ yylval.sValue = strdup(yytext); return (NEGACAO);}
+"*"                     { yylval.sValue = strdup(yytext); return(MULT);}
+"-"                     { yylval.sValue = strdup(yytext); return(SUB);}
+"+"                     { yylval.sValue = strdup(yytext); return(SOMA);}
+"/"                     { yylval.sValue = strdup(yytext); return(DIV);}
+"%"                     { yylval.sValue = strdup(yytext); return(MOD);}
+"^"                     { yylval.sValue = strdup(yytext); return(EXP);}
+">"                     { yylval.sValue = strdup(yytext); return(MAIOR);}
+"<"                     { yylval.sValue = strdup(yytext); return(MENOR);}
+"="                     { yylval.sValue = strdup(yytext); return(ATRIB);}
+"=="					{ yylval.sValue = strdup(yytext); return (IGUAL); }
+"!="					{ yylval.sValue = strdup(yytext); return (DIFERENTE); }
+"@"                     { yylval.sValue = strdup(yytext); return(ARROBA);}
 ","                     { return(VIRGULA);}
 ";"                     { return(PONTOVIRGULA);}
 "["                     { return(LCOLCHETE);}

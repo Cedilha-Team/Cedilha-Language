@@ -3,6 +3,7 @@
 #include <string.h>
 #include "./estruturas/pilha/pilha.h"
 #include "./estruturas/tabelahash/tabelaHash.h"
+#include "attrib.h"
 
 int yylex(void);
 int yyerror(char *s);
@@ -18,17 +19,13 @@ int forCounter;
 int ifCounter;
 int whileCounter;
 
-typedef struct {
-	char * scope;
-	char * sValue;
-	char * type;
-
-} allValues;
+static struct AllAttributes *value;
 
 %}
 
 %union {
-	allValues * allvalues;  /* string value */
+	struct AllAttributes * value;
+	char* sValue; /* string value */
 }
 
 %token <sValue> ID LIT_TEXTO LIT_BOOL LIT_REAL LIT_INT
@@ -47,25 +44,34 @@ typedef struct {
 
 %start programa
 
-%type <sValue> programa termo literal
+%type <value> programa termo literal
 %%
 
 programa : {pushScope("global","void");} termo {popScope(&scope_stack,"global");}
          ;
 
-termo : ID       { allValues coisa;
-					coisa.scope = "escopinho";
-					coisa.sValue = $1.sValue;
-					coisa.type = $1.type;
-					$$ = coisa;}
-      | literal  {$$ = $1;}
+termo : ID       { struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  $1);
+					$$ = info;}
+				  
+      | literal  { struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  $1->code);
+					$$ = info;}
       ;
       
 
-literal : LIT_REAL  {$$ = $1;}
-		| LIT_BOOL  {$$ = $1;}
-		| LIT_INT   {$$ = $1;}
- 		| LIT_TEXTO {$$ = $1;}
+literal : LIT_REAL  {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  $1);
+					$$ = info;}
+		| LIT_BOOL  {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  $1);
+					$$ = info;}
+		| LIT_INT   {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  $1);
+					$$ = info;}
+ 		| LIT_TEXTO {struct AllAttributes * info = 
+    				attrib_new("TODO Procurar na pilha", "TODO Procurar na pilha",  $1);
+					$$ = info;}
 		;
 %%
 
