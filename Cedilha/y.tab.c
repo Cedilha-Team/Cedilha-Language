@@ -80,6 +80,7 @@ extern char * yytext;
 
 Pilha scope_stack;
 HashTable symbol_table;
+FILE *fp;
 
 /*usado para contar qual bloco está*/
 int forCounter;
@@ -92,7 +93,10 @@ int doWhileCounter;
 void pushBlockScope(char*nome, int ordem);
 void inicializaContadores();
 
-#line 96 "y.tab.c" /* yacc.c:339  */
+
+
+
+#line 100 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -258,11 +262,11 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 31 "parserVdc.y" /* yacc.c:355  */
+#line 35 "parserVdc.y" /* yacc.c:355  */
 
 	char * sValue;  /* string value */
 
-#line 266 "y.tab.c" /* yacc.c:355  */
+#line 270 "y.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -277,7 +281,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 281 "y.tab.c" /* yacc.c:358  */
+#line 285 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -580,20 +584,20 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    59,    59,    59,    62,    63,    72,    73,    77,    93,
-      94,   103,   104,   107,   121,   135,   136,   144,   147,   160,
-     161,   167,   168,   175,   176,   180,   181,   179,   190,   191,
-     189,   198,   205,   211,   212,   217,   220,   225,   232,   233,
-     231,   240,   241,   248,   249,   250,   253,   254,   257,   258,
-     261,   258,   266,   274,   276,   273,   283,   284,   285,   286,
-     287,   288,   289,   292,   297,   304,   305,   306,   307,   308,
-     309,   312,   313,   316,   317,   318,   322,   324,   321,   331,
-     333,   331,   341,   343,   341,   352,   353,   356,   357,   360,
-     367,   374,   379,   388,   389,   394,   399,   404,   411,   412,
-     413,   416,   417,   418,   421,   422,   423,   424,   425,   426,
-     429,   430,   431,   432,   433,   434,   437,   438,   441,   442,
-     443,   446,   453,   458,   465,   472,   473,   474,   475,   476,
-     479,   480,   488,   489,   496,   497,   501,   502,   503,   504
+       0,    63,    63,    63,    66,    72,    81,    82,    86,   102,
+     108,   117,   118,   121,   135,   149,   155,   163,   166,   179,
+     180,   191,   197,   207,   208,   212,   213,   211,   224,   225,
+     223,   234,   243,   252,   258,   265,   268,   275,   282,   283,
+     281,   289,   295,   304,   305,   306,   309,   310,   313,   314,
+     317,   314,   324,   334,   336,   333,   345,   346,   347,   348,
+     349,   350,   351,   354,   361,   370,   371,   372,   373,   374,
+     375,   378,   379,   382,   383,   384,   388,   390,   387,   399,
+     401,   399,   411,   413,   411,   424,   430,   433,   439,   442,
+     451,   460,   467,   478,   479,   486,   493,   500,   509,   510,
+     511,   514,   515,   516,   519,   520,   521,   522,   523,   524,
+     527,   528,   529,   530,   531,   532,   535,   536,   539,   540,
+     541,   544,   553,   560,   569,   578,   579,   580,   581,   582,
+     585,   586,   595,   596,   605,   606,   610,   611,   612,   613
 };
 #endif
 
@@ -1554,25 +1558,30 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 59 "parserVdc.y" /* yacc.c:1646  */
+#line 63 "parserVdc.y" /* yacc.c:1646  */
     {pushScope("global","void");}
-#line 1560 "y.tab.c" /* yacc.c:1646  */
+#line 1564 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 59 "parserVdc.y" /* yacc.c:1646  */
+#line 63 "parserVdc.y" /* yacc.c:1646  */
     {popScope();}
-#line 1566 "y.tab.c" /* yacc.c:1646  */
+#line 1570 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 62 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = strdup(" ");}
-#line 1572 "y.tab.c" /* yacc.c:1646  */
+#line 66 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+																test(str){
+																	strcpy(str, " ");
+																	(yyval.sValue) = str;
+																}
+															}
+#line 1581 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 63 "parserVdc.y" /* yacc.c:1646  */
+#line 72 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 4 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[0].sValue));
 															create_pointer(char,str,tamanho);
 															test(str){
@@ -1580,23 +1589,23 @@ yyreduce:
 																(yyval.sValue) = str;
 															}
 	        												}
-#line 1584 "y.tab.c" /* yacc.c:1646  */
+#line 1593 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 72 "parserVdc.y" /* yacc.c:1646  */
+#line 81 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1590 "y.tab.c" /* yacc.c:1646  */
+#line 1599 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 73 "parserVdc.y" /* yacc.c:1646  */
+#line 82 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1596 "y.tab.c" /* yacc.c:1646  */
+#line 1605 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 77 "parserVdc.y" /* yacc.c:1646  */
+#line 86 "parserVdc.y" /* yacc.c:1646  */
     {if(!insertSymbolTable(symbol_table,(yyvsp[-3].sValue), strdup(mostrarTopo(&scope_stack)->scopeName),"MeuTipo")){
 																yyerror("nome de variável já foi declarada!\n");
 															}else{
@@ -1610,17 +1619,22 @@ yyreduce:
 															}
 														
 															}
-#line 1614 "y.tab.c" /* yacc.c:1646  */
+#line 1623 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 93 "parserVdc.y" /* yacc.c:1646  */
-    {char * str = (char *) malloc(2); str = strdup(" "); (yyval.sValue) = str;}
-#line 1620 "y.tab.c" /* yacc.c:1646  */
+#line 102 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+																	test(str){
+																		strcpy(str, " ");
+																		(yyval.sValue) = str;
+																	}
+																	}
+#line 1634 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 94 "parserVdc.y" /* yacc.c:1646  */
+#line 108 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 4 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[0].sValue));
 			        												create_pointer(char,str,tamanho);
 																	test(str){
@@ -1628,23 +1642,23 @@ yyreduce:
 																		(yyval.sValue) = str;
 																	}
 																	}
-#line 1632 "y.tab.c" /* yacc.c:1646  */
+#line 1646 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 103 "parserVdc.y" /* yacc.c:1646  */
+#line 117 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1638 "y.tab.c" /* yacc.c:1646  */
+#line 1652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 104 "parserVdc.y" /* yacc.c:1646  */
+#line 118 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1644 "y.tab.c" /* yacc.c:1646  */
+#line 1658 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 107 "parserVdc.y" /* yacc.c:1646  */
+#line 121 "parserVdc.y" /* yacc.c:1646  */
     {	if(!insertSymbolTable(symbol_table,(char*)(yyvsp[-3].sValue), strdup(mostrarTopo(&scope_stack)->scopeName),(char*)(yyvsp[-4].sValue))){
 																					yyerror("nome de variável já foi declarada!\n");
 																			 }else{
@@ -1657,11 +1671,11 @@ yyreduce:
 																				
 																			 }
 																		}
-#line 1661 "y.tab.c" /* yacc.c:1646  */
+#line 1675 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 121 "parserVdc.y" /* yacc.c:1646  */
+#line 135 "parserVdc.y" /* yacc.c:1646  */
     {	if(!insertSymbolTable(symbol_table,(yyvsp[-3].sValue), strdup(mostrarTopo(&scope_stack)->scopeName),"void") ){
 																					yyerror("nome de variável já foi declarada!\n");
 																	}else{
@@ -1674,17 +1688,22 @@ yyreduce:
 																	
 																	}
 																}
-#line 1678 "y.tab.c" /* yacc.c:1646  */
+#line 1692 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 135 "parserVdc.y" /* yacc.c:1646  */
-    {	(yyval.sValue) = strdup(" ");}
-#line 1684 "y.tab.c" /* yacc.c:1646  */
+#line 149 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+											test(str){
+												strcpy(str, " ");
+												(yyval.sValue) = str;
+											}
+											}
+#line 1703 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 136 "parserVdc.y" /* yacc.c:1646  */
+#line 155 "parserVdc.y" /* yacc.c:1646  */
     {	int tamanho = 3 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[0].sValue));
 												create_pointer(char,str,tamanho);
 												test(str){
@@ -1693,890 +1712,977 @@ yyreduce:
 												}
 												
 											}
-#line 1697 "y.tab.c" /* yacc.c:1646  */
+#line 1716 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 144 "parserVdc.y" /* yacc.c:1646  */
+#line 163 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1703 "y.tab.c" /* yacc.c:1646  */
+#line 1722 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 147 "parserVdc.y" /* yacc.c:1646  */
-    {//if(!insertSymbolTable(symbol_table,$2, strdup(mostrarTopo(&scope_stack)->scopeName),$1) ){
-						//	yyerror("nome de variável já foi declarada!\n");
-					//	}else{
-							int  tamanho = 1+strlen((yyvsp[-1].sValue))+strlen((yyvsp[0].sValue));
-							char * str = (char *) malloc(tamanho);
-							sprintf(str, "%s%s",(yyvsp[-1].sValue),(yyvsp[0].sValue));
-							 (yyval.sValue) = str;
-							 free((yyvsp[-1].sValue));free((yyvsp[0].sValue));
-					//	} 
-						
+#line 166 "parserVdc.y" /* yacc.c:1646  */
+    {	if(!insertSymbolTable(symbol_table,(yyvsp[0].sValue), strdup(mostrarTopo(&scope_stack)->scopeName),(yyvsp[-1].sValue)) ){
+								yyerror("nome de variável já foi declarada!\n");
+							}else{
+								int  tamanho = 1+strlen((yyvsp[-1].sValue))+strlen((yyvsp[0].sValue));
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "%s%s",(yyvsp[-1].sValue),(yyvsp[0].sValue));
+									(yyval.sValue) = str;
+								}
+							} 
 						}
-#line 1719 "y.tab.c" /* yacc.c:1646  */
+#line 1738 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 160 "parserVdc.y" /* yacc.c:1646  */
-    {char * str = (char *) malloc(2); str = strdup(" "); (yyval.sValue) = str;}
-#line 1725 "y.tab.c" /* yacc.c:1646  */
+#line 179 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = strdup(" ");}
+#line 1744 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 161 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 17 + strlen((char *)(yyvsp[-1].sValue));
-            											char * str = (char *) malloc(tamanho); 
-													   sprintf(str, "%s%s\n}", "BlocoFuncoes {\n", (char *) (yyvsp[-1].sValue)); 
-													   printf("%s\n",str); }
-#line 1734 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 21:
-#line 167 "parserVdc.y" /* yacc.c:1646  */
-    {char * str = (char *) malloc(2); str = strdup(" "); (yyval.sValue) = str;}
-#line 1740 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 22:
-#line 168 "parserVdc.y" /* yacc.c:1646  */
-    {int  tamanho = 1+strlen((yyvsp[-1].sValue))+strlen((yyvsp[0].sValue));
-													char * str = (char *) malloc(tamanho);
-													sprintf(str, "%s%s",(yyvsp[-1].sValue),(yyvsp[0].sValue));
-													 (yyval.sValue) = str;
-													 free((yyvsp[-1].sValue));free((yyvsp[0].sValue));}
-#line 1750 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 23:
-#line 175 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 180 "parserVdc.y" /* yacc.c:1646  */
+    {	int tamanho = 17 + strlen((char *)(yyvsp[-1].sValue));
+	            											create_pointer(char,str,tamanho);
+															test(str){
+																sprintf(str, "%s%s\n}", "BlocoFuncoes {\n", (char *) (yyvsp[-1].sValue)); 
+																printf("%s\n",str); 
+															}
+														}
 #line 1756 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 24:
-#line 176 "parserVdc.y" /* yacc.c:1646  */
+  case 21:
+#line 191 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+													test(str){
+														strcpy(str, " ");
+														(yyval.sValue) = str;
+													}
+													}
+#line 1767 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 22:
+#line 197 "parserVdc.y" /* yacc.c:1646  */
+    {	int  tamanho = 1+strlen((yyvsp[-1].sValue))+strlen((yyvsp[0].sValue));
+														create_pointer(char,str,tamanho);
+														test(str){
+															sprintf(str, "%s%s",(yyvsp[-1].sValue),(yyvsp[0].sValue));
+															(yyval.sValue) = str;
+														}
+													 
+													}
+#line 1780 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 23:
+#line 207 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1762 "y.tab.c" /* yacc.c:1646  */
+#line 1786 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 24:
+#line 208 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 1792 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 180 "parserVdc.y" /* yacc.c:1646  */
+#line 212 "parserVdc.y" /* yacc.c:1646  */
     {inicializaContadores(); /*pushScope((char*)$3,(char*)$2);*/}
-#line 1768 "y.tab.c" /* yacc.c:1646  */
+#line 1798 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 181 "parserVdc.y" /* yacc.c:1646  */
+#line 213 "parserVdc.y" /* yacc.c:1646  */
     {/*popScope();*/}
-#line 1774 "y.tab.c" /* yacc.c:1646  */
+#line 1804 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 182 "parserVdc.y" /* yacc.c:1646  */
+#line 214 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 17+strlen((yyvsp[-9].sValue)) + strlen((yyvsp[-8].sValue)) + strlen((yyvsp[-6].sValue))+strlen((yyvsp[-2].sValue));
-										 char * str = (char *) malloc(tamanho); 
-										 sprintf(str, "Funcao %s %s (%s) {\n%s\n}", (yyvsp[-9].sValue), (yyvsp[-8].sValue), (yyvsp[-6].sValue), (yyvsp[-2].sValue)); 
-										 (yyval.sValue) = str; 
-										 free((yyvsp[-9].sValue)); free((yyvsp[-8].sValue)); free((yyvsp[-6].sValue)); free((yyvsp[-2].sValue));}
-#line 1784 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 28:
-#line 190 "parserVdc.y" /* yacc.c:1646  */
-    {inicializaContadores();/*pushScope((char*)$2,"void");*/}
-#line 1790 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 29:
-#line 191 "parserVdc.y" /* yacc.c:1646  */
-    {/*popScope();*/}
-#line 1796 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 30:
-#line 191 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 14 + strlen((yyvsp[-8].sValue)) + strlen((yyvsp[-6].sValue)) + strlen((yyvsp[-2].sValue));
-																char * str = (char *) malloc(tamanho); 
-																 sprintf(str, "Proc %s (%s) {\n%s\n}", (yyvsp[-8].sValue), (yyvsp[-6].sValue), (yyvsp[-2].sValue)); 
-																 (yyval.sValue) = str; 
-																 free((yyvsp[-8].sValue)); free((yyvsp[-6].sValue)); free((yyvsp[-2].sValue));}
-#line 1806 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 31:
-#line 198 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 3+strlen((yyvsp[-3].sValue)) + strlen((yyvsp[-1].sValue));
-																 char * str = (char *) malloc(tamanho); 
-																 sprintf(str, "%s(%s)", (yyvsp[-3].sValue), (yyvsp[-1].sValue)); 
-																 (yyval.sValue) = str;
-																 free((yyvsp[-3].sValue)); free((yyvsp[-1].sValue));}
+										create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "Funcao %s %s (%s) {\n%s\n}", (yyvsp[-9].sValue), (yyvsp[-8].sValue), (yyvsp[-6].sValue), (yyvsp[-2].sValue)); 
+											(yyval.sValue) = str;
+										}
+										}
 #line 1816 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 32:
-#line 205 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 9 + strlen((yyvsp[0].sValue));
-								char * str = (char *) malloc(tamanho); 
-								sprintf(str, "Retorne %s", (yyvsp[0].sValue)); 
-								(yyval.sValue) = str;
-								free((yyvsp[0].sValue));}
-#line 1826 "y.tab.c" /* yacc.c:1646  */
+  case 28:
+#line 224 "parserVdc.y" /* yacc.c:1646  */
+    {inicializaContadores();/*pushScope((char*)$2,"void");*/}
+#line 1822 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 33:
-#line 211 "parserVdc.y" /* yacc.c:1646  */
-    {char * str = (char *) malloc(2); str = strdup(" "); (yyval.sValue) = str;}
-#line 1832 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 34:
-#line 212 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 3 + strlen((yyvsp[-2].sValue))+ strlen((yyvsp[0].sValue));
-																	char * str = (char *) malloc(tamanho); 
-																	sprintf(str, "%s, %s", (yyvsp[-2].sValue), (yyvsp[0].sValue)); 
-																	(yyval.sValue) = str; 
-																	free((yyvsp[-2].sValue)); free((yyvsp[0].sValue));}
-#line 1842 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 35:
-#line 217 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1848 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 36:
-#line 220 "parserVdc.y" /* yacc.c:1646  */
-    {int  tamanho = 1+strlen((yyvsp[-1].sValue))+strlen((yyvsp[0].sValue));
-									char * str = (char *) malloc(tamanho);
-									sprintf(str, "%s%s",(yyvsp[-1].sValue),(yyvsp[0].sValue));
-									 (yyval.sValue) = str;
-									 free((yyvsp[-1].sValue));free((yyvsp[0].sValue));}
-#line 1858 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 37:
+  case 29:
 #line 225 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
+    {/*popScope();*/}
+#line 1828 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 30:
+#line 225 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 14 + strlen((yyvsp[-8].sValue)) + strlen((yyvsp[-6].sValue)) + strlen((yyvsp[-2].sValue));
+																	create_pointer(char,str,tamanho);
+																	test(str){
+																		sprintf(str, "Proc %s (%s) {\n%s\n}", (yyvsp[-8].sValue), (yyvsp[-6].sValue), (yyvsp[-2].sValue)); 
+																		(yyval.sValue) = str;
+																	}
+																	}
+#line 1840 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 31:
+#line 234 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 3+strlen((yyvsp[-3].sValue)) + strlen((yyvsp[-1].sValue));
+																create_pointer(char,str,tamanho);
+																test(str){
+																	sprintf(str, "%s(%s)", (yyvsp[-3].sValue), (yyvsp[-1].sValue)); 
+																	(yyval.sValue) = str;
+																} 
+																}
+#line 1852 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 32:
+#line 243 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 9 + strlen((yyvsp[0].sValue));
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "Retorne %s", (yyvsp[0].sValue)); 
+									(yyval.sValue) = str;
+								} 
+								}
 #line 1864 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 38:
-#line 232 "parserVdc.y" /* yacc.c:1646  */
-    {inicializaContadores();/*pushScope("main","void");*/}
-#line 1870 "y.tab.c" /* yacc.c:1646  */
+  case 33:
+#line 252 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+																	test(str){
+																		strcpy(str, " ");
+																		(yyval.sValue) = str;
+																	}
+																	}
+#line 1875 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 39:
-#line 233 "parserVdc.y" /* yacc.c:1646  */
-    {/*popScope();*/}
-#line 1876 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 40:
-#line 234 "parserVdc.y" /* yacc.c:1646  */
-    {printf("BlocoPrincipal {\n%s}\n",(yyvsp[-2].sValue));
-									free((yyvsp[-2].sValue));}
-#line 1883 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 41:
-#line 240 "parserVdc.y" /* yacc.c:1646  */
-    {char * str = (char *) malloc(2); str = strdup(" "); (yyval.sValue) = str;}
-#line 1889 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 42:
-#line 241 "parserVdc.y" /* yacc.c:1646  */
+  case 34:
+#line 258 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 3 + strlen((yyvsp[-2].sValue))+ strlen((yyvsp[0].sValue));
-											char * str = (char *) malloc(tamanho); 
-											sprintf(str, "%s;\n%s", (yyvsp[-2].sValue), (yyvsp[0].sValue)); 
-											(yyval.sValue) = str; 
-											free((yyvsp[-2].sValue)); free((yyvsp[0].sValue));}
-#line 1899 "y.tab.c" /* yacc.c:1646  */
+																	create_pointer(char,str,tamanho);
+																	test(str){
+																		sprintf(str, "%s, %s", (yyvsp[-2].sValue), (yyvsp[0].sValue)); 
+																		(yyval.sValue) = str;
+																	} 
+																	}
+#line 1887 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 43:
-#line 248 "parserVdc.y" /* yacc.c:1646  */
+  case 35:
+#line 265 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 1893 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 36:
+#line 268 "parserVdc.y" /* yacc.c:1646  */
+    {int  tamanho = 1+strlen((yyvsp[-1].sValue))+strlen((yyvsp[0].sValue));
+									create_pointer(char,str,tamanho);
+									test(str){
+										sprintf(str, "%s%s",(yyvsp[-1].sValue),(yyvsp[0].sValue));
+										(yyval.sValue) = str;
+									} 
+									}
 #line 1905 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 44:
-#line 249 "parserVdc.y" /* yacc.c:1646  */
+  case 37:
+#line 275 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
 #line 1911 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 45:
-#line 250 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
+  case 38:
+#line 282 "parserVdc.y" /* yacc.c:1646  */
+    {inicializaContadores(); pushScope("main","void");}
 #line 1917 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 46:
-#line 253 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
+  case 39:
+#line 283 "parserVdc.y" /* yacc.c:1646  */
+    {popScope();}
 #line 1923 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 47:
-#line 254 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
+  case 40:
+#line 284 "parserVdc.y" /* yacc.c:1646  */
+    {printf("BlocoPrincipal {\n%s}\n",(yyvsp[-2].sValue));}
 #line 1929 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 48:
-#line 257 "parserVdc.y" /* yacc.c:1646  */
+  case 41:
+#line 289 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+											test(str){
+												strcpy(str, " ");
+												(yyval.sValue) = str;
+											}
+											}
+#line 1940 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 42:
+#line 295 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 3 + strlen((yyvsp[-2].sValue))+ strlen((yyvsp[0].sValue));
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "%s;\n%s", (yyvsp[-2].sValue), (yyvsp[0].sValue)); 
+												(yyval.sValue) = str;
+											} 
+											}
+#line 1952 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 304 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1935 "y.tab.c" /* yacc.c:1646  */
+#line 1958 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 49:
-#line 258 "parserVdc.y" /* yacc.c:1646  */
-    {pushBlockScope("senao",elseCounter);
-										elseCounter++;
-										}
-#line 1943 "y.tab.c" /* yacc.c:1646  */
+  case 44:
+#line 305 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 1964 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 50:
-#line 261 "parserVdc.y" /* yacc.c:1646  */
-    {popScope();}
-#line 1949 "y.tab.c" /* yacc.c:1646  */
+  case 45:
+#line 306 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 1970 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 51:
-#line 261 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 12 + strlen((yyvsp[-6].sValue))+ strlen((yyvsp[-2].sValue));
-											char * str = (char *) malloc(tamanho); 
-											sprintf(str, "%s\nSenao {\n%s\n}", (yyvsp[-6].sValue), (yyvsp[-2].sValue)); 
-											(yyval.sValue) = str;
-											free((yyvsp[-6].sValue));free((yyvsp[-2].sValue));}
-#line 1959 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 52:
-#line 266 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 7 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[0].sValue));
-													char * str = (char *) malloc(tamanho); 
-													sprintf(str, "%s\nSenao%s", (yyvsp[-2].sValue), (yyvsp[0].sValue));
-													(yyval.sValue) = str; 
-													free((yyvsp[-2].sValue)); free((yyvsp[0].sValue));}
-#line 1969 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 53:
-#line 274 "parserVdc.y" /* yacc.c:1646  */
-    {pushBlockScope("se",ifCounter);
-							ifCounter++; }
+  case 46:
+#line 309 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
 #line 1976 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 54:
-#line 276 "parserVdc.y" /* yacc.c:1646  */
-    {popScope();}
+  case 47:
+#line 310 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
 #line 1982 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 55:
-#line 276 "parserVdc.y" /* yacc.c:1646  */
-    {	int tamanho = 5 + strlen((yyvsp[-7].sValue)) + strlen((yyvsp[-2].sValue));
-														char * str = (char *) malloc(tamanho); 
-														sprintf(str, "Se (%s) Execute {\n%s\n}", (yyvsp[-7].sValue), (yyvsp[-2].sValue)); 
+  case 48:
+#line 313 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 1988 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 49:
+#line 314 "parserVdc.y" /* yacc.c:1646  */
+    {pushBlockScope("senao",elseCounter);
+										elseCounter++;
+										}
+#line 1996 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 50:
+#line 317 "parserVdc.y" /* yacc.c:1646  */
+    {popScope();}
+#line 2002 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 51:
+#line 317 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 12 + strlen((yyvsp[-6].sValue))+ strlen((yyvsp[-2].sValue));
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "%s\nSenao {\n%s\n}", (yyvsp[-6].sValue), (yyvsp[-2].sValue));
+												(yyval.sValue) = str;
+											}  
+											}
+#line 2014 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 52:
+#line 324 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 7 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[0].sValue));
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "%s\nSenao%s", (yyvsp[-2].sValue), (yyvsp[0].sValue));
 														(yyval.sValue) = str;
-														free((yyvsp[-7].sValue)); free((yyvsp[-2].sValue));}
-#line 1992 "y.tab.c" /* yacc.c:1646  */
+													}  
+													}
+#line 2026 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 53:
+#line 334 "parserVdc.y" /* yacc.c:1646  */
+    {pushBlockScope("se",ifCounter);
+							ifCounter++; }
+#line 2033 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 54:
+#line 336 "parserVdc.y" /* yacc.c:1646  */
+    {popScope();}
+#line 2039 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 55:
+#line 336 "parserVdc.y" /* yacc.c:1646  */
+    {	int tamanho = 5 + strlen((yyvsp[-7].sValue)) + strlen((yyvsp[-2].sValue));
+														create_pointer(char,str,tamanho);
+														test(str){
+															sprintf(str, "Se (%s) Execute {\n%s\n}", (yyvsp[-7].sValue), (yyvsp[-2].sValue));
+															(yyval.sValue) = str;
+														} 
+														}
+#line 2051 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 283 "parserVdc.y" /* yacc.c:1646  */
+#line 345 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 1998 "y.tab.c" /* yacc.c:1646  */
+#line 2057 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 284 "parserVdc.y" /* yacc.c:1646  */
+#line 346 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2004 "y.tab.c" /* yacc.c:1646  */
+#line 2063 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 285 "parserVdc.y" /* yacc.c:1646  */
+#line 347 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2010 "y.tab.c" /* yacc.c:1646  */
+#line 2069 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 286 "parserVdc.y" /* yacc.c:1646  */
+#line 348 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2016 "y.tab.c" /* yacc.c:1646  */
+#line 2075 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 287 "parserVdc.y" /* yacc.c:1646  */
+#line 349 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2022 "y.tab.c" /* yacc.c:1646  */
+#line 2081 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 288 "parserVdc.y" /* yacc.c:1646  */
+#line 350 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2028 "y.tab.c" /* yacc.c:1646  */
+#line 2087 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 289 "parserVdc.y" /* yacc.c:1646  */
+#line 351 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2034 "y.tab.c" /* yacc.c:1646  */
+#line 2093 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 292 "parserVdc.y" /* yacc.c:1646  */
+#line 354 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 2 + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
-												 char * str = (char *) malloc(tamanho); 
-												 sprintf(str, "%s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
-												 (yyval.sValue) = str;
-												 free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2044 "y.tab.c" /* yacc.c:1646  */
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "%s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue));
+													(yyval.sValue) = str;
+												} 
+												}
+#line 2105 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 297 "parserVdc.y" /* yacc.c:1646  */
+#line 361 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 3 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "%s %s %s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
-												(yyval.sValue) = str; 
-												free((yyvsp[-2].sValue)); free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2054 "y.tab.c" /* yacc.c:1646  */
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "%s %s %s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
+													(yyval.sValue) = str;
+												} 
+												}
+#line 2117 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 304 "parserVdc.y" /* yacc.c:1646  */
+#line 370 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2060 "y.tab.c" /* yacc.c:1646  */
+#line 2123 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 305 "parserVdc.y" /* yacc.c:1646  */
+#line 371 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2066 "y.tab.c" /* yacc.c:1646  */
+#line 2129 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 306 "parserVdc.y" /* yacc.c:1646  */
+#line 372 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2072 "y.tab.c" /* yacc.c:1646  */
+#line 2135 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 307 "parserVdc.y" /* yacc.c:1646  */
+#line 373 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2078 "y.tab.c" /* yacc.c:1646  */
+#line 2141 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 308 "parserVdc.y" /* yacc.c:1646  */
+#line 374 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2084 "y.tab.c" /* yacc.c:1646  */
+#line 2147 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 309 "parserVdc.y" /* yacc.c:1646  */
+#line 375 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2090 "y.tab.c" /* yacc.c:1646  */
+#line 2153 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 312 "parserVdc.y" /* yacc.c:1646  */
+#line 378 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2096 "y.tab.c" /* yacc.c:1646  */
+#line 2159 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 313 "parserVdc.y" /* yacc.c:1646  */
+#line 379 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2102 "y.tab.c" /* yacc.c:1646  */
+#line 2165 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 316 "parserVdc.y" /* yacc.c:1646  */
+#line 382 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2108 "y.tab.c" /* yacc.c:1646  */
+#line 2171 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 317 "parserVdc.y" /* yacc.c:1646  */
+#line 383 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2114 "y.tab.c" /* yacc.c:1646  */
+#line 2177 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 318 "parserVdc.y" /* yacc.c:1646  */
+#line 384 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2120 "y.tab.c" /* yacc.c:1646  */
+#line 2183 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 322 "parserVdc.y" /* yacc.c:1646  */
+#line 388 "parserVdc.y" /* yacc.c:1646  */
     {pushBlockScope("enquanto",whileCounter);
 							whileCounter++;}
-#line 2127 "y.tab.c" /* yacc.c:1646  */
+#line 2190 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 324 "parserVdc.y" /* yacc.c:1646  */
+#line 390 "parserVdc.y" /* yacc.c:1646  */
     {popScope();}
-#line 2133 "y.tab.c" /* yacc.c:1646  */
+#line 2196 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 324 "parserVdc.y" /* yacc.c:1646  */
+#line 390 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 25 + strlen((yyvsp[-7].sValue)) + strlen((yyvsp[-2].sValue));
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "Enquanto (%s) Execute {\n%s\n}", (yyvsp[-7].sValue), (yyvsp[-2].sValue)); 
-												(yyval.sValue) = str; 
-												free((yyvsp[-7].sValue)), free((yyvsp[-2].sValue));}
-#line 2143 "y.tab.c" /* yacc.c:1646  */
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "Enquanto (%s) Execute {\n%s\n}", (yyvsp[-7].sValue), (yyvsp[-2].sValue)); 
+													(yyval.sValue) = str;
+												}
+												}
+#line 2208 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 331 "parserVdc.y" /* yacc.c:1646  */
+#line 399 "parserVdc.y" /* yacc.c:1646  */
     {	pushBlockScope("facaenquanto",doWhileCounter);
 										doWhileCounter++;}
-#line 2150 "y.tab.c" /* yacc.c:1646  */
+#line 2215 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 333 "parserVdc.y" /* yacc.c:1646  */
+#line 401 "parserVdc.y" /* yacc.c:1646  */
     {popScope();}
-#line 2156 "y.tab.c" /* yacc.c:1646  */
+#line 2221 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 334 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 25 + strlen((yyvsp[-6].sValue)) +strlen((yyvsp[-1].sValue));
-																	  char * str = (char *) malloc(tamanho); 
-																	  sprintf(str, "Execute {\n%s\n} Enquanto (%s)", (yyvsp[-6].sValue), (yyvsp[-1].sValue)); 
-																	  (yyval.sValue) = str;
-																	  free((yyvsp[-6].sValue)), free((yyvsp[-1].sValue));}
-#line 2166 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 82:
-#line 341 "parserVdc.y" /* yacc.c:1646  */
-    {pushBlockScope("para",forCounter);
-								forCounter++;}
-#line 2173 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 83:
-#line 343 "parserVdc.y" /* yacc.c:1646  */
-    {popScope();}
-#line 2179 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 84:
-#line 345 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 22 + strlen((yyvsp[-10].sValue)) + strlen((yyvsp[-7].sValue)) + strlen((yyvsp[-5].sValue)) + strlen((yyvsp[-1].sValue));
-													char * str = (char *) malloc(tamanho); 
-													sprintf(str, "Para (%s;%s;%s) Execute{\n%s\n}", (yyvsp[-10].sValue), (yyvsp[-7].sValue), (yyvsp[-5].sValue), (yyvsp[-1].sValue)); 
-													(yyval.sValue) = str;
-													free((yyvsp[-10].sValue)); free((yyvsp[-7].sValue)); free((yyvsp[-5].sValue)); free((yyvsp[-1].sValue));}
-#line 2189 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 85:
-#line 352 "parserVdc.y" /* yacc.c:1646  */
-    {char * str = (char *) malloc(2); str = strdup(" "); (yyval.sValue) = str;}
-#line 2195 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 86:
-#line 353 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2201 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 87:
-#line 356 "parserVdc.y" /* yacc.c:1646  */
-    {char * str = (char *) malloc(2); str = strdup(" "); (yyval.sValue) = str;}
-#line 2207 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 88:
-#line 357 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2213 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 89:
-#line 360 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 10 + strlen((yyvsp[-1].sValue));
-													char * str = (char *) malloc(tamanho); 
-													sprintf(str, "Imprima(%s)", (yyvsp[-1].sValue)); 
-													(yyval.sValue) = str; 
-													free((yyvsp[-1].sValue));}
-#line 2223 "y.tab.c" /* yacc.c:1646  */
-    break;
-
-  case 90:
-#line 367 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 7 + strlen((yyvsp[-1].sValue));
-											char * str = (char *) malloc(tamanho); 
-											sprintf(str, "Leia(%s)", (yyvsp[-1].sValue)); 
-											(yyval.sValue) = str; 
-											free((yyvsp[-1].sValue));}
+#line 402 "parserVdc.y" /* yacc.c:1646  */
+    {	int tamanho = 25 + strlen((yyvsp[-6].sValue)) +strlen((yyvsp[-1].sValue));
+																		create_pointer(char,str,tamanho);
+																		test(str){
+																			sprintf(str, "Execute {\n%s\n} Enquanto (%s)", (yyvsp[-6].sValue), (yyvsp[-1].sValue)); 
+																			(yyval.sValue) = str;
+																		} 
+																	  }
 #line 2233 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 91:
-#line 374 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 2 + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
-										 char * str = (char *) malloc(tamanho); 
-										 sprintf(str, "%s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
-										 (yyval.sValue) = str;
-										 free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2243 "y.tab.c" /* yacc.c:1646  */
+  case 82:
+#line 411 "parserVdc.y" /* yacc.c:1646  */
+    {pushBlockScope("para",forCounter);
+								forCounter++;}
+#line 2240 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 92:
-#line 379 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 4 + strlen((yyvsp[-3].sValue))+ strlen((yyvsp[-2].sValue)) + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
-									     char * str = (char *) malloc(tamanho); 
-										 sprintf(str, "%s %s %s %s", (yyvsp[-3].sValue), (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
-										 (yyval.sValue) = str;
-										 free((yyvsp[-3].sValue)); free((yyvsp[-2].sValue));free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2253 "y.tab.c" /* yacc.c:1646  */
+  case 83:
+#line 413 "parserVdc.y" /* yacc.c:1646  */
+    {popScope();}
+#line 2246 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 93:
-#line 388 "parserVdc.y" /* yacc.c:1646  */
-    {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2259 "y.tab.c" /* yacc.c:1646  */
+  case 84:
+#line 415 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 22 + strlen((yyvsp[-10].sValue)) + strlen((yyvsp[-7].sValue)) + strlen((yyvsp[-5].sValue)) + strlen((yyvsp[-1].sValue));
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "Para (%s;%s;%s) Execute{\n%s\n}", (yyvsp[-10].sValue), (yyvsp[-7].sValue), (yyvsp[-5].sValue), (yyvsp[-1].sValue)); 
+														(yyval.sValue) = str;
+													} 
+													}
+#line 2258 "y.tab.c" /* yacc.c:1646  */
     break;
 
-  case 94:
-#line 389 "parserVdc.y" /* yacc.c:1646  */
-    {int tamanho = 2 + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
-										char * str = (char *) malloc(tamanho); 
-										sprintf(str, "%s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
-										(yyval.sValue) = str;
-										free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
+  case 85:
+#line 424 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+							test(str){
+								strcpy(str, " ");
+								(yyval.sValue) = str;
+							}
+							}
 #line 2269 "y.tab.c" /* yacc.c:1646  */
     break;
 
+  case 86:
+#line 430 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 2275 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 87:
+#line 433 "parserVdc.y" /* yacc.c:1646  */
+    {create_pointer(char,str,2);
+						test(str){
+							strcpy(str, " ");
+							(yyval.sValue) = str;
+						}
+						}
+#line 2286 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 88:
+#line 439 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 2292 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 89:
+#line 442 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 10 + strlen((yyvsp[-1].sValue));
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "Imprima(%s)", (yyvsp[-1].sValue)); 
+														(yyval.sValue) = str;
+													} 
+													}
+#line 2304 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 90:
+#line 451 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 7 + strlen((yyvsp[-1].sValue));
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "Leia(%s)", (yyvsp[-1].sValue));  
+												(yyval.sValue) = str;
+											} 
+											}
+#line 2316 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 91:
+#line 460 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 2 + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
+										create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "%s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue));   
+											(yyval.sValue) = str;
+										} 
+										}
+#line 2328 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 92:
+#line 467 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 4 + strlen((yyvsp[-3].sValue))+ strlen((yyvsp[-2].sValue)) + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
+									    create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "%s %s %s %s", (yyvsp[-3].sValue), (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
+											(yyval.sValue) = str;
+										}
+										}
+#line 2340 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 93:
+#line 478 "parserVdc.y" /* yacc.c:1646  */
+    {(yyval.sValue) = (yyvsp[0].sValue);}
+#line 2346 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 94:
+#line 479 "parserVdc.y" /* yacc.c:1646  */
+    {int tamanho = 2 + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
+										create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "%s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
+											(yyval.sValue) = str;
+										} 
+										}
+#line 2358 "y.tab.c" /* yacc.c:1646  */
+    break;
+
   case 95:
-#line 394 "parserVdc.y" /* yacc.c:1646  */
+#line 486 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 3 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "%s %s %s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
-												(yyval.sValue) = str; 
-												free((yyvsp[-2].sValue)); free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2279 "y.tab.c" /* yacc.c:1646  */
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "%s %s %s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
+													(yyval.sValue) = str;
+												} 
+												}
+#line 2370 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
-#line 399 "parserVdc.y" /* yacc.c:1646  */
+#line 493 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 3 + strlen((yyvsp[-1].sValue));
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "(%s)", (yyvsp[-1].sValue)); 
-												(yyval.sValue) = str; 
-												free((yyvsp[-1].sValue));}
-#line 2289 "y.tab.c" /* yacc.c:1646  */
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "(%s)", (yyvsp[-1].sValue));
+													(yyval.sValue) = str;
+												} 
+												}
+#line 2382 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
-#line 404 "parserVdc.y" /* yacc.c:1646  */
+#line 500 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 3 + strlen((yyvsp[-2].sValue)) + strlen((yyvsp[-1].sValue)) + strlen((yyvsp[0].sValue));
-															char * str = (char *) malloc(tamanho); 
-															sprintf(str, "%s %s %s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
-															(yyval.sValue) = str; 
-															free((yyvsp[-2].sValue)); free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2299 "y.tab.c" /* yacc.c:1646  */
+															create_pointer(char,str,tamanho);
+															test(str){
+																sprintf(str, "%s %s %s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue)); 
+																(yyval.sValue) = str;
+															} 
+															}
+#line 2394 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
-#line 411 "parserVdc.y" /* yacc.c:1646  */
+#line 509 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2305 "y.tab.c" /* yacc.c:1646  */
+#line 2400 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
-#line 412 "parserVdc.y" /* yacc.c:1646  */
+#line 510 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2311 "y.tab.c" /* yacc.c:1646  */
+#line 2406 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 100:
-#line 413 "parserVdc.y" /* yacc.c:1646  */
+#line 511 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2317 "y.tab.c" /* yacc.c:1646  */
+#line 2412 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 101:
-#line 416 "parserVdc.y" /* yacc.c:1646  */
+#line 514 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2323 "y.tab.c" /* yacc.c:1646  */
+#line 2418 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 102:
-#line 417 "parserVdc.y" /* yacc.c:1646  */
+#line 515 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2329 "y.tab.c" /* yacc.c:1646  */
+#line 2424 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 103:
-#line 418 "parserVdc.y" /* yacc.c:1646  */
+#line 516 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2335 "y.tab.c" /* yacc.c:1646  */
+#line 2430 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 104:
-#line 421 "parserVdc.y" /* yacc.c:1646  */
+#line 519 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2341 "y.tab.c" /* yacc.c:1646  */
+#line 2436 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 105:
-#line 422 "parserVdc.y" /* yacc.c:1646  */
+#line 520 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2347 "y.tab.c" /* yacc.c:1646  */
+#line 2442 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
-#line 423 "parserVdc.y" /* yacc.c:1646  */
+#line 521 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2353 "y.tab.c" /* yacc.c:1646  */
+#line 2448 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
-#line 424 "parserVdc.y" /* yacc.c:1646  */
+#line 522 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2359 "y.tab.c" /* yacc.c:1646  */
+#line 2454 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 108:
-#line 425 "parserVdc.y" /* yacc.c:1646  */
+#line 523 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2365 "y.tab.c" /* yacc.c:1646  */
+#line 2460 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 109:
-#line 426 "parserVdc.y" /* yacc.c:1646  */
+#line 524 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2371 "y.tab.c" /* yacc.c:1646  */
+#line 2466 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 110:
-#line 429 "parserVdc.y" /* yacc.c:1646  */
+#line 527 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2377 "y.tab.c" /* yacc.c:1646  */
+#line 2472 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 111:
-#line 430 "parserVdc.y" /* yacc.c:1646  */
+#line 528 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2383 "y.tab.c" /* yacc.c:1646  */
+#line 2478 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 112:
-#line 431 "parserVdc.y" /* yacc.c:1646  */
+#line 529 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2389 "y.tab.c" /* yacc.c:1646  */
+#line 2484 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 113:
-#line 432 "parserVdc.y" /* yacc.c:1646  */
+#line 530 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2395 "y.tab.c" /* yacc.c:1646  */
+#line 2490 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 114:
-#line 433 "parserVdc.y" /* yacc.c:1646  */
+#line 531 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2401 "y.tab.c" /* yacc.c:1646  */
+#line 2496 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 115:
-#line 434 "parserVdc.y" /* yacc.c:1646  */
+#line 532 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2407 "y.tab.c" /* yacc.c:1646  */
+#line 2502 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 116:
-#line 437 "parserVdc.y" /* yacc.c:1646  */
+#line 535 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2413 "y.tab.c" /* yacc.c:1646  */
+#line 2508 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 117:
-#line 438 "parserVdc.y" /* yacc.c:1646  */
+#line 536 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2419 "y.tab.c" /* yacc.c:1646  */
+#line 2514 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 118:
-#line 441 "parserVdc.y" /* yacc.c:1646  */
+#line 539 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2425 "y.tab.c" /* yacc.c:1646  */
+#line 2520 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 119:
-#line 442 "parserVdc.y" /* yacc.c:1646  */
+#line 540 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2431 "y.tab.c" /* yacc.c:1646  */
+#line 2526 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 120:
-#line 443 "parserVdc.y" /* yacc.c:1646  */
+#line 541 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2437 "y.tab.c" /* yacc.c:1646  */
+#line 2532 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 121:
-#line 446 "parserVdc.y" /* yacc.c:1646  */
+#line 544 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 9+strlen((yyvsp[0].sValue));
-								char* str = (char*)malloc(tamanho);
-								sprintf(str, "MeuTipo %s", (yyvsp[0].sValue));
-								(yyval.sValue) = str;
-								free((yyvsp[0].sValue));}
-#line 2447 "y.tab.c" /* yacc.c:1646  */
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "MeuTipo %s", (yyvsp[0].sValue));
+									(yyval.sValue) = str;
+								}
+								}
+#line 2544 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 122:
-#line 453 "parserVdc.y" /* yacc.c:1646  */
+#line 553 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 8+strlen((yyvsp[-2].sValue))+ strlen((yyvsp[-1].sValue)) +strlen((yyvsp[0].sValue));
-																 char* str = (char*)malloc(tamanho);
-																 sprintf(str, "Vetor %s %s%s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue));
-																 (yyval.sValue) = str;
-																 free((yyvsp[-2].sValue)); free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2457 "y.tab.c" /* yacc.c:1646  */
+																create_pointer(char,str,tamanho);
+																test(str){
+																	sprintf(str, "Vetor %s %s%s", (yyvsp[-2].sValue), (yyvsp[-1].sValue), (yyvsp[0].sValue));
+																	(yyval.sValue) = str;
+																}
+																}
+#line 2556 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 123:
-#line 458 "parserVdc.y" /* yacc.c:1646  */
+#line 560 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 8+strlen((yyvsp[-1].sValue))+strlen((yyvsp[0].sValue));
-													char* str = (char*)malloc(tamanho);
-													sprintf(str, "Vetor %s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue));
-													(yyval.sValue) = str; 
-													free((yyvsp[-1].sValue)); free((yyvsp[0].sValue));}
-#line 2467 "y.tab.c" /* yacc.c:1646  */
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "Vetor %s %s", (yyvsp[-1].sValue), (yyvsp[0].sValue));
+														(yyval.sValue) = str;
+													}
+													}
+#line 2568 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 124:
-#line 465 "parserVdc.y" /* yacc.c:1646  */
+#line 569 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = 3+strlen((char*)(yyvsp[-1].sValue));
-											 char* str = (char*)malloc(tamanho);
-											 sprintf(str, "[%s]",(yyvsp[-1].sValue));
-											 (yyval.sValue) = str;
-											 free((yyvsp[-1].sValue));}
-#line 2477 "y.tab.c" /* yacc.c:1646  */
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "[%s]",(yyvsp[-1].sValue));
+												(yyval.sValue) = str;
+											}
+											}
+#line 2580 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 125:
-#line 472 "parserVdc.y" /* yacc.c:1646  */
+#line 578 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2483 "y.tab.c" /* yacc.c:1646  */
+#line 2586 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 126:
-#line 473 "parserVdc.y" /* yacc.c:1646  */
+#line 579 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2489 "y.tab.c" /* yacc.c:1646  */
+#line 2592 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 127:
-#line 474 "parserVdc.y" /* yacc.c:1646  */
+#line 580 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2495 "y.tab.c" /* yacc.c:1646  */
+#line 2598 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 128:
-#line 475 "parserVdc.y" /* yacc.c:1646  */
+#line 581 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2501 "y.tab.c" /* yacc.c:1646  */
+#line 2604 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 129:
-#line 476 "parserVdc.y" /* yacc.c:1646  */
+#line 582 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2507 "y.tab.c" /* yacc.c:1646  */
+#line 2610 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 130:
-#line 479 "parserVdc.y" /* yacc.c:1646  */
+#line 585 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2513 "y.tab.c" /* yacc.c:1646  */
+#line 2616 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 131:
-#line 480 "parserVdc.y" /* yacc.c:1646  */
+#line 586 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = strlen((yyvsp[-2].sValue)) + strlen((yyvsp[0].sValue)) + 3;
-								char* str = (char*) malloc(tamanho);
-								sprintf(str, "%s, %s", (yyvsp[-2].sValue), (yyvsp[0].sValue));
-								(yyval.sValue) = str; 
-								free((yyvsp[-2].sValue));
-								free((yyvsp[0].sValue));}
-#line 2524 "y.tab.c" /* yacc.c:1646  */
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "%s, %s", (yyvsp[-2].sValue), (yyvsp[0].sValue));
+									(yyval.sValue) = str;
+								}
+								}
+#line 2628 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 132:
-#line 488 "parserVdc.y" /* yacc.c:1646  */
+#line 595 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2530 "y.tab.c" /* yacc.c:1646  */
+#line 2634 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 133:
-#line 489 "parserVdc.y" /* yacc.c:1646  */
+#line 596 "parserVdc.y" /* yacc.c:1646  */
     {int tamanho = strlen((yyvsp[-2].sValue))+1+strlen((yyvsp[0].sValue))+3;
-					char* str = malloc(tamanho);
-					sprintf(str, "%s, %s",(yyvsp[-2].sValue),(yyvsp[0].sValue));
-					(yyval.sValue) = str; 
-					free((yyvsp[-2].sValue)); free((yyvsp[0].sValue));}
-#line 2540 "y.tab.c" /* yacc.c:1646  */
+						create_pointer(char,str,tamanho);
+						test(str){
+							sprintf(str, "%s, %s",(yyvsp[-2].sValue),(yyvsp[0].sValue));
+							(yyval.sValue) = str;
+						}
+						}
+#line 2646 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 134:
-#line 496 "parserVdc.y" /* yacc.c:1646  */
+#line 605 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2546 "y.tab.c" /* yacc.c:1646  */
+#line 2652 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 135:
-#line 497 "parserVdc.y" /* yacc.c:1646  */
+#line 606 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2552 "y.tab.c" /* yacc.c:1646  */
+#line 2658 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 136:
-#line 501 "parserVdc.y" /* yacc.c:1646  */
+#line 610 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2558 "y.tab.c" /* yacc.c:1646  */
+#line 2664 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 137:
-#line 502 "parserVdc.y" /* yacc.c:1646  */
+#line 611 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2564 "y.tab.c" /* yacc.c:1646  */
+#line 2670 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 138:
-#line 503 "parserVdc.y" /* yacc.c:1646  */
+#line 612 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2570 "y.tab.c" /* yacc.c:1646  */
+#line 2676 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 139:
-#line 504 "parserVdc.y" /* yacc.c:1646  */
+#line 613 "parserVdc.y" /* yacc.c:1646  */
     {(yyval.sValue) = (yyvsp[0].sValue);}
-#line 2576 "y.tab.c" /* yacc.c:1646  */
+#line 2682 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2580 "y.tab.c" /* yacc.c:1646  */
+#line 2686 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2804,7 +2910,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 506 "parserVdc.y" /* yacc.c:1906  */
+#line 615 "parserVdc.y" /* yacc.c:1906  */
 
 
 int main (void) {
@@ -2812,8 +2918,10 @@ int main (void) {
 	iniciar(&scope_stack);
 	init_array(&symbol_table,50);
 	startMemoryBank();
+	fp = fopen("result.c", "w+");
 	int resultado = yyparse ( );
 	stopMemoryBank();
+	fclose(fp);
 	return resultado;
 }
 
@@ -2846,22 +2954,27 @@ int popScope(){
 void pushBlockScope(char*nome, int ordem){
 	ElementoTipoNome * item = mostrarTopo(&scope_stack);
 	printf("nome do escopo: %s\n",item->scopeName);
-	char * escopoPai = (char*) malloc(strlen(item->scopeName));
 	
-	
+	create_pointer(char,escopoPai,strlen(item->scopeName));
+	test(escopoPai){
+		strcpy(escopoPai,item->scopeName);
+		printf("nome do escopoPai: %s\n",escopoPai);
 
+	}
+	
 	char ordemStr [10];
 	sprintf(ordemStr, "%d", ordem);
 	
 	int tamanho = strlen(escopoPai) + strlen(nome)+strlen(ordemStr)+1;
-	char* resultado = (char*) malloc(tamanho);
-	strcpy(resultado,escopoPai);
-	strcat(resultado,nome);
-	strcat(resultado,ordemStr);
-	//strcat(resultado,"\0");
-	//coloca na pilha
-	pushScope(resultado,"void");
-	
+	create_pointer(char,resultado,tamanho);
+	test(resultado){
+		strcpy(resultado,escopoPai);
+		strcat(resultado,nome);
+		strcat(resultado,ordemStr);
+		printf("nome do escopoPai: %s\n",resultado);
+		//coloca na pilha
+		pushScope(resultado,"void");
+	}
 }
 
 void inicializaContadores(){
@@ -2872,14 +2985,17 @@ void inicializaContadores(){
 	doWhileCounter = 0;
 }
 int insertSymbolTable(HashTable* hashTable,char*name, char*scope,char*type){
-	char* key = (char*) malloc(strlen(scope)+strlen(name)+1);
-	strcpy(key,scope);
-	strcat(key,name);
+	int tamanho = strlen(scope)+strlen(name)+1;
+	create_pointer(char,key,tamanho);
+	test(key){
+		strcpy(key,scope);
+		strcat(key,name);
+	}
+	
 	Symbol *item = createSymbol(key,name,scope,type);
 	int result = insert(&symbol_table,item);
 	printf("tamanho da hash: %d\n",symbol_table.size);
 	return result;
-	free(key);
 }
 
 

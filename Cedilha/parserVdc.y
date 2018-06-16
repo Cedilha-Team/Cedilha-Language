@@ -15,6 +15,7 @@ extern char * yytext;
 
 Pilha scope_stack;
 HashTable symbol_table;
+FILE *fp;
 
 /*usado para contar qual bloco está*/
 int forCounter;
@@ -26,6 +27,9 @@ int doWhileCounter;
 
 void pushBlockScope(char*nome, int ordem);
 void inicializaContadores();
+
+
+
 %}
 
 %union {
@@ -59,7 +63,12 @@ tamanho_vetor termos ids retorne declaracao_registro tipo_vetor tipo_registro
 programa : {pushScope("global","void");} declaracoes assinatura_funcoes bloco_principal bloco_funcoes {popScope();}
          ;
 
-declaracoes :												{$$ = strdup(" ");}
+declaracoes :												{create_pointer(char,str,2);
+																test(str){
+																	strcpy(str, " ");
+																	$$ = str;
+																}
+															}
 			| declaracao_global PONTOVIRGULA declaracoes	{int tamanho = 4 + strlen($1) + strlen($3);
 															create_pointer(char,str,tamanho);
 															test(str){
@@ -90,7 +99,12 @@ declaracao_registro : MEU_TIPO ID LCHAVE parametros RCHAVE	{if(!insertSymbolTabl
 					;										
 
 
-assinatura_funcoes  :												{$$ = strdup(" ");}
+assinatura_funcoes  :												{create_pointer(char,str,2);
+																	test(str){
+																		strcpy(str, " ");
+																		$$ = str;
+																	}
+																	}
 					| assinaturas PONTOVIRGULA assinatura_funcoes 	{int tamanho = 4 + strlen($1) + strlen($3);
 			        												create_pointer(char,str,tamanho);
 																	test(str){
@@ -132,7 +146,12 @@ assinatura_proc : PROC ID LPARENTESES parametros RPARENTESES	{	if(!insertSymbolT
 																}
 				;
 				
-parametros :								{	$$ = strdup(" ");}
+parametros :								{create_pointer(char,str,2);
+											test(str){
+												strcpy(str, " ");
+												$$ = str;
+											}
+											}
            | parametro VIRGULA parametros	{	int tamanho = 3 + strlen($1) + strlen($3);
 												create_pointer(char,str,tamanho);
 												test(str){
@@ -169,12 +188,20 @@ bloco_funcoes  : {$$ = strdup(" ");}
 													   
 				;
 				
-funcoes_proc :										{$ = strdup(" ");}
-			 | definicoes_funcoes_proc funcoes_proc {int  tamanho = 1+strlen($1)+strlen($2);
-													char * str = (char *) malloc(tamanho);
-													sprintf(str, "%s%s",$1,$2);
-													 $$ = str;
-													 free($1);free($2);}
+funcoes_proc :										{create_pointer(char,str,2);
+													test(str){
+														strcpy(str, " ");
+														$$ = str;
+													}
+													}
+			 | definicoes_funcoes_proc funcoes_proc {	int  tamanho = 1+strlen($1)+strlen($2);
+														create_pointer(char,str,tamanho);
+														test(str){
+															sprintf(str, "%s%s",$1,$2);
+															$$ = str;
+														}
+													 
+													}
 			 ;
 
 definicoes_funcoes_proc : definicao_funcao			{$$ = $1;}
@@ -185,48 +212,66 @@ definicao_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES
 								LCHAVE {inicializaContadores(); /*pushScope((char*)$3,(char*)$2);*/} 
 										sentencas {/*popScope();*/} 
 								RCHAVE	{int tamanho = 17+strlen($2) + strlen($3) + strlen($5)+strlen($9);
-										 char * str = (char *) malloc(tamanho); 
-										 sprintf(str, "Funcao %s %s (%s) {\n%s\n}", $2, $3, $5, $9); 
-										 $$ = str; 
-										 free($2); free($3); free($5); free($9);}
+										create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "Funcao %s %s (%s) {\n%s\n}", $2, $3, $5, $9); 
+											$$ = str;
+										}
+										}
 				 ;
 
 definicao_procedimento : PROC ID LPARENTESES parametros RPARENTESES 
 								LCHAVE {inicializaContadores();/*pushScope((char*)$2,"void");*/}
 								sentencas {/*popScope();*/} RCHAVE	{int tamanho = 14 + strlen($2) + strlen($4) + strlen($8);
-																char * str = (char *) malloc(tamanho); 
-																 sprintf(str, "Proc %s (%s) {\n%s\n}", $2, $4, $8); 
-																 $$ = str; 
-																 free($2); free($4); free($8);}
+																	create_pointer(char,str,tamanho);
+																	test(str){
+																		sprintf(str, "Proc %s (%s) {\n%s\n}", $2, $4, $8); 
+																		$$ = str;
+																	}
+																	}
 				 ;
 
 chamada_funcao : ID  LPARENTESES parametros_chamada RPARENTESES	{int tamanho = 3+strlen($1) + strlen($3);
-																 char * str = (char *) malloc(tamanho); 
-																 sprintf(str, "%s(%s)", $1, $3); 
-																 $$ = str;
-																 free($1); free($3);} 
+																create_pointer(char,str,tamanho);
+																test(str){
+																	sprintf(str, "%s(%s)", $1, $3); 
+																	$$ = str;
+																} 
+																} 
 			   ;
 
 retorne : RETORNE expressao		{int tamanho = 9 + strlen($2);
-								char * str = (char *) malloc(tamanho); 
-								sprintf(str, "Retorne %s", $2); 
-								$$ = str;
-								free($2);}
-
-parametros_chamada: {$$ = strdup(" ");}
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "Retorne %s", $2); 
+									$$ = str;
+								} 
+								}
+		;
+		
+parametros_chamada: 												{create_pointer(char,str,2);
+																	test(str){
+																		strcpy(str, " ");
+																		$$ = str;
+																	}
+																	}
 		           | parametro_chamada VIRGULA parametros_chamada	{int tamanho = 3 + strlen($1)+ strlen($3);
-																	char * str = (char *) malloc(tamanho); 
-																	sprintf(str, "%s, %s", $1, $3); 
-																	$$ = str; 
-																	free($1); free($3);}
+																	create_pointer(char,str,tamanho);
+																	test(str){
+																		sprintf(str, "%s, %s", $1, $3); 
+																		$$ = str;
+																	} 
+																	}
 		           | parametro_chamada								{$$ = $1;}
         			;
         			
 parametro_chamada: ARROBA termo    {int  tamanho = 1+strlen($1)+strlen($2);
-									char * str = (char *) malloc(tamanho);
-									sprintf(str, "%s%s",$1,$2);
-									 $$ = str;
-									 free($1);free($2);}
+									create_pointer(char,str,tamanho);
+									test(str){
+										sprintf(str, "%s%s",$1,$2);
+										$$ = str;
+									} 
+									}
 	    		  | termo   		{$$ = $1;}
 	    		 ;
 		  
@@ -234,20 +279,26 @@ parametro_chamada: ARROBA termo    {int  tamanho = 1+strlen($1)+strlen($2);
 
 					
 bloco_principal : BPRINCIPAL LCHAVE 
-								{inicializaContadores();/*pushScope("main","void");*/} 
-								sentencas {/*popScope();*/} 
-							RCHAVE  {printf("BlocoPrincipal {\n%s}\n",$4);
-									free($4);}
+								{inicializaContadores(); pushScope("main","void");} 
+								sentencas {popScope();} 
+							RCHAVE  {printf("BlocoPrincipal {\n%s}\n",$4);}
 				;
 
 
 
-sentencas:									{$$ = strdup(" ");}
+sentencas:									{create_pointer(char,str,2);
+											test(str){
+												strcpy(str, " ");
+												$$ = str;
+											}
+											}
 		 | sentenca PONTOVIRGULA sentencas {int tamanho = 3 + strlen($1)+ strlen($3);
-											char * str = (char *) malloc(tamanho); 
-											sprintf(str, "%s;\n%s", $1, $3); 
-											$$ = str; 
-											free($1); free($3);}
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "%s;\n%s", $1, $3); 
+												$$ = str;
+											} 
+											}
 		 ;
 
 sentenca: comando   {$$ = $1;}
@@ -264,26 +315,32 @@ bloco_se : se_simplificado		{$$ = $1;}
 										elseCounter++;
 										} 
 			sentencas {popScope();} RCHAVE {int tamanho = 12 + strlen($1)+ strlen($5);
-											char * str = (char *) malloc(tamanho); 
-											sprintf(str, "%s\nSenao {\n%s\n}", $1, $5); 
-											$$ = str;
-											free($1);free($5);}
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "%s\nSenao {\n%s\n}", $1, $5);
+												$$ = str;
+											}  
+											}
 		| se_simplificado SENAO bloco_se			{int tamanho = 7 + strlen($1) + strlen($3);
-													char * str = (char *) malloc(tamanho); 
-													sprintf(str, "%s\nSenao%s", $1, $3);
-													$$ = str; 
-													free($1); free($3);}
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "%s\nSenao%s", $1, $3);
+														$$ = str;
+													}  
+													}
 		;		 
 
 se_simplificado : SE LPARENTESES expressao RPARENTESES EXECUTE 
 					LCHAVE {pushBlockScope("se",ifCounter);
 							ifCounter++; }
 					sentencas {popScope();} RCHAVE	{	int tamanho = 5 + strlen($3) + strlen($8);
-														char * str = (char *) malloc(tamanho); 
-														sprintf(str, "Se (%s) Execute {\n%s\n}", $3, $8); 
-														$$ = str;
-														free($3); free($8);}
-;
+														create_pointer(char,str,tamanho);
+														test(str){
+															sprintf(str, "Se (%s) Execute {\n%s\n}", $3, $8);
+															$$ = str;
+														} 
+														}
+				;
 
 comando	 : declaracao 		{$$ = $1;}
 		 | imprime			{$$ = $1;}
@@ -295,15 +352,19 @@ comando	 : declaracao 		{$$ = $1;}
          ;
 
 atribuicao : ID atribuicao_unaria				{int tamanho = 2 + strlen($1) + strlen($2);
-												 char * str = (char *) malloc(tamanho); 
-												 sprintf(str, "%s %s", $1, $2); 
-												 $$ = str;
-												 free($1); free($2);}
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "%s %s", $1, $2);
+													$$ = str;
+												} 
+												}
 		   | ID atribuicao_binaria expressao	{int tamanho = 3 + strlen($1) + strlen($2) + strlen($3);
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "%s %s %s", $1, $2, $3); 
-												$$ = str; 
-												free($1); free($2); free($3);}
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "%s %s %s", $1, $2, $3); 
+													$$ = str;
+												} 
+												}
 		   ;
 		   
 atribuicao_binaria : ATRIB		{$$ = $1;}
@@ -327,20 +388,24 @@ bloco_enquanto : ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE
 				 LCHAVE 	{pushBlockScope("enquanto",whileCounter);
 							whileCounter++;}
 				sentencas {popScope();} RCHAVE {int tamanho = 25 + strlen($3) + strlen($8);
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "Enquanto (%s) Execute {\n%s\n}", $3, $8); 
-												$$ = str; 
-												free($3), free($8);}
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "Enquanto (%s) Execute {\n%s\n}", $3, $8); 
+													$$ = str;
+												}
+												}
 				;
 			   
 bloco_faca_enquanto : EXECUTE LCHAVE {	pushBlockScope("facaenquanto",doWhileCounter);
 										doWhileCounter++;}
 					sentencas {popScope();} 
-					RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES {int tamanho = 25 + strlen($4) +strlen($9);
-																	  char * str = (char *) malloc(tamanho); 
-																	  sprintf(str, "Execute {\n%s\n} Enquanto (%s)", $4, $9); 
-																	  $$ = str;
-																	  free($4), free($9);}
+					RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES {	int tamanho = 25 + strlen($4) +strlen($9);
+																		create_pointer(char,str,tamanho);
+																		test(str){
+																			sprintf(str, "Execute {\n%s\n} Enquanto (%s)", $4, $9); 
+																			$$ = str;
+																		} 
+																	  }
 			        ;
 			   
 bloco_para : PARA LPARENTESES {pushBlockScope("para",forCounter);
@@ -348,69 +413,97 @@ bloco_para : PARA LPARENTESES {pushBlockScope("para",forCounter);
 			declaracao_para {popScope();} PONTOVIRGULA
 			expressao PONTOVIRGULA comando_para RPARENTESES 
 			EXECUTE LCHAVE sentencas RCHAVE 		{int tamanho = 22 + strlen($4) + strlen($7) + strlen($9) + strlen($13);
-													char * str = (char *) malloc(tamanho); 
-													sprintf(str, "Para (%s;%s;%s) Execute{\n%s\n}", $4, $7, $9, $13); 
-													$$ = str;
-													free($4); free($7); free($9); free($13);}
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "Para (%s;%s;%s) Execute{\n%s\n}", $4, $7, $9, $13); 
+														$$ = str;
+													} 
+													}
 		   ;			   
 
-declaracao_para:			 {$$ = strdup(" ");}
+declaracao_para:			{create_pointer(char,str,2);
+							test(str){
+								strcpy(str, " ");
+								$$ = str;
+							}
+							}
 				| declaracao {$$ = $1;}
 				;
 
-comando_para :			{$$ = strdup(" ");}
+comando_para :			{create_pointer(char,str,2);
+						test(str){
+							strcpy(str, " ");
+							$$ = str;
+						}
+						}
 			 | comando	{$$ = $1;}
 			 ;
 
 imprime : IMPRIMA LPARENTESES termos RPARENTESES	{int tamanho = 10 + strlen($3);
-													char * str = (char *) malloc(tamanho); 
-													sprintf(str, "Imprima(%s)", $3); 
-													$$ = str; 
-													free($3);} 
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "Imprima(%s)", $3); 
+														$$ = str;
+													} 
+													} 
 		;
 
 leia	: LEIA LPARENTESES ids RPARENTESES	{int tamanho = 7 + strlen($3);
-											char * str = (char *) malloc(tamanho); 
-											sprintf(str, "Leia(%s)", $3); 
-											$$ = str; 
-											free($3);}
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "Leia(%s)", $3);  
+												$$ = str;
+											} 
+											}
 		;
  
-declaracao : tipo ID					 {int tamanho = 2 + strlen($1) + strlen($2);
-										 char * str = (char *) malloc(tamanho); 
-										 sprintf(str, "%s %s", $1, $2); 
-										 $$ = str;
-										 free($1); free($2);}  
+declaracao : tipo ID					{int tamanho = 2 + strlen($1) + strlen($2);
+										create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "%s %s", $1, $2);   
+											$$ = str;
+										} 
+										}  
 			| tipo ID ATRIB expressao	{int tamanho = 4 + strlen($1)+ strlen($2) + strlen($3) + strlen($4);
-									     char * str = (char *) malloc(tamanho); 
-										 sprintf(str, "%s %s %s %s", $1, $2, $3, $4); 
-										 $$ = str;
-										 free($1); free($2);free($3); free($4);}
+									    create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "%s %s %s %s", $1, $2, $3, $4); 
+											$$ = str;
+										}
+										}
 			
 			;
 
 
 expressao	: termo {$$ = $1;}
 			| operador_unario expressao	{int tamanho = 2 + strlen($1) + strlen($2);
-										char * str = (char *) malloc(tamanho); 
-										sprintf(str, "%s %s", $1, $2); 
-										$$ = str;
-										free($1); free($2);}
+										create_pointer(char,str,tamanho);
+										test(str){
+											sprintf(str, "%s %s", $1, $2); 
+											$$ = str;
+										} 
+										}
 			| termo operador_binario expressao {int tamanho = 3 + strlen($1) + strlen($2) + strlen($3);
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "%s %s %s", $1, $2, $3); 
-												$$ = str; 
-												free($1); free($2); free($3);}
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "%s %s %s", $1, $2, $3); 
+													$$ = str;
+												} 
+												}
 			| LPARENTESES expressao RPARENTESES {int tamanho = 3 + strlen($2);
-												char * str = (char *) malloc(tamanho); 
-												sprintf(str, "(%s)", $2); 
-												$$ = str; 
-												free($2);}
+												create_pointer(char,str,tamanho);
+												test(str){
+													sprintf(str, "(%s)", $2);
+													$$ = str;
+												} 
+												}
 			| chamada_funcao operador_binario expressao 	{int tamanho = 3 + strlen($1) + strlen($2) + strlen($3);
-															char * str = (char *) malloc(tamanho); 
-															sprintf(str, "%s %s %s", $1, $2, $3); 
-															$$ = str; 
-															free($1); free($2); free($3);}
+															create_pointer(char,str,tamanho);
+															test(str){
+																sprintf(str, "%s %s %s", $1, $2, $3); 
+																$$ = str;
+															} 
+															}
 			;
 
 operador_unario :	SUB					{$$ = $1;}
@@ -449,29 +542,37 @@ tipo : tipo_primitivo	{$$ = $1;}
 	 ;
 	 
 tipo_registro : MEU_TIPO ID		{int tamanho = 9+strlen($2);
-								char* str = (char*)malloc(tamanho);
-								sprintf(str, "MeuTipo %s", $2);
-								$$ = str;
-								free($2);}
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "MeuTipo %s", $2);
+									$$ = str;
+								}
+								}
 			  ;
 
 tipo_vetor : VETOR tipo_primitivo tamanho_vetor tamanho_vetor	{int tamanho = 8+strlen($2)+ strlen($3) +strlen($4);
-																 char* str = (char*)malloc(tamanho);
-																 sprintf(str, "Vetor %s %s%s", $2, $3, $4);
-																 $$ = str;
-																 free($2); free($3); free($4);}
+																create_pointer(char,str,tamanho);
+																test(str){
+																	sprintf(str, "Vetor %s %s%s", $2, $3, $4);
+																	$$ = str;
+																}
+																}
 	        | VETOR tipo_primitivo tamanho_vetor 	{int tamanho = 8+strlen($2)+strlen($3);
-													char* str = (char*)malloc(tamanho);
-													sprintf(str, "Vetor %s %s", $2, $3);
-													$$ = str; 
-													free($2); free($3);}
+													create_pointer(char,str,tamanho);
+													test(str){
+														sprintf(str, "Vetor %s %s", $2, $3);
+														$$ = str;
+													}
+													}
 			;
 
-tamanho_vetor : LCOLCHETE termo RCOLCHETE {int tamanho = 3+strlen((char*)$2);
-											 char* str = (char*)malloc(tamanho);
-											 sprintf(str, "[%s]",$2);
-											 $$ = str;
-											 free($2);}
+tamanho_vetor : LCOLCHETE termo RCOLCHETE	{int tamanho = 3+strlen((char*)$2);
+											create_pointer(char,str,tamanho);
+											test(str){
+												sprintf(str, "[%s]",$2);
+												$$ = str;
+											}
+											}
 			  ;
 
 tipo_primitivo : INTEIRO 	{$$ = $1;}
@@ -483,19 +584,22 @@ tipo_primitivo : INTEIRO 	{$$ = $1;}
 
 termos : termo					{$$ = $1;}
 	   | termo VIRGULA termos	{int tamanho = strlen($1) + strlen($3) + 3;
-								char* str = (char*) malloc(tamanho);
-								sprintf(str, "%s, %s", $1, $3);
-								$$ = str; 
-								free($1);
-								free($3);}
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "%s, %s", $1, $3);
+									$$ = str;
+								}
+								}
 	   ;
 	   
 ids : ID			 {$$ = $1;}
-	| ID VIRGULA ids {int tamanho = strlen($1)+1+strlen($3)+3;
-					char* str = malloc(tamanho);
-					sprintf(str, "%s, %s",$1,$3);
-					$$ = str; 
-					free($1); free($3);}
+	| ID VIRGULA ids	{int tamanho = strlen($1)+1+strlen($3)+3;
+						create_pointer(char,str,tamanho);
+						test(str){
+							sprintf(str, "%s, %s",$1,$3);
+							$$ = str;
+						}
+						}
 	;
 			   
 termo : ID       {$$ = $1;}
@@ -515,8 +619,10 @@ int main (void) {
 	iniciar(&scope_stack);
 	init_array(&symbol_table,50);
 	startMemoryBank();
+	fp = fopen("result.c", "w+");
 	int resultado = yyparse ( );
 	stopMemoryBank();
+	fclose(fp);
 	return resultado;
 }
 
@@ -549,22 +655,27 @@ int popScope(){
 void pushBlockScope(char*nome, int ordem){
 	ElementoTipoNome * item = mostrarTopo(&scope_stack);
 	printf("nome do escopo: %s\n",item->scopeName);
-	char * escopoPai = (char*) malloc(strlen(item->scopeName));
 	
-	
+	create_pointer(char,escopoPai,strlen(item->scopeName));
+	test(escopoPai){
+		strcpy(escopoPai,item->scopeName);
+		printf("nome do escopoPai: %s\n",escopoPai);
 
+	}
+	
 	char ordemStr [10];
 	sprintf(ordemStr, "%d", ordem);
 	
 	int tamanho = strlen(escopoPai) + strlen(nome)+strlen(ordemStr)+1;
-	char* resultado = (char*) malloc(tamanho);
-	strcpy(resultado,escopoPai);
-	strcat(resultado,nome);
-	strcat(resultado,ordemStr);
-	//strcat(resultado,"\0");
-	//coloca na pilha
-	pushScope(resultado,"void");
-	
+	create_pointer(char,resultado,tamanho);
+	test(resultado){
+		strcpy(resultado,escopoPai);
+		strcat(resultado,nome);
+		strcat(resultado,ordemStr);
+		printf("nome do escopoPai: %s\n",resultado);
+		//coloca na pilha
+		pushScope(resultado,"void");
+	}
 }
 
 void inicializaContadores(){
@@ -575,14 +686,17 @@ void inicializaContadores(){
 	doWhileCounter = 0;
 }
 int insertSymbolTable(HashTable* hashTable,char*name, char*scope,char*type){
-	char* key = (char*) malloc(strlen(scope)+strlen(name)+1);
-	strcpy(key,scope);
-	strcat(key,name);
+	int tamanho = strlen(scope)+strlen(name)+1;
+	create_pointer(char,key,tamanho);
+	test(key){
+		strcpy(key,scope);
+		strcat(key,name);
+	}
+	
 	Symbol *item = createSymbol(key,name,scope,type);
 	int result = insert(&symbol_table,item);
 	printf("tamanho da hash: %d\n",symbol_table.size);
 	return result;
-	free(key);
 }
 
 

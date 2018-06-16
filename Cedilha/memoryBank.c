@@ -26,8 +26,6 @@ void * alloc( int size){
     
     strcpy(toBeMarked,"cla");
     
-    printf("%s\n" , toBeMarked);
-    
     return resultado + 4;
 }
 
