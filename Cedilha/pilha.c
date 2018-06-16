@@ -1,7 +1,9 @@
 #include <stdio.h>
-#include<string.h>
-#include<stdlib.h>
+#include <string.h>
+#include <stdlib.h>
+#include <assert.h>
 #include "./include/pilha.h"
+#include "./include/memoryBank.h"
 
 void iniciar (Pilha *monte){
   monte->inicio = NULL;
@@ -9,18 +11,21 @@ void iniciar (Pilha *monte){
 }
 
 int empilhar(Pilha * monte, char *scopeName, char* scopeType){
-  ElementoTipoNome *novo_elemento;
-  if ((novo_elemento = (ElementoTipoNome *) malloc (sizeof (ElementoTipoNome))) == NULL)
-    return -1;
-  if ((novo_elemento->scopeName = (char *) malloc (50 * sizeof (char)))
-      == NULL)
-    return -1;
-  if ((novo_elemento->scopeType = (char *) malloc (50 * sizeof (char)))
-      == NULL)
-    return -1;
-    
-  strcpy (novo_elemento->scopeName, scopeName);
-  strcpy (novo_elemento->scopeType, scopeType);
+
+  create_pointer(ElementoTipoNome,novo_elemento,1);
+  
+  create_pointer(char,auxScopeName,1+strlen(scopeName));
+  test(auxScopeName){
+    novo_elemento->scopeName = auxScopeName;
+    strcpy (novo_elemento->scopeName, scopeName);
+  }
+  
+  create_pointer(char,auxScopeType,1+strlen(scopeName));
+  test(auxScopeType){
+    novo_elemento->scopeType = auxScopeType;
+    strcpy (novo_elemento->scopeType, scopeType);
+  }
+  
   novo_elemento->proximo = monte->inicio;
   monte->inicio = novo_elemento;
   monte->tamanho++;
@@ -32,9 +37,6 @@ int desempilhar (Pilha *monte){
     return -1;
   p_elemento = monte->inicio;
   monte->inicio = monte->inicio->proximo;
-  free (p_elemento->scopeName);
-  free (p_elemento->scopeType);
-  free (p_elemento);
   monte->tamanho--;
   return 0;
 }

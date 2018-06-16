@@ -18,13 +18,13 @@ void * alloc( int size){
         assert(1==0);
     }
     
-    void* resultado =nextPosition;
+    void* resultado = nextPosition;
     
     nextPosition = nextPosition + 4 + size;
     
     char* toBeMarked = (char*) resultado;
     
-    strcpy(toBeMarked,"cla");
+    strcpy(toBeMarked,"mrk");
     
     return resultado + 4;
 }
@@ -34,7 +34,29 @@ void stopMemoryBank(){
     
 }
 
-int stringPorRef(char * string){
-    strcat(string,"oioioio");
-    return 0;
+char *remove_substr (char *str, char *substr)
+{
+     char *aux; // guarda o endereco da pos inicial de substr na str.
+     int tam;
+     register int i; // armazenado em registrador.
+     
+     tam = strlen (substr); // armazena tamanho da substr.
+     aux = strstr (str, substr); // retorna endereco inicial da substr.
+     
+    if (aux) // A substring esta contida na string? (endereco retornado?)
+    {
+       if (aux == str) // remove substring no inicio.
+          for (i = 0; i < tam; i++, ++str);
+       else
+       {
+           /* i guarda a posicao inicial da substring
+              tam e o tamanho do deslocamento (quantidade de caracteres apos
+              a substring). */
+          for (i = (aux - str); i < strlen(str); i++)
+             str[i] = str[i + tam];      
+       }              
+       return str;           
+    } 
+    else
+        return " ";
 }

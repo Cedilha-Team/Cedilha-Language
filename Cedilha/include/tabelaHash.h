@@ -41,7 +41,6 @@ int hashcode(char* key, int max);
 
 Symbol * createSymbol(char* key, char* name, char* scope, char* type);
 
-
 void rehash(HashTable* hashTable);
 
 /*
@@ -50,6 +49,13 @@ void rehash(HashTable* hashTable);
  *Returns -1 in case key is not present
 */
 int find(Symbol *list, char* key);
+
+/*
+ *This function finds the given key in the Hash Table
+ *Returns it's Linked list
+ *Returns -1 in case key is not present
+*/
+Symbol* findHashTable(HashTable * hashtable, char* key);
 
 /* Returns the node (Linked List item) located at given find_index  */
 Symbol* get_element(Symbol *list, int find_index);

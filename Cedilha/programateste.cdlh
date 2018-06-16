@@ -1,29 +1,32 @@
 
 MeuTipo coisaUoh { 
-        Inteiro qtde,
-        Texto descricao
+    Inteiro qtde,
+    Texto descricao
 };
 
-Funcao Inteiro teste(Inteiro i);
-Proc teste (Inteiro j);
+Funcao Inteiro teste1(Inteiro i);
+Proc teste2(Inteiro j);
 
 
 BlocoPrincipal {
-    Leia(as);
+    /*Vetor Inteiro [1][2] vetorzinho;*/
     Imprima("lalal");
     Inteiro a;
-    Texto texto = 2*("lalalalala" + 5);
+    Texto texto = 2 * ("lalalalala" + 5);
     Inteiro c;
     Inteiro b;
+    
+    Real vdc;
+    
     Real z;
     Booleano afirmacao;
     
-    verdadeiro = Verdadeiro;
+    afirmacao = Verdadeiro;
+    Leia(a);
     
     a = 3;
     b = 1;
     c = 9162 + a || (13);
-    Inteiro b;
     
     
     Se (a > b) Execute {
@@ -38,7 +41,7 @@ BlocoPrincipal {
         x+1;
     };
     
-
+    
      Execute{
         Inteiro x = 1;
         a+b;
@@ -49,21 +52,25 @@ BlocoPrincipal {
         c = 10;
     };
 
-   Vetor Inteiro [1][2] vetorzinho;
    
-    x = teste(i,2,56) + 1;
-    Inteiro j = teste(i,"txt") + 1;
+   
+    x = teste1(i,2,56) + 1;
+    Inteiro j = teste2(i,"txt") + 1;
 
 }
 
 BlocoFuncoes {
  
     Proc teste(Inteiro i){ 
+        Inteiro x;
+        Inteiro i;
         x = 2 + i;
         Retorne x;
     }
     
     Funcao Inteiro teste1(Inteiro i){ 
+        Inteiro x;
+        Inteiro i;
         x = 2 + i;
         Retorne x;
     }
