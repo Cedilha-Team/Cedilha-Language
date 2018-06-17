@@ -32,13 +32,17 @@ int size_of_array(HashTable* hashTable){
 
 /* This function creates an index corresponding to the every given key */
 int hashcode(char* key, int max){
-    unsigned long hash = 5381;
+    unsigned int hash = 5381;
     int c;
 
     while (c = *key++)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-    unsigned int index = (int)hash % max;
-    return (int)index;
+    
+    int index = (int)hash % max;
+    if(index < 0){
+        index *= -1;
+    }
+    return index;
 }
 
 Symbol * createSymbol(char* key, char* name, char* scope, char* type){
@@ -89,9 +93,7 @@ int insert(HashTable* hashTable, Symbol *item){
 
    int index = hashcode(item->key, hashTable->max);  
     
-    if(index<0){
-        index *= -1;
-    }
+    
     
     /* Extracting Linked List at a given index */
    Symbol *list = (Symbol*) hashTable->array[index].head;
@@ -120,7 +122,7 @@ int insert(HashTable* hashTable, Symbol *item){
     		/*
     		 *Key already present in linked list
     		*/
-            printf("elemento já inserido na estrutura!\n");
+            printf("elemento já inserido na estrutura! nome:%s escopo:%s tipo:%s\n",item->name,item->scope,item->type);
             return 0;
          }
     }

@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <assert.h>
 #include "./include/pilha.h"
@@ -16,6 +17,8 @@ extern char * yytext;
 Pilha scope_stack;
 HashTable symbol_table;
 FILE *fp;
+static struct AllAttributes *attrib;
+
 
 /*usado para contar qual bloco está*/
 int forCounter;
@@ -27,14 +30,15 @@ int doWhileCounter;
 
 void pushBlockScope(char*nome, int ordem);
 void inicializaContadores();
-int checkBeforeDeclaration(char* name);
 int insertSymbolTable(char*name,char*type);
-
+Symbol* checkBeforeDeclaration(char* name);
+char * getCType(char * type);
 
 
 %}
 
 %union {
+	struct AllAttributes * attrib;
 	char * sValue;  /* string value */
 };
 
@@ -52,14 +56,16 @@ int insertSymbolTable(char*name,char*type);
 
 %start programa
 
-%type <sValue> bloco_principal termo literal imprime leia sentencas sentenca tipo tipo_primitivo declaracao expressao 
+%type <sValue> bloco_principal imprime leia sentencas sentenca tipo tipo_primitivo declaracao
 operador_unario operador_binario operador_relacional operador_aritmetico operador_booleano comando atribuicao
 atribuicao_binaria atribuicao_unaria controle bloco_se se_simplificado
 bloco_enquanto bloco_faca_enquanto bloco_para repeticao declaracao_para comando_para
 assinaturas assinatura_funcoes assinatura_funcao assinatura_proc parametro parametros   
 bloco_funcoes funcoes_proc definicoes_funcoes_proc definicao_funcao definicao_procedimento
 chamada_funcao parametros_chamada parametro_chamada declaracoes declaracao_global
-tamanho_vetor termos ids_leia retorne declaracao_registro tipo_vetor tipo_registro
+tamanho_vetor termos ids_leia retorne declaracao_registro tipo_registro
+
+%type <attrib> expressao termo tipo_vetor literal
 %%
 
 programa : {pushScope("global","void");}
@@ -95,7 +101,13 @@ declaracao_global : declaracao				{$$ = $1;}
 
 declaracao_registro :	MEU_TIPO ID LCHAVE {pushScope($2,"MeuTipo");} 
 						parametros {popScope();} RCHAVE	
-						{if(insertSymbolTable){
+						{int tam = strlen($2)+8;
+						create_pointer(char,meutipoId,tam);
+							test(meutipoId){
+								strcpy(meutipoId,"MeuTipo");
+								strcat(meutipoId,$2);
+							}
+						if(insertSymbolTable($2,meutipoId)){
 							int tamanho = 13 + strlen($2) + strlen($5);
 							create_pointer(char,str,tamanho);
 							test(str){
@@ -178,7 +190,7 @@ parametro  : tipo ID   {	if(insertSymbolTable($2, $1) ){
 									sprintf(str, "%s%s",$1,$2);
 									$$ = str;
 								}
-							} 
+							}
 						}
 			;
 					
@@ -219,98 +231,103 @@ definicoes_funcoes_proc : definicao_funcao			{$$ = $1;}
 						| definicao_procedimento	{$$ = $1;}
 						;
 
-definicao_funcao : FUNCAO tipo ID LPARENTESES parametros RPARENTESES 
-								LCHAVE {inicializaContadores(); pushScope($3,$2);} 
-										sentencas {popScope();} 
-								RCHAVE	{int tamanho = 17+strlen($2) + strlen($3) + strlen($5)+strlen($9);
-										create_pointer(char,str,tamanho);
-										test(str){
-											sprintf(str, "Funcao %s %s (%s) {\n%s\n}", $2, $3, $5, $9); 
-											$$ = str;
-										}
-										}
+definicao_funcao :	FUNCAO tipo ID {checkBeforeDeclaration($3);} 
+					LPARENTESES {pushScope($3,$2);} parametros RPARENTESES 
+					LCHAVE {inicializaContadores();} 
+					sentencas {popScope();} RCHAVE	
+						{int tamanho = 17+strlen($2) + strlen($3) + strlen($7)+strlen($11);
+						create_pointer(char,str,tamanho);
+						test(str){
+							sprintf(str, "Funcao %s %s (%s) {\n%s\n}", $2, $3, $7, $11); 
+							$$ = str;
+						}
+						}
 				 ;
 
-definicao_procedimento : PROC ID LPARENTESES parametros RPARENTESES 
-								LCHAVE {inicializaContadores();pushScope((char*)$2,"void");}
-								sentencas {popScope();} RCHAVE	{int tamanho = 14 + strlen($2) + strlen($4) + strlen($8);
-																	create_pointer(char,str,tamanho);
-																	test(str){
-																		sprintf(str, "Proc %s (%s) {\n%s\n}", $2, $4, $8); 
-																		$$ = str;
-																	}
-																	}
-				 ;
-
-chamada_funcao : ID  LPARENTESES parametros_chamada RPARENTESES	{int tamanho = 3+strlen($1) + strlen($3);
-																create_pointer(char,str,tamanho);
-																test(str){
-																	sprintf(str, "%s(%s)", $1, $3); 
-																	$$ = str;
-																} 
-																} 
-			   ;
-
-retorne : RETORNE expressao		{int tamanho = 9 + strlen($2);
+definicao_procedimento :	PROC ID {checkBeforeDeclaration($2);} LPARENTESES {pushScope((char*)$2,"void");}
+							parametros RPARENTESES LCHAVE {inicializaContadores();}
+							sentencas {popScope();} RCHAVE	
+								{int tamanho = 14 + strlen($2) + strlen($6) + strlen($10);
 								create_pointer(char,str,tamanho);
 								test(str){
-									sprintf(str, "Retorne %s", $2); 
+									sprintf(str, "Proc %s (%s) {\n%s\n}", $2, $6, $10); 
+									$$ = str;
+								}
+								}
+				 ;
+
+chamada_funcao :	ID  {checkBeforeDeclaration($1);} LPARENTESES //TODO checagem de chamada de funcao tem que ser no escopo global
+					parametros_chamada RPARENTESES //TODO verifica se a função chamada foi declarada (symbol-table)
+						{int tamanho = 3+strlen($1) + strlen($4);
+						create_pointer(char,str,tamanho);
+						test(str){
+							sprintf(str, "%s(%s)", $1, $4); 
+							$$ = str;
+						} 
+						} 
+			   ;
+
+retorne : RETORNE expressao		{int tamanho = 9 + strlen($2->code);
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "Retorne %s", $2->code); 
 									$$ = str;
 								} 
 								}
 		;
 		
-parametros_chamada: 												{create_pointer(char,str,2);
-																	test(str){
-																		strcpy(str, " ");
-																		$$ = str;
-																	}
-																	}
-		           | parametro_chamada VIRGULA parametros_chamada	{int tamanho = 3 + strlen($1)+ strlen($3);
-																	create_pointer(char,str,tamanho);
-																	test(str){
-																		sprintf(str, "%s, %s", $1, $3); 
-																		$$ = str;
-																	} 
-																	}
-		           | parametro_chamada								{$$ = $1;}
+parametros_chamada: 	{create_pointer(char,str,2);
+						test(str){
+							strcpy(str, " ");
+							$$ = str;
+						}
+						}
+		           | parametro_chamada VIRGULA parametros_chamada
+		        		{int tamanho = 3 + strlen($1)+ strlen($3);
+						create_pointer(char,str,tamanho);
+						test(str){
+							sprintf(str, "%s, %s", $1, $3); 
+							$$ = str;
+						} 
+						}
+		           | parametro_chamada	{$$ = $1;}
         			;
         			
-parametro_chamada: ARROBA termo    {int  tamanho = 1+strlen($1)+strlen($2);
+parametro_chamada: ARROBA termo    {int  tamanho = 1+strlen($1)+strlen($2->code);
 									create_pointer(char,str,tamanho);
 									test(str){
-										sprintf(str, "%s%s",$1,$2);
+										sprintf(str, "%s%s",$1,$2->code);
 										$$ = str;
 									} 
 									}
-	    		  | termo   		{$$ = $1;}
+	    		  | termo   		{$$ = $1->code;}
 	    		 ;
 		  
 		  
 
 					
-bloco_principal : BPRINCIPAL LCHAVE 
-								{inicializaContadores(); pushScope("main","void");} 
-								sentencas {popScope();} 
-							RCHAVE  {fprintf(fp,"BlocoPrincipal {\n%s}\n",$4); 
-									}
+bloco_principal :	BPRINCIPAL LCHAVE {inicializaContadores(); pushScope("main","void");} 
+					sentencas {popScope();} RCHAVE
+						{fprintf(fp,"BlocoPrincipal {\n%s}\n",$4); 
+						}
 				;
 
 
 
-sentencas:									{create_pointer(char,str,2);
-											test(str){
-												strcpy(str, " ");
-												$$ = str;
-											}
-											}
-		 | sentenca PONTOVIRGULA sentencas {int tamanho = 3 + strlen($1)+ strlen($3);
-											create_pointer(char,str,tamanho);
-											test(str){
-												sprintf(str, "%s;\n%s", $1, $3); 
-												$$ = str;
-											} 
-											}
+sentencas:		{create_pointer(char,str,2);
+				test(str){
+					strcpy(str, " ");
+					$$ = str;
+				}
+				}
+		 |	sentenca PONTOVIRGULA sentencas 
+			{int tamanho = 4 + strlen($1)+ strlen($3);
+			create_pointer(char,str,tamanho);
+			test(str){
+				sprintf(str, "\t%s;\n%s", $1, $3); 
+				$$ = str;
+			} 
+			}
 		 ;
 
 sentenca: comando   {$$ = $1;}
@@ -322,61 +339,65 @@ controle : bloco_se 		{$$ = $1;}
 		 | PARE     		{$$ = $1;}
 		 ;
 		 
-bloco_se : se_simplificado		{$$ = $1;}
-		| se_simplificado SENAO LCHAVE {pushBlockScope("senao",elseCounter);
-										elseCounter++;
-										} 
-			sentencas {popScope();} RCHAVE {int tamanho = 12 + strlen($1)+ strlen($5);
-											create_pointer(char,str,tamanho);
-											test(str){
-												sprintf(str, "%s\nSenao {\n%s\n}", $1, $5);
-												$$ = str;
-											}  
-											}
-		| se_simplificado SENAO bloco_se			{int tamanho = 7 + strlen($1) + strlen($3);
-													create_pointer(char,str,tamanho);
-													test(str){
-														sprintf(str, "%s\nSenao%s", $1, $3);
-														$$ = str;
-													}  
-													}
+bloco_se :	se_simplificado		{$$ = $1;}
+		 |	se_simplificado SENAO LCHAVE {pushBlockScope("senao",elseCounter); 	elseCounter++;} 
+			sentencas {popScope();} RCHAVE 
+				{int tamanho = 12 + strlen($1)+ strlen($5);
+				create_pointer(char,str,tamanho);
+				test(str){
+					sprintf(str, "%s\nSenao {\n%s\n}", $1, $5);
+					$$ = str;
+				}  
+				}
+		|	se_simplificado SENAO bloco_se			
+				{int tamanho = 7 + strlen($1) + strlen($3);
+				create_pointer(char,str,tamanho);
+				test(str){
+					sprintf(str, "%s\nSenao%s", $1, $3);
+					$$ = str;
+				}  
+				}
 		;		 
 
-se_simplificado : SE LPARENTESES expressao RPARENTESES EXECUTE 
-					LCHAVE {pushBlockScope("se",ifCounter);
-							ifCounter++; }
-					sentencas {popScope();} RCHAVE	{	int tamanho = 5 + strlen($3) + strlen($8);
-														create_pointer(char,str,tamanho);
-														test(str){
-															sprintf(str, "Se (%s) Execute {\n%s\n}", $3, $8);
-															$$ = str;
-														} 
-														}
+se_simplificado :	SE LPARENTESES expressao RPARENTESES EXECUTE 
+					LCHAVE {pushBlockScope("se",ifCounter);	ifCounter++; }
+					sentencas {popScope();} RCHAVE	
+						{	int tamanho = 8 + strlen($3->code) + strlen($8);
+							create_pointer(char,str,tamanho);
+							test(str){
+								sprintf(str, "Se (%s) \tExecute {\n\t\t%s\n}", $3->code, $8);
+								$$ = str;
+							} 
+						}
 				;
 
 comando	 : declaracao 		{$$ = $1;}
 		 | imprime			{$$ = $1;}
 		 | leia 			{$$ = $1;}
-		 | expressao		{$$ = $1;}
+		 | expressao 		{$$ = $1->code;}
          | atribuicao		{$$ = $1;}
          | chamada_funcao	{$$ = $1;}
          | retorne			{$$ = $1;}	
          ;
 
-atribuicao : ID atribuicao_unaria				{int tamanho = 2 + strlen($1) + strlen($2);
-												create_pointer(char,str,tamanho);
-												test(str){
-													sprintf(str, "%s %s", $1, $2);
-													$$ = str;
-												} 
-												}
-		   | ID atribuicao_binaria expressao	{int tamanho = 3 + strlen($1) + strlen($2) + strlen($3);
-												create_pointer(char,str,tamanho);
-												test(str){
-													sprintf(str, "%s %s %s", $1, $2, $3); 
-													$$ = str;
-												} 
-												}
+atribuicao :	ID atribuicao_unaria				
+					{	int tamanho = 2 + strlen($1) + strlen($2);
+						create_pointer(char,str,tamanho);
+						test(str){
+							sprintf(str, "%s %s", $1, $2);
+							$$ = str;
+						}
+					}
+					
+									
+		   |	ID atribuicao_binaria expressao	
+					{int tamanho = 3 + strlen($1) + strlen($2) + strlen($3->code);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "%s %s %s", $1, $2, $3->code); 
+						$$ = str;
+					} 
+					}
 		   ;
 		   
 atribuicao_binaria : ATRIB		{$$ = $1;}
@@ -397,67 +418,67 @@ repeticao : bloco_enquanto       {$$ = $1;}
 		  ;
 
 bloco_enquanto : ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE 
-				 LCHAVE 	{pushBlockScope("enquanto",whileCounter);
-							whileCounter++;}
-				sentencas {popScope();} RCHAVE {int tamanho = 25 + strlen($3) + strlen($8);
-												create_pointer(char,str,tamanho);
-												test(str){
-													sprintf(str, "Enquanto (%s) Execute {\n%s\n}", $3, $8); 
-													$$ = str;
-												}
-												}
+				 LCHAVE {pushBlockScope("enquanto",whileCounter); whileCounter++;}
+				sentencas {popScope();} RCHAVE 
+					{int tamanho = 25 + strlen($3->code) + strlen($8);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "Enquanto (%s) Execute {\n%s\n}", $3->code, $8); 
+						$$ = str;
+					}
+					}
 				;
 			   
-bloco_faca_enquanto : EXECUTE LCHAVE {	pushBlockScope("facaenquanto",doWhileCounter);
-										doWhileCounter++;}
-					sentencas {popScope();} 
-					RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES {	int tamanho = 25 + strlen($4) +strlen($9);
-																		create_pointer(char,str,tamanho);
-																		test(str){
-																			sprintf(str, "Execute {\n%s\n} Enquanto (%s)", $4, $9); 
-																			$$ = str;
-																		} 
-																	  }
+bloco_faca_enquanto :	EXECUTE LCHAVE {pushBlockScope("facaenquanto",doWhileCounter); doWhileCounter++;}
+						sentencas {popScope();} RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES 
+							{	int tamanho = 25 + strlen($4) +strlen($9->code);
+								create_pointer(char,str,tamanho);
+								test(str){
+									sprintf(str, "Execute {\n%s\n} Enquanto (%s)", $4, $9->code); 
+									$$ = str;
+								} 
+							}
 			        ;
 			   
-bloco_para : PARA LPARENTESES {pushBlockScope("para",forCounter);
-								forCounter++;} 
-			declaracao_para {popScope();} PONTOVIRGULA
-			expressao PONTOVIRGULA comando_para RPARENTESES 
-			EXECUTE LCHAVE sentencas RCHAVE 		{int tamanho = 22 + strlen($4) + strlen($7) + strlen($9) + strlen($13);
-													create_pointer(char,str,tamanho);
-													test(str){
-														sprintf(str, "Para (%s;%s;%s) Execute{\n%s\n}", $4, $7, $9, $13); 
-														$$ = str;
-													} 
-													}
+bloco_para :	PARA LPARENTESES {pushBlockScope("para",forCounter); forCounter++;} 
+				declaracao_para {popScope();} PONTOVIRGULA
+				expressao PONTOVIRGULA comando_para RPARENTESES 
+				EXECUTE LCHAVE sentencas RCHAVE 	
+					{int tamanho = 22 + strlen($4) + strlen($7->code) + strlen($9) + strlen($13);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "Para (%s;%s;%s) Execute{\n%s\n}", $4, $7->code, $9, $13); 
+						$$ = str;
+					} 
+					}
 		   ;			   
 
-declaracao_para:			{create_pointer(char,str,2);
-							test(str){
-								strcpy(str, " ");
-								$$ = str;
-							}
-							}
-				| declaracao {$$ = $1;}
+declaracao_para:	{create_pointer(char,str,2);
+					test(str){
+						strcpy(str, " ");
+						$$ = str;
+					}
+					}
+				|	declaracao {$$ = $1;}
 				;
 
-comando_para :			{create_pointer(char,str,2);
-						test(str){
-							strcpy(str, " ");
-							$$ = str;
-						}
-						}
-			 | comando	{$$ = $1;}
+comando_para :	{create_pointer(char,str,2);
+				test(str){
+					strcpy(str, " ");
+					$$ = str;
+				}
+				}
+			 |	comando	{$$ = $1;}
 			 ;
 
-imprime : IMPRIMA LPARENTESES termos RPARENTESES	{int tamanho = 10 + strlen($3);
-													create_pointer(char,str,tamanho);
-													test(str){
-														sprintf(str, "Imprima(%s)", $3); 
-														$$ = str;
-													} 
-													} 
+imprime :	IMPRIMA LPARENTESES termos RPARENTESES	
+				{int tamanho = 10 + strlen($3);
+				create_pointer(char,str,tamanho);
+				test(str){
+					sprintf(str, "Imprima(%s)", $3); 
+					$$ = str;
+				} 
+				} 
 		;
 
 leia	: LEIA LPARENTESES ids_leia RPARENTESES	{int tamanho = 7 + strlen($3);
@@ -469,57 +490,74 @@ leia	: LEIA LPARENTESES ids_leia RPARENTESES	{int tamanho = 7 + strlen($3);
 											}
 		;
  
-declaracao : tipo ID					{if(insertSymbolTable($2,$1)){
-											int tamanho = 2 + strlen($1) + strlen($2);
-											create_pointer(char,str,tamanho);
-											test(str){
-												sprintf(str, "%s %s", $1, $2);   
-												$$ = str;
-											}
-										}else{
-											yyerror("nome de variável já foi declarada!\n");
-										} 
-										}  
-			| tipo ID ATRIB expressao	{int tamanho = 4 + strlen($1)+ strlen($2) + strlen($3) + strlen($4);
-									    create_pointer(char,str,tamanho);
-										test(str){
-											sprintf(str, "%s %s %s %s", $1, $2, $3, $4); 
-											$$ = str;
-										}
-										}
-			
+declaracao :	tipo ID					
+					{if(insertSymbolTable($2,$1)){
+						int tamanho = 2 + strlen($1) + strlen($2);
+						create_pointer(char,str,tamanho);
+						char * type = getCType($1);
+						test(str){
+							sprintf(str, "%s %s", type, $2);   
+							$$ = str;
+						}
+					}
+					}  
+			| tipo ID ATRIB expressao	//TODO verificar se tipo da expressao é compativel com tipo do id
+				{if(insertSymbolTable($2,$1)){
+					int tamanho = 4 + strlen($1)+ strlen($2) + strlen($3) + strlen($4->code);
+				    create_pointer(char,str,tamanho);
+					char * type = getCType($1);
+					test(str){
+						sprintf(str, "%s %s %s %s", type, $2, $3, $4->code); 
+						$$ = str;
+					}
+				}
+				}
 			;
 
 
-expressao	: termo {$$ = $1;}
-			| operador_unario expressao	{int tamanho = 2 + strlen($1) + strlen($2);
-										create_pointer(char,str,tamanho);
-										test(str){
-											sprintf(str, "%s %s", $1, $2); 
-											$$ = str;
-										} 
-										}
-			| termo operador_binario expressao {int tamanho = 3 + strlen($1) + strlen($2) + strlen($3);
-												create_pointer(char,str,tamanho);
-												test(str){
-													sprintf(str, "%s %s %s", $1, $2, $3); 
-													$$ = str;
-												} 
-												}
-			| LPARENTESES expressao RPARENTESES {int tamanho = 3 + strlen($2);
-												create_pointer(char,str,tamanho);
-												test(str){
-													sprintf(str, "(%s)", $2);
-													$$ = str;
-												} 
-												}
-			| chamada_funcao operador_binario expressao 	{int tamanho = 3 + strlen($1) + strlen($2) + strlen($3);
-															create_pointer(char,str,tamanho);
-															test(str){
-																sprintf(str, "%s %s %s", $1, $2, $3); 
-																$$ = str;
-															} 
-															}
+expressao	:	termo {struct AllAttributes * info =
+						attrib_new("Escopo", "Tipo", $1->code);
+						$$ = info;}
+			|	operador_unario expressao	
+					{int tamanho = 2 + strlen($1) + strlen($2->code);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "%s %s", $1, $2->code);
+						struct AllAttributes * info =
+						attrib_new("Escopo", "Tipo", str);
+						$$ = info;
+					} 
+					}
+			|	termo operador_binario expressao 
+					{int tamanho = 3 + strlen($1->code) + strlen($2) + strlen($3->code);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "%s %s %s", $1->code, $2, $3->code); 
+						struct AllAttributes * info =
+						attrib_new("Escopo", "Tipo", str);
+						$$ = info;
+					} 
+					}
+			|	LPARENTESES expressao RPARENTESES 
+					{int tamanho = 3 + strlen($2->code);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "(%s)", $2->code);
+						struct AllAttributes * info =
+						attrib_new("Escopo", "Tipo", str);
+						$$ = info;
+					} 
+					}
+			|	chamada_funcao operador_binario expressao 	
+					{int tamanho = 3 + strlen($1) + strlen($2) + strlen($3->code);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "%s %s %s", $1, $2, $3->code); 
+						struct AllAttributes * info =
+						attrib_new("Escopo", "Tipo", str);
+						$$ = info;
+					} 
+					}
 			;
 
 operador_unario :	SUB					{$$ = $1;}
@@ -553,42 +591,55 @@ operador_booleano : E_LOG		        	{$$ = $1;}
 					;
 
 tipo : tipo_primitivo	{$$ = $1;}
-	 | tipo_vetor       {$$ = $1;}
+	 | tipo_vetor       {$$ = $1->code;}
 	 | tipo_registro	{$$ = $1;}
 	 ;
 	 
-tipo_registro : MEU_TIPO ID		{int tamanho = 9+strlen($2);
-								create_pointer(char,str,tamanho);
-								test(str){
-									sprintf(str, "MeuTipo %s", $2);
-									$$ = str;
-								}
-								}
+tipo_registro : MEU_TIPO ID		
+					{
+					if(insertSymbolTable($2,"MeuTipo")){
+						int tamanho = 9+strlen($2);
+						create_pointer(char,str,tamanho);
+						test(str){
+							sprintf(str, "MeuTipo %s", $2);
+							$$ = str;
+						}
+					}
+					}
 			  ;
 
-tipo_vetor : VETOR tipo_primitivo tamanho_vetor tamanho_vetor	{int tamanho = 8+strlen($2)+ strlen($3) +strlen($4);
-																create_pointer(char,str,tamanho);
-																test(str){
-																	sprintf(str, "Vetor %s %s%s", $2, $3, $4);
-																	$$ = str;
-																}
-																}
-	        | VETOR tipo_primitivo tamanho_vetor 	{int tamanho = 8+strlen($2)+strlen($3);
-													create_pointer(char,str,tamanho);
-													test(str){
-														sprintf(str, "Vetor %s %s", $2, $3);
-														$$ = str;
-													}
-													}
+tipo_vetor : VETOR tipo_primitivo tamanho_vetor tamanho_vetor	
+				{
+					int tamanho = 8+strlen($2)+ strlen($3) +strlen($4);
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "Vetor %s %s%s", $2, $3, $4);
+						struct AllAttributes * info =
+						attrib_new("Escopo", "Tipo", str);
+						$$ = info;
+					}
+				
+				}
+	        | VETOR tipo_primitivo tamanho_vetor 	
+	        	{int tamanho = 8+strlen($2)+strlen($3);
+				create_pointer(char,str,tamanho);
+				test(str){
+					sprintf(str, "Vetor %s %s", $2, $3);
+						struct AllAttributes * info =
+						attrib_new("Escopo", "Tipo", str);
+						$$ = info;
+				}
+				}
 			;
 
-tamanho_vetor : LCOLCHETE termo RCOLCHETE	{int tamanho = 3+strlen((char*)$2);
-											create_pointer(char,str,tamanho);
-											test(str){
-												sprintf(str, "[%s]",$2);
-												$$ = str;
-											}
-											}
+tamanho_vetor : LCOLCHETE termo RCOLCHETE	
+					{int tamanho = 3+strlen((char*)$2->code); //TODO verificar se o termo é do tipo inteiro
+					create_pointer(char,str,tamanho);
+					test(str){
+						sprintf(str, "[%s]",$2->code);
+						$$ = str;
+					}
+					}
 			  ;
 
 tipo_primitivo : INTEIRO 	{$$ = $1;}
@@ -598,18 +649,19 @@ tipo_primitivo : INTEIRO 	{$$ = $1;}
 			   | BOOL		{$$ = $1;}
 			   ;
 
-termos : termo					{$$ = $1;}
-	   | termo VIRGULA termos	{int tamanho = strlen($1) + strlen($3) + 3;
+termos : termo					{$$ = $1->code;}
+	   | termo VIRGULA termos	{int tamanho = strlen($1->code) + strlen($3) + 3;
 								create_pointer(char,str,tamanho);
 								test(str){
-									sprintf(str, "%s, %s", $1, $3);
+									sprintf(str, "%s, %s", $1->code, $3);
 									$$ = str;
 								}
 								}
 	   ;
 	   
-ids_leia : ID			 {$$ = $1;}
-	| ID VIRGULA ids_leia	{int tamanho = 3+strlen($1)+strlen($3);
+ids_leia : ID				{checkBeforeDeclaration($1); $$ = $1;}
+	| ID VIRGULA ids_leia	{checkBeforeDeclaration($1);
+							int tamanho = 3+strlen($1)+strlen($3);
 							create_pointer(char,str,tamanho);
 							test(str){
 								sprintf(str, "%s, %s",$1,$3);
@@ -618,15 +670,31 @@ ids_leia : ID			 {$$ = $1;}
 							}
 	;
 			   
-termo : ID       { $$ = $1;}
-      | literal  {$$ = $1;}
+termo : ID       {  create_pointer(char,tipo,10);
+					test(tipo){
+						strcpy(tipo,checkBeforeDeclaration($1)->type);
+					}
+					struct AllAttributes * info =
+					attrib_new(mostrarTopo(&scope_stack)->scopeName,tipo, $1);
+					$$ = info;}
+      | literal  {struct AllAttributes * info =
+					attrib_new(mostrarTopo(&scope_stack)->scopeName, $1->type, $1->code);
+					$$ = info;}
       ;
       
 
-literal : LIT_REAL  {$$ = $1;}
-		| LIT_BOOL  {$$ = $1;}
-		| LIT_INT   {$$ = $1;}
- 		| LIT_TEXTO {$$ = $1;}
+literal : LIT_REAL  {struct AllAttributes * info =
+					attrib_new(mostrarTopo(&scope_stack)->scopeName, "Real", $1);
+					$$ = info;}
+		| LIT_BOOL  {struct AllAttributes * info =
+					attrib_new(mostrarTopo(&scope_stack)->scopeName, "Bool", $1);
+					$$ = info;}
+		| LIT_INT   {struct AllAttributes * info =
+					attrib_new(mostrarTopo(&scope_stack)->scopeName, "Inteiro", $1);
+					$$ = info;}
+ 		| LIT_TEXTO {struct AllAttributes * info =
+					attrib_new(mostrarTopo(&scope_stack)->scopeName, "Texto", $1);
+					$$ = info;}
 		;
 %%
 
@@ -646,9 +714,11 @@ int main (void) {
 
 int yyerror (char *msg) {
 	fprintf (stderr, "-- %d: %s at '%s'\n", yylineno, msg, yytext);
-	//destrua conteudo e fecha arquivo e exit
-	printf("%s\n",msg);
-
+	//TODO destrua conteudo e fecha arquivo e exit
+	fclose(fp);
+	fclose(fopen("result.c", "w"));
+	remove("result.c");
+	exit(0);
 	return 0;
 }
 
@@ -657,7 +727,6 @@ int pushScope(char* scope, char* type){
 		
 	if(procurar(&scope_stack, scope, type)<0){
 		empilhar(&scope_stack,scope,type);
-		printf("tamanho da pilha apos push:%d\n",scope_stack.tamanho);
 	}
 	mostrar(&scope_stack);
 }
@@ -666,8 +735,6 @@ int popScope(){
 
 	if(desempilhar(&scope_stack)<0){
 		printf("pilha vazia\n");
-	}else{
-		printf("pop! tamanho da pilha:%d \n",scope_stack.tamanho);
 	}
 }
 
@@ -728,14 +795,13 @@ int insertSymbolTable(char*name,char*type){
 	
 	
 	if(result){
-		printf("variavel inserida na tabela de simbolo. tamanho da hash: %d\n",symbol_table.size);
+		printf("variavel inserida na tabela de simbolo. tamanho da hash: %d nome: %s escopo: %s\n",symbol_table.size, name, mostrarTopo(&scope_stack)->scopeName);
 		return 1;
 	}else{
 		create_pointer(char,errormsg,50);
 		test(errormsg){
-			sprintf(errormsg, "Na função ‘%s’:\n erro: redeclaração de ‘%s’",
+			sprintf(errormsg, "Na função ‘%s’:\n erro: redeclaração de ‘%s’\n",
 					mostrarTopo(&scope_stack)->scopeName,name);
-			printf("%s",errormsg);
 			yyerror(errormsg);
 			
 		}
@@ -743,29 +809,73 @@ int insertSymbolTable(char*name,char*type){
 	
 }
 
-int checkBeforeDeclaration(char* name){
-	
-	int keysize = strlen(name) + strlen(mostrarTopo(&scope_stack)->scopeName)+1;
-	create_pointer(char,key,keysize);
-	test(key){
-		strcpy(key,mostrarTopo(&scope_stack)->scopeName);
-		strcat(key,name);
+char * getCType(char * type){
+	if(strcmp(type, "Inteiro") == 0){
+		return "int";
 	}
-	
-	Symbol * item = findHashTable(&symbol_table,key);
-	if(item!=NULL){
-		printf("ok, variavel ja foi declarada\n");
-		return 1;
-	}else{
+	else if(strcmp(type, "Real") == 0){
+		return "double";
+	} 
+	else if(strcmp(type, "Texto") == 0){
+		return "char *";
+	}
+	else if(strcmp(type, "Booleano") == 0){
+		return "int";
+	}
+	else if(strcmp(type, "MeuTipo") == 0){
+		return "struct";
+	}
+	else{
 		create_pointer(char,errormsg,50);
 		test(errormsg){
-			sprintf(errormsg, "Na função ‘%s’:\n erro: ‘%s’ não declarada (primeiro uso nesta função)\n",
-					mostrarTopo(&scope_stack)->scopeName,name);
-			printf("erro: %s",errormsg);
+			sprintf(errormsg, "Na função ‘%s’:\n erro: ‘%s’ não é um tipo válido\n",
+					mostrarTopo(&scope_stack)->scopeName,type);
 			yyerror(errormsg);
 			
 		}
+	}
+}
+
+bool compareTypes(char * type1, char * type2){
+	if((strcmp(type1, "Inteiro") == 0 && strcmp(type2, "Real")) == 0||
+		(strcmp(type1, "Real") == 0 && strcmp(type2, "Inteiro")==0)
+		|| strcmp(type1, type2) == 0)
+		return true;
+	return false;
+}
+
+Symbol* checkBeforeDeclaration(char* name){
+	int posicao = scope_stack.tamanho;
+	
+	do{
 		
+		ElementoTipoNome* currentScope = procurarTopo(&scope_stack,posicao);
+		
+		if(currentScope!=NULL){
+			int keysize = strlen(name) + strlen(currentScope->scopeName)+1;
+			create_pointer(char,key,keysize);
+			test(key){
+				strcpy(key,currentScope->scopeName);
+				strcat(key,name);
+			}
+			
+			Symbol * item = findHashTable(&symbol_table,key);
+			
+			if(item!=NULL){
+				printf("Variavel ja foi declarada. Nome:%s\n",name);
+				return item;
+			}else{
+				posicao--;
+			}	
+			
+		}
+	}while(posicao>0);
+	
+	create_pointer(char,errormsg,50);
+	test(errormsg){
+		sprintf(errormsg, "Na função ‘%s’:\n erro: ‘%s’ não declarada (primeiro uso nesta função)\n",
+				mostrarTopo(&scope_stack)->scopeName,name);
+		yyerror(errormsg);
 		
 	}
 }

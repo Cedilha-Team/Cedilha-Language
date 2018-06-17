@@ -7,7 +7,6 @@ MeuTipo coisaUoh {
 Funcao Inteiro teste1(Inteiro i);
 Proc teste2(Inteiro j);
 
-
 BlocoPrincipal {
     /*Vetor Inteiro [1][2] vetorzinho;*/
     Imprima("lalal");
@@ -15,7 +14,7 @@ BlocoPrincipal {
     Texto texto = 2 * ("lalalalala" + 5);
     Inteiro c;
     Inteiro b;
-    
+    x =1;
     Real vdc;
     
     Real z;
@@ -61,16 +60,16 @@ BlocoPrincipal {
 
 BlocoFuncoes {
  
-    Proc teste(Inteiro i){ 
+    Proc teste2(Inteiro i){ 
         Inteiro x;
-        Inteiro i;
-        x = 2 + i;
+        #Inteiro i;
+        x = 2 + x;
         Retorne x;
     }
     
     Funcao Inteiro teste1(Inteiro i){ 
         Inteiro x;
-        Inteiro i;
+        Inteiro j;
         x = 2 + i;
         Retorne x;
     }

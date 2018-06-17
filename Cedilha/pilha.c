@@ -75,8 +75,8 @@ int procurar(Pilha * monte, char* scopeName, char* scopeType){
   return -1;
 }
 
-ElementoTipoNome* topo(Pilha * monte, int n){
-  if(n > monte->tamanho || n > 0){
+ElementoTipoNome* procurarTopo(Pilha * monte, int n){
+  if(n > monte->tamanho || n <= 0){
     return NULL;
   }
   
@@ -84,9 +84,10 @@ ElementoTipoNome* topo(Pilha * monte, int n){
   int i;
   atual = monte->inicio;
   
-  for(i=0;i<n;++i){
+  for(i=n; i<monte->tamanho; ++i){
     atual = atual->proximo;
   }
+  
   return atual;
 }
 

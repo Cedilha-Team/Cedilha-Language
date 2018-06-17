@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "./include/memoryBank.h"
 #include "y.tab.h"
+#include "./include/attrib.h"
 
 
 extern void yyerror(const char *);  /* prints grammar violation message */

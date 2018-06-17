@@ -25,7 +25,7 @@ void mostrar(Pilha * monte);
 
 int procurar(Pilha * monte, char* scopeName, char* scopeType);
 
-ElementoTipoNome* topo(Pilha * monte, int n);
+ElementoTipoNome* procurarTopo(Pilha * monte, int n);
 
 
 #endif
