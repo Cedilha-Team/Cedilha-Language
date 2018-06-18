@@ -20,13 +20,13 @@ void * alloc( int size){
     
     void* resultado = nextPosition;
     
-    nextPosition = nextPosition + 4 + size;
+    nextPosition = nextPosition + 8 + size;
     
     char* toBeMarked = (char*) resultado;
     
-    strcpy(toBeMarked,"mrk");
+    strcpy(toBeMarked,"/*scp*/");
     
-    return resultado + 4;
+    return resultado + 8;
 }
 
 void stopMemoryBank(){

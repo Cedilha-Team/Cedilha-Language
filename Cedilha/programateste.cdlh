@@ -14,7 +14,7 @@ BlocoPrincipal {
     Texto texto = 2 * ("lalalalala" + 5);
     Inteiro c;
     Inteiro b;
-    x =1;
+    Inteiro x = 1;
     Real vdc;
     
     Real z;
@@ -37,30 +37,30 @@ BlocoPrincipal {
     };
 
     Enquanto (vdc > 5) Execute {
-        x+1;
+        x+=1;
     };
     
     
      Execute{
         Inteiro x = 1;
         a+b;
-        x = 1+2*3;
+        x = 1 + 2 * 3;
      } Enquanto (vdc > 5 ); 
      
     Para ( Inteiro j = 10; j < 15; j++ ) Execute {
         c = 10;
     };
 
+  
    
-   
-    x = teste1(i,2,56) + 1;
-    Inteiro j = teste2(i,"txt") + 1;
+    x = teste1(b,2,56) + 1;
+    Inteiro j = teste2(a,"txt") + 1;
 
 }
 
 BlocoFuncoes {
  
-    Proc teste2(Inteiro i){ 
+  /*  Proc teste2(Inteiro i){ 
         Inteiro x;
         #Inteiro i;
         x = 2 + x;
@@ -72,6 +72,6 @@ BlocoFuncoes {
         Inteiro j;
         x = 2 + i;
         Retorne x;
-    }
+    }*/
 
 }

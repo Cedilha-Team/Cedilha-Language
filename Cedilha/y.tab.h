@@ -176,7 +176,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 40 "parserVdc.y" /* yacc.c:1909  */
+#line 42 "parserVdc.y" /* yacc.c:1909  */
 
 	struct AllAttributes * attrib;
 	char * sValue;  /* string value */

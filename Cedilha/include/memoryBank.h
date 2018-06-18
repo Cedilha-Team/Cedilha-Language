@@ -31,7 +31,7 @@ char *remove_substr (char *str, char *substr);
 /*Testa se o ponteiro está funcionando */
 #define test(pointer) aux = (char  *) pointer; \
     if( !( lastPosition > (void *)pointer && firstPosition < (void *) pointer) \
-      || !(strcmp("mrk",(aux-4))==0)\
+      || !(strcmp("/*scp*/",(aux-8))==0)\
     ){\
         printf(" erro no ponteiro");\
         assert(1==0);\

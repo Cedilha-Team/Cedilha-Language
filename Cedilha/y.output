@@ -168,7 +168,7 @@ Grammar
 
    95 $@30: %empty
 
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
 
    97 declaracao_para: %empty
    98                | declaracao
@@ -176,140 +176,143 @@ Grammar
    99 comando_para: %empty
   100             | comando
 
-  101 imprime: IMPRIMA LPARENTESES termos RPARENTESES
+  101 imprime: IMPRIMA LPARENTESES termos_imprime RPARENTESES
 
-  102 leia: LEIA LPARENTESES ids_leia RPARENTESES
+  102 termos_imprime: termo_imprime
+  103               | termo_imprime VIRGULA termos_imprime
 
-  103 declaracao: tipo ID
-  104           | tipo ID ATRIB expressao
+  104 termo_imprime: ID
+  105              | literal
 
-  105 expressao: termo
-  106          | operador_unario expressao
-  107          | termo operador_binario expressao
-  108          | LPARENTESES expressao RPARENTESES
-  109          | chamada_funcao operador_binario expressao
+  106 leia: LEIA LPARENTESES ids_leia RPARENTESES
 
-  110 operador_unario: SUB
-  111                | NEGACAO
-  112                | ARROBA
+  107 declaracao: tipo ID
+  108           | tipo ID ATRIB expressao
 
-  113 operador_binario: operador_booleano
-  114                 | operador_relacional
-  115                 | operador_aritmetico
+  109 expressao: termo
+  110          | operador_unario expressao
+  111          | termo operador_binario expressao
+  112          | LPARENTESES expressao RPARENTESES
+  113          | chamada_funcao operador_binario expressao
 
-  116 operador_relacional: MENORIGUAL
-  117                    | MAIORIQUAL
-  118                    | IGUAL
-  119                    | DIFERENTE
-  120                    | MAIOR
-  121                    | MENOR
+  114 operador_unario: SUB
+  115                | NEGACAO
+  116                | ARROBA
 
-  122 operador_aritmetico: MULT
-  123                    | DIV
-  124                    | MOD
-  125                    | EXP
-  126                    | SUB
-  127                    | SOMA
+  117 operador_binario: operador_booleano
+  118                 | operador_relacional
+  119                 | operador_aritmetico
 
-  128 operador_booleano: E_LOG
-  129                  | OU_LOG
+  120 operador_relacional: MENORIGUAL
+  121                    | MAIORIQUAL
+  122                    | IGUAL
+  123                    | DIFERENTE
+  124                    | MAIOR
+  125                    | MENOR
 
-  130 tipo: tipo_primitivo
-  131     | tipo_vetor
-  132     | tipo_registro
+  126 operador_aritmetico: MULT
+  127                    | DIV
+  128                    | MOD
+  129                    | EXP
+  130                    | SUB
+  131                    | SOMA
 
-  133 tipo_registro: MEU_TIPO ID
+  132 operador_booleano: E_LOG
+  133                  | OU_LOG
 
-  134 tipo_vetor: VETOR tipo_primitivo tamanho_vetor tamanho_vetor
-  135           | VETOR tipo_primitivo tamanho_vetor
+  134 tipo: tipo_primitivo
+  135     | tipo_vetor
+  136     | tipo_registro
 
-  136 tamanho_vetor: LCOLCHETE termo RCOLCHETE
+  137 tipo_registro: MEU_TIPO ID
 
-  137 tipo_primitivo: INTEIRO
-  138               | REAL
-  139               | CARACTERE
-  140               | TEXTO
-  141               | BOOL
+  138 tipo_vetor: VETOR tipo_primitivo tamanho_vetor tamanho_vetor
+  139           | VETOR tipo_primitivo tamanho_vetor
 
-  142 termos: termo
-  143       | termo VIRGULA termos
+  140 tamanho_vetor: LCOLCHETE termo RCOLCHETE
 
-  144 ids_leia: ID
-  145         | ID VIRGULA ids_leia
+  141 tipo_primitivo: INTEIRO
+  142               | REAL
+  143               | CARACTERE
+  144               | TEXTO
+  145               | BOOL
 
-  146 termo: ID
-  147      | literal
+  146 ids_leia: ID
+  147         | ID VIRGULA ids_leia
 
-  148 literal: LIT_REAL
-  149        | LIT_BOOL
-  150        | LIT_INT
-  151        | LIT_TEXTO
+  148 termo: ID
+  149      | literal
+
+  150 literal: LIT_REAL
+  151        | LIT_BOOL
+  152        | LIT_INT
+  153        | LIT_TEXTO
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-ID (258) 11 18 21 25 36 41 43 75 76 103 104 133 144 145 146
-LIT_TEXTO (259) 151
-LIT_BOOL (260) 149
-LIT_REAL (261) 148
-LIT_INT (262) 150
-MENORIGUAL (263) 116
-MAIORIQUAL (264) 117
-IGUAL (265) 118
-DIFERENTE (266) 119
-MAIOR (267) 120
-MENOR (268) 121
-ATRIB (269) 77 104
+ID (258) 11 18 21 25 36 41 43 75 76 104 107 108 137 146 147 148
+LIT_TEXTO (259) 153
+LIT_BOOL (260) 151
+LIT_REAL (261) 150
+LIT_INT (262) 152
+MENORIGUAL (263) 120
+MAIORIQUAL (264) 121
+IGUAL (265) 122
+DIFERENTE (266) 123
+MAIOR (267) 124
+MENOR (268) 125
+ATRIB (269) 77 108
 ATRIB_SOMA (270) 78
 ATRIB_SUB (271) 79
 ATRIB_MULT (272) 80
 ATRIB_DIV (273) 81
 ATRIB_MOD (274) 82
-NEGACAO (275) 111
+NEGACAO (275) 115
 INC (276) 83
 DEC (277) 84
-E_LOG (278) 128
-OU_LOG (279) 129
-ARROBA (280) 48 112
-MULT (281) 122
-SUB (282) 110 126
-SOMA (283) 127
-DIV (284) 123
-MOD (285) 124
-EXP (286) 125
-BOOL (287) 141
-TEXTO (288) 140
-CARACTERE (289) 139
-REAL (290) 138
-INTEIRO (291) 137
+E_LOG (278) 132
+OU_LOG (279) 133
+ARROBA (280) 48 116
+MULT (281) 126
+SUB (282) 114 130
+SOMA (283) 131
+DIV (284) 127
+MOD (285) 128
+EXP (286) 129
+BOOL (287) 145
+TEXTO (288) 144
+CARACTERE (289) 143
+REAL (290) 142
+INTEIRO (291) 141
 PARE (292) 59
 ASPAS_DUPLAS (293)
 ASPAS_SIMPLES (294)
-LCOLCHETE (295) 136
-RCOLCHETE (296) 136
+LCOLCHETE (295) 140
+RCOLCHETE (296) 140
 LCHAVE (297) 11 27 36 41 52 63 67 90 93 96
 RCHAVE (298) 11 27 36 41 52 63 67 90 93 96
-LPARENTESES (299) 18 21 36 41 43 67 90 93 96 101 102 108
-RPARENTESES (300) 18 21 36 41 43 67 90 93 96 101 102 108
+LPARENTESES (299) 18 21 36 41 43 67 90 93 96 101 106 112
+RPARENTESES (300) 18 21 36 41 43 67 90 93 96 101 106 112
 SE (301) 67
 IMPRIMA (302) 101
-LEIA (303) 102
+LEIA (303) 106
 ENQUANTO (304) 90 93
 PARA (305) 96
 EXECUTE (306) 67 90 93 96
 SENAO (307) 63 64
 CONSTANTE (308)
 RETORNE (309) 44
-VIRGULA (310) 23 46 143 145
+VIRGULA (310) 23 46 103 147
 PONTOVIRGULA (311) 6 13 54 96
-MEU_TIPO (312) 11 133
+MEU_TIPO (312) 11 137
 BPRINCIPAL (313) 52
 BFUNCOES (314) 27
 FUNCAO (315) 18 36
 PROC (316) 21 41
-VETOR (317) 134 135
+VETOR (317) 138 139
 CERQUILHA (318)
 
 
@@ -382,7 +385,7 @@ $@16 (95)
 $@17 (96)
     on left: 40, on right: 41
 chamada_funcao (97)
-    on left: 43, on right: 73 109
+    on left: 43, on right: 73 113
 $@18 (98)
     on left: 42, on right: 43
 retorne (99)
@@ -449,41 +452,43 @@ comando_para (129)
     on left: 99 100, on right: 96
 imprime (130)
     on left: 101, on right: 69
-leia (131)
-    on left: 102, on right: 70
-declaracao (132)
-    on left: 103 104, on right: 7 68 98
-expressao (133)
-    on left: 105 106 107 108 109, on right: 44 67 71 76 90 93 96 104
-    106 107 108 109
-operador_unario (134)
-    on left: 110 111 112, on right: 106
-operador_binario (135)
-    on left: 113 114 115, on right: 107 109
-operador_relacional (136)
-    on left: 116 117 118 119 120 121, on right: 114
-operador_aritmetico (137)
-    on left: 122 123 124 125 126 127, on right: 115
-operador_booleano (138)
-    on left: 128 129, on right: 113
-tipo (139)
-    on left: 130 131 132, on right: 18 25 36 103 104
-tipo_registro (140)
-    on left: 133, on right: 132
-tipo_vetor (141)
-    on left: 134 135, on right: 131
-tamanho_vetor (142)
-    on left: 136, on right: 134 135
-tipo_primitivo (143)
-    on left: 137 138 139 140 141, on right: 130 134 135
-termos (144)
-    on left: 142 143, on right: 101 143
-ids_leia (145)
-    on left: 144 145, on right: 102 145
-termo (146)
-    on left: 146 147, on right: 48 49 105 107 136 142 143
-literal (147)
-    on left: 148 149 150 151, on right: 147
+termos_imprime (131)
+    on left: 102 103, on right: 101 103
+termo_imprime (132)
+    on left: 104 105, on right: 102 103
+leia (133)
+    on left: 106, on right: 70
+declaracao (134)
+    on left: 107 108, on right: 7 68 98
+expressao (135)
+    on left: 109 110 111 112 113, on right: 44 67 71 76 90 93 96 108
+    110 111 112 113
+operador_unario (136)
+    on left: 114 115 116, on right: 110
+operador_binario (137)
+    on left: 117 118 119, on right: 111 113
+operador_relacional (138)
+    on left: 120 121 122 123 124 125, on right: 118
+operador_aritmetico (139)
+    on left: 126 127 128 129 130 131, on right: 119
+operador_booleano (140)
+    on left: 132 133, on right: 117
+tipo (141)
+    on left: 134 135 136, on right: 18 25 36 107 108
+tipo_registro (142)
+    on left: 137, on right: 136
+tipo_vetor (143)
+    on left: 138 139, on right: 135
+tamanho_vetor (144)
+    on left: 140, on right: 138 139
+tipo_primitivo (145)
+    on left: 141 142 143 144 145, on right: 134 138 139
+ids_leia (146)
+    on left: 146 147, on right: 106 147
+termo (147)
+    on left: 148 149, on right: 48 49 109 111 140
+literal (148)
+    on left: 150 151 152 153, on right: 105 149
 
 
 State 0
@@ -536,51 +541,51 @@ State 3
 
 State 4
 
-  141 tipo_primitivo: BOOL .
+  145 tipo_primitivo: BOOL .
 
-    $default  reduce using rule 141 (tipo_primitivo)
+    $default  reduce using rule 145 (tipo_primitivo)
 
 
 State 5
 
-  140 tipo_primitivo: TEXTO .
+  144 tipo_primitivo: TEXTO .
 
-    $default  reduce using rule 140 (tipo_primitivo)
+    $default  reduce using rule 144 (tipo_primitivo)
 
 
 State 6
 
-  139 tipo_primitivo: CARACTERE .
+  143 tipo_primitivo: CARACTERE .
 
-    $default  reduce using rule 139 (tipo_primitivo)
+    $default  reduce using rule 143 (tipo_primitivo)
 
 
 State 7
 
-  138 tipo_primitivo: REAL .
+  142 tipo_primitivo: REAL .
 
-    $default  reduce using rule 138 (tipo_primitivo)
+    $default  reduce using rule 142 (tipo_primitivo)
 
 
 State 8
 
-  137 tipo_primitivo: INTEIRO .
+  141 tipo_primitivo: INTEIRO .
 
-    $default  reduce using rule 137 (tipo_primitivo)
+    $default  reduce using rule 141 (tipo_primitivo)
 
 
 State 9
 
    11 declaracao_registro: MEU_TIPO . ID LCHAVE $@4 parametros $@5 RCHAVE
-  133 tipo_registro: MEU_TIPO . ID
+  137 tipo_registro: MEU_TIPO . ID
 
     ID  shift, and go to state 19
 
 
 State 10
 
-  134 tipo_vetor: VETOR . tipo_primitivo tamanho_vetor tamanho_vetor
-  135           | VETOR . tipo_primitivo tamanho_vetor
+  138 tipo_vetor: VETOR . tipo_primitivo tamanho_vetor tamanho_vetor
+  139           | VETOR . tipo_primitivo tamanho_vetor
 
     BOOL       shift, and go to state 4
     TEXTO      shift, and go to state 5
@@ -623,47 +628,47 @@ State 14
 
 State 15
 
-  103 declaracao: tipo . ID
-  104           | tipo . ID ATRIB expressao
+  107 declaracao: tipo . ID
+  108           | tipo . ID ATRIB expressao
 
     ID  shift, and go to state 23
 
 
 State 16
 
-  132 tipo: tipo_registro .
+  136 tipo: tipo_registro .
 
-    $default  reduce using rule 132 (tipo)
+    $default  reduce using rule 136 (tipo)
 
 
 State 17
 
-  131 tipo: tipo_vetor .
+  135 tipo: tipo_vetor .
 
-    $default  reduce using rule 131 (tipo)
+    $default  reduce using rule 135 (tipo)
 
 
 State 18
 
-  130 tipo: tipo_primitivo .
+  134 tipo: tipo_primitivo .
 
-    $default  reduce using rule 130 (tipo)
+    $default  reduce using rule 134 (tipo)
 
 
 State 19
 
    11 declaracao_registro: MEU_TIPO ID . LCHAVE $@4 parametros $@5 RCHAVE
-  133 tipo_registro: MEU_TIPO ID .
+  137 tipo_registro: MEU_TIPO ID .
 
     LCHAVE  shift, and go to state 24
 
-    $default  reduce using rule 133 (tipo_registro)
+    $default  reduce using rule 137 (tipo_registro)
 
 
 State 20
 
-  134 tipo_vetor: VETOR tipo_primitivo . tamanho_vetor tamanho_vetor
-  135           | VETOR tipo_primitivo . tamanho_vetor
+  138 tipo_vetor: VETOR tipo_primitivo . tamanho_vetor tamanho_vetor
+  139           | VETOR tipo_primitivo . tamanho_vetor
 
     LCOLCHETE  shift, and go to state 25
 
@@ -711,12 +716,12 @@ State 22
 
 State 23
 
-  103 declaracao: tipo ID .
-  104           | tipo ID . ATRIB expressao
+  107 declaracao: tipo ID .
+  108           | tipo ID . ATRIB expressao
 
     ATRIB  shift, and go to state 34
 
-    $default  reduce using rule 103 (declaracao)
+    $default  reduce using rule 107 (declaracao)
 
 
 State 24
@@ -730,7 +735,7 @@ State 24
 
 State 25
 
-  136 tamanho_vetor: LCOLCHETE . termo RCOLCHETE
+  140 tamanho_vetor: LCOLCHETE . termo RCOLCHETE
 
     ID         shift, and go to state 36
     LIT_TEXTO  shift, and go to state 37
@@ -744,12 +749,12 @@ State 25
 
 State 26
 
-  134 tipo_vetor: VETOR tipo_primitivo tamanho_vetor . tamanho_vetor
-  135           | VETOR tipo_primitivo tamanho_vetor .
+  138 tipo_vetor: VETOR tipo_primitivo tamanho_vetor . tamanho_vetor
+  139           | VETOR tipo_primitivo tamanho_vetor .
 
     LCOLCHETE  shift, and go to state 25
 
-    $default  reduce using rule 135 (tipo_vetor)
+    $default  reduce using rule 139 (tipo_vetor)
 
     tamanho_vetor  go to state 43
 
@@ -818,7 +823,7 @@ State 33
 
 State 34
 
-  104 declaracao: tipo ID ATRIB . expressao
+  108 declaracao: tipo ID ATRIB . expressao
 
     ID           shift, and go to state 49
     LIT_TEXTO    shift, and go to state 37
@@ -861,63 +866,63 @@ State 35
 
 State 36
 
-  146 termo: ID .
+  148 termo: ID .
 
-    $default  reduce using rule 146 (termo)
+    $default  reduce using rule 148 (termo)
 
 
 State 37
 
-  151 literal: LIT_TEXTO .
+  153 literal: LIT_TEXTO .
 
-    $default  reduce using rule 151 (literal)
+    $default  reduce using rule 153 (literal)
 
 
 State 38
 
-  149 literal: LIT_BOOL .
+  151 literal: LIT_BOOL .
 
-    $default  reduce using rule 149 (literal)
+    $default  reduce using rule 151 (literal)
 
 
 State 39
 
-  148 literal: LIT_REAL .
-
-    $default  reduce using rule 148 (literal)
-
-
-State 40
-
-  150 literal: LIT_INT .
+  150 literal: LIT_REAL .
 
     $default  reduce using rule 150 (literal)
 
 
+State 40
+
+  152 literal: LIT_INT .
+
+    $default  reduce using rule 152 (literal)
+
+
 State 41
 
-  136 tamanho_vetor: LCOLCHETE termo . RCOLCHETE
+  140 tamanho_vetor: LCOLCHETE termo . RCOLCHETE
 
     RCOLCHETE  shift, and go to state 61
 
 
 State 42
 
-  147 termo: literal .
+  149 termo: literal .
 
-    $default  reduce using rule 147 (termo)
+    $default  reduce using rule 149 (termo)
 
 
 State 43
 
-  134 tipo_vetor: VETOR tipo_primitivo tamanho_vetor tamanho_vetor .
+  138 tipo_vetor: VETOR tipo_primitivo tamanho_vetor tamanho_vetor .
 
-    $default  reduce using rule 134 (tipo_vetor)
+    $default  reduce using rule 138 (tipo_vetor)
 
 
 State 44
 
-  133 tipo_registro: MEU_TIPO . ID
+  137 tipo_registro: MEU_TIPO . ID
 
     ID  shift, and go to state 62
 
@@ -963,38 +968,38 @@ State 48
 State 49
 
    43 chamada_funcao: ID . $@18 LPARENTESES parametros_chamada RPARENTESES
-  146 termo: ID .
+  148 termo: ID .
 
     LPARENTESES  reduce using rule 42 ($@18)
-    $default     reduce using rule 146 (termo)
+    $default     reduce using rule 148 (termo)
 
     $@18  go to state 68
 
 
 State 50
 
-  111 operador_unario: NEGACAO .
+  115 operador_unario: NEGACAO .
 
-    $default  reduce using rule 111 (operador_unario)
+    $default  reduce using rule 115 (operador_unario)
 
 
 State 51
 
-  112 operador_unario: ARROBA .
+  116 operador_unario: ARROBA .
 
-    $default  reduce using rule 112 (operador_unario)
+    $default  reduce using rule 116 (operador_unario)
 
 
 State 52
 
-  110 operador_unario: SUB .
+  114 operador_unario: SUB .
 
-    $default  reduce using rule 110 (operador_unario)
+    $default  reduce using rule 114 (operador_unario)
 
 
 State 53
 
-  108 expressao: LPARENTESES . expressao RPARENTESES
+  112 expressao: LPARENTESES . expressao RPARENTESES
 
     ID           shift, and go to state 49
     LIT_TEXTO    shift, and go to state 37
@@ -1015,7 +1020,7 @@ State 53
 
 State 54
 
-  109 expressao: chamada_funcao . operador_binario expressao
+  113 expressao: chamada_funcao . operador_binario expressao
 
     MENORIGUAL  shift, and go to state 70
     MAIORIQUAL  shift, and go to state 71
@@ -1040,14 +1045,14 @@ State 54
 
 State 55
 
-  104 declaracao: tipo ID ATRIB expressao .
+  108 declaracao: tipo ID ATRIB expressao .
 
-    $default  reduce using rule 104 (declaracao)
+    $default  reduce using rule 108 (declaracao)
 
 
 State 56
 
-  106 expressao: operador_unario . expressao
+  110 expressao: operador_unario . expressao
 
     ID           shift, and go to state 49
     LIT_TEXTO    shift, and go to state 37
@@ -1068,8 +1073,8 @@ State 56
 
 State 57
 
-  105 expressao: termo .
-  107          | termo . operador_binario expressao
+  109 expressao: termo .
+  111          | termo . operador_binario expressao
 
     MENORIGUAL  shift, and go to state 70
     MAIORIQUAL  shift, and go to state 71
@@ -1086,7 +1091,7 @@ State 57
     MOD         shift, and go to state 82
     EXP         shift, and go to state 83
 
-    $default  reduce using rule 105 (expressao)
+    $default  reduce using rule 109 (expressao)
 
     operador_binario     go to state 89
     operador_relacional  go to state 85
@@ -1122,16 +1127,16 @@ State 60
 
 State 61
 
-  136 tamanho_vetor: LCOLCHETE termo RCOLCHETE .
+  140 tamanho_vetor: LCOLCHETE termo RCOLCHETE .
 
-    $default  reduce using rule 136 (tamanho_vetor)
+    $default  reduce using rule 140 (tamanho_vetor)
 
 
 State 62
 
-  133 tipo_registro: MEU_TIPO ID .
+  137 tipo_registro: MEU_TIPO ID .
 
-    $default  reduce using rule 133 (tipo_registro)
+    $default  reduce using rule 137 (tipo_registro)
 
 
 State 63
@@ -1184,112 +1189,112 @@ State 68
 
 State 69
 
-  108 expressao: LPARENTESES expressao . RPARENTESES
+  112 expressao: LPARENTESES expressao . RPARENTESES
 
     RPARENTESES  shift, and go to state 99
 
 
 State 70
 
-  116 operador_relacional: MENORIGUAL .
-
-    $default  reduce using rule 116 (operador_relacional)
-
-
-State 71
-
-  117 operador_relacional: MAIORIQUAL .
-
-    $default  reduce using rule 117 (operador_relacional)
-
-
-State 72
-
-  118 operador_relacional: IGUAL .
-
-    $default  reduce using rule 118 (operador_relacional)
-
-
-State 73
-
-  119 operador_relacional: DIFERENTE .
-
-    $default  reduce using rule 119 (operador_relacional)
-
-
-State 74
-
-  120 operador_relacional: MAIOR .
+  120 operador_relacional: MENORIGUAL .
 
     $default  reduce using rule 120 (operador_relacional)
 
 
-State 75
+State 71
 
-  121 operador_relacional: MENOR .
+  121 operador_relacional: MAIORIQUAL .
 
     $default  reduce using rule 121 (operador_relacional)
 
 
+State 72
+
+  122 operador_relacional: IGUAL .
+
+    $default  reduce using rule 122 (operador_relacional)
+
+
+State 73
+
+  123 operador_relacional: DIFERENTE .
+
+    $default  reduce using rule 123 (operador_relacional)
+
+
+State 74
+
+  124 operador_relacional: MAIOR .
+
+    $default  reduce using rule 124 (operador_relacional)
+
+
+State 75
+
+  125 operador_relacional: MENOR .
+
+    $default  reduce using rule 125 (operador_relacional)
+
+
 State 76
 
-  128 operador_booleano: E_LOG .
+  132 operador_booleano: E_LOG .
 
-    $default  reduce using rule 128 (operador_booleano)
+    $default  reduce using rule 132 (operador_booleano)
 
 
 State 77
 
-  129 operador_booleano: OU_LOG .
+  133 operador_booleano: OU_LOG .
 
-    $default  reduce using rule 129 (operador_booleano)
+    $default  reduce using rule 133 (operador_booleano)
 
 
 State 78
 
-  122 operador_aritmetico: MULT .
-
-    $default  reduce using rule 122 (operador_aritmetico)
-
-
-State 79
-
-  126 operador_aritmetico: SUB .
+  126 operador_aritmetico: MULT .
 
     $default  reduce using rule 126 (operador_aritmetico)
 
 
+State 79
+
+  130 operador_aritmetico: SUB .
+
+    $default  reduce using rule 130 (operador_aritmetico)
+
+
 State 80
 
-  127 operador_aritmetico: SOMA .
+  131 operador_aritmetico: SOMA .
 
-    $default  reduce using rule 127 (operador_aritmetico)
+    $default  reduce using rule 131 (operador_aritmetico)
 
 
 State 81
 
-  123 operador_aritmetico: DIV .
+  127 operador_aritmetico: DIV .
 
-    $default  reduce using rule 123 (operador_aritmetico)
+    $default  reduce using rule 127 (operador_aritmetico)
 
 
 State 82
 
-  124 operador_aritmetico: MOD .
+  128 operador_aritmetico: MOD .
 
-    $default  reduce using rule 124 (operador_aritmetico)
+    $default  reduce using rule 128 (operador_aritmetico)
 
 
 State 83
 
-  125 operador_aritmetico: EXP .
+  129 operador_aritmetico: EXP .
 
-    $default  reduce using rule 125 (operador_aritmetico)
+    $default  reduce using rule 129 (operador_aritmetico)
 
 
 State 84
 
-  109 expressao: chamada_funcao operador_binario . expressao
+  113 expressao: chamada_funcao operador_binario . expressao
 
     ID           shift, and go to state 49
     LIT_TEXTO    shift, and go to state 37
@@ -1310,35 +1315,35 @@ State 84
 
 State 85
 
-  114 operador_binario: operador_relacional .
+  118 operador_binario: operador_relacional .
 
-    $default  reduce using rule 114 (operador_binario)
+    $default  reduce using rule 118 (operador_binario)
 
 
 State 86
 
-  115 operador_binario: operador_aritmetico .
+  119 operador_binario: operador_aritmetico .
 
-    $default  reduce using rule 115 (operador_binario)
+    $default  reduce using rule 119 (operador_binario)
 
 
 State 87
 
-  113 operador_binario: operador_booleano .
+  117 operador_binario: operador_booleano .
 
-    $default  reduce using rule 113 (operador_binario)
+    $default  reduce using rule 117 (operador_binario)
 
 
 State 88
 
-  106 expressao: operador_unario expressao .
+  110 expressao: operador_unario expressao .
 
-    $default  reduce using rule 106 (expressao)
+    $default  reduce using rule 110 (expressao)
 
 
 State 89
 
-  107 expressao: termo operador_binario . expressao
+  111 expressao: termo operador_binario . expressao
 
     ID           shift, and go to state 49
     LIT_TEXTO    shift, and go to state 37
@@ -1468,23 +1473,23 @@ State 98
 
 State 99
 
-  108 expressao: LPARENTESES expressao RPARENTESES .
+  112 expressao: LPARENTESES expressao RPARENTESES .
 
-    $default  reduce using rule 108 (expressao)
+    $default  reduce using rule 112 (expressao)
 
 
 State 100
 
-  109 expressao: chamada_funcao operador_binario expressao .
+  113 expressao: chamada_funcao operador_binario expressao .
 
-    $default  reduce using rule 109 (expressao)
+    $default  reduce using rule 113 (expressao)
 
 
 State 101
 
-  107 expressao: termo operador_binario expressao .
+  111 expressao: termo operador_binario expressao .
 
-    $default  reduce using rule 107 (expressao)
+    $default  reduce using rule 111 (expressao)
 
 
 State 102
@@ -1663,7 +1668,7 @@ State 114
    43 chamada_funcao: ID . $@18 LPARENTESES parametros_chamada RPARENTESES
    75 atribuicao: ID . atribuicao_unaria
    76           | ID . atribuicao_binaria expressao
-  146 termo: ID .
+  148 termo: ID .
 
     ATRIB       shift, and go to state 151
     ATRIB_SOMA  shift, and go to state 152
@@ -1675,7 +1680,7 @@ State 114
     DEC         shift, and go to state 158
 
     LPARENTESES  reduce using rule 42 ($@18)
-    $default     reduce using rule 146 (termo)
+    $default     reduce using rule 148 (termo)
 
     $@18                go to state 68
     atribuicao_binaria  go to state 159
@@ -1698,14 +1703,14 @@ State 116
 
 State 117
 
-  101 imprime: IMPRIMA . LPARENTESES termos RPARENTESES
+  101 imprime: IMPRIMA . LPARENTESES termos_imprime RPARENTESES
 
     LPARENTESES  shift, and go to state 162
 
 
 State 118
 
-  102 leia: LEIA . LPARENTESES ids_leia RPARENTESES
+  106 leia: LEIA . LPARENTESES ids_leia RPARENTESES
 
     LPARENTESES  shift, and go to state 163
 
@@ -1719,7 +1724,7 @@ State 119
 
 State 120
 
-   96 bloco_para: PARA . LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+   96 bloco_para: PARA . LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
 
     LPARENTESES  shift, and go to state 165
 
@@ -1755,7 +1760,7 @@ State 122
 State 123
 
    73 comando: chamada_funcao .
-  109 expressao: chamada_funcao . operador_binario expressao
+  113 expressao: chamada_funcao . operador_binario expressao
 
     MENORIGUAL  shift, and go to state 70
     MAIORIQUAL  shift, and go to state 71
@@ -2113,26 +2118,26 @@ State 161
 
 State 162
 
-  101 imprime: IMPRIMA LPARENTESES . termos RPARENTESES
+  101 imprime: IMPRIMA LPARENTESES . termos_imprime RPARENTESES
 
-    ID         shift, and go to state 36
+    ID         shift, and go to state 179
     LIT_TEXTO  shift, and go to state 37
     LIT_BOOL   shift, and go to state 38
     LIT_REAL   shift, and go to state 39
     LIT_INT    shift, and go to state 40
 
-    termos   go to state 179
-    termo    go to state 180
-    literal  go to state 42
+    termos_imprime  go to state 180
+    termo_imprime   go to state 181
+    literal         go to state 182
 
 
 State 163
 
-  102 leia: LEIA LPARENTESES . ids_leia RPARENTESES
+  106 leia: LEIA LPARENTESES . ids_leia RPARENTESES
 
-    ID  shift, and go to state 181
+    ID  shift, and go to state 183
 
-    ids_leia  go to state 182
+    ids_leia  go to state 184
 
 
 State 164
@@ -2150,7 +2155,7 @@ State 164
     LPARENTESES  shift, and go to state 53
 
     chamada_funcao   go to state 54
-    expressao        go to state 183
+    expressao        go to state 185
     operador_unario  go to state 56
     termo            go to state 57
     literal          go to state 42
@@ -2158,11 +2163,11 @@ State 164
 
 State 165
 
-   96 bloco_para: PARA LPARENTESES . $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+   96 bloco_para: PARA LPARENTESES . $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
 
     $default  reduce using rule 94 ($@29)
 
-    $@29  go to state 184
+    $@29  go to state 186
 
 
 State 166
@@ -2171,7 +2176,7 @@ State 166
 
     $default  reduce using rule 91 ($@27)
 
-    $@27  go to state 185
+    $@27  go to state 187
 
 
 State 167
@@ -2185,7 +2190,7 @@ State 168
 
    52 bloco_principal: BPRINCIPAL LCHAVE $@19 sentencas $@20 . RCHAVE
 
-    RCHAVE  shift, and go to state 186
+    RCHAVE  shift, and go to state 188
 
 
 State 169
@@ -2221,7 +2226,7 @@ State 169
 
     chamada_funcao       go to state 123
     retorne              go to state 124
-    sentencas            go to state 187
+    sentencas            go to state 189
     sentenca             go to state 126
     controle             go to state 127
     bloco_se             go to state 128
@@ -2250,10 +2255,10 @@ State 170
    63 bloco_se: se_simplificado SENAO . LCHAVE $@21 sentencas $@22 RCHAVE
    64         | se_simplificado SENAO . bloco_se
 
-    LCHAVE  shift, and go to state 188
+    LCHAVE  shift, and go to state 190
     SE      shift, and go to state 116
 
-    bloco_se         go to state 189
+    bloco_se         go to state 191
     se_simplificado  go to state 129
 
 
@@ -2261,7 +2266,7 @@ State 171
 
    36 definicao_funcao: FUNCAO tipo . ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE
 
-    ID  shift, and go to state 190
+    ID  shift, and go to state 192
 
 
 State 172
@@ -2270,7 +2275,7 @@ State 172
 
     $default  reduce using rule 37 ($@14)
 
-    $@14  go to state 191
+    $@14  go to state 193
 
 
 State 173
@@ -2312,53 +2317,67 @@ State 178
 
    67 se_simplificado: SE LPARENTESES expressao . RPARENTESES EXECUTE LCHAVE $@23 sentencas $@24 RCHAVE
 
-    RPARENTESES  shift, and go to state 192
+    RPARENTESES  shift, and go to state 194
 
 
 State 179
 
-  101 imprime: IMPRIMA LPARENTESES termos . RPARENTESES
+  104 termo_imprime: ID .
 
-    RPARENTESES  shift, and go to state 193
+    $default  reduce using rule 104 (termo_imprime)
 
 
 State 180
 
-  142 termos: termo .
-  143       | termo . VIRGULA termos
+  101 imprime: IMPRIMA LPARENTESES termos_imprime . RPARENTESES
 
-    VIRGULA  shift, and go to state 194
-
-    $default  reduce using rule 142 (termos)
+    RPARENTESES  shift, and go to state 195
 
 
 State 181
 
-  144 ids_leia: ID .
-  145         | ID . VIRGULA ids_leia
+  102 termos_imprime: termo_imprime .
+  103               | termo_imprime . VIRGULA termos_imprime
 
-    VIRGULA  shift, and go to state 195
+    VIRGULA  shift, and go to state 196
 
-    $default  reduce using rule 144 (ids_leia)
+    $default  reduce using rule 102 (termos_imprime)
 
 
 State 182
 
-  102 leia: LEIA LPARENTESES ids_leia . RPARENTESES
+  105 termo_imprime: literal .
 
-    RPARENTESES  shift, and go to state 196
+    $default  reduce using rule 105 (termo_imprime)
 
 
 State 183
 
-   90 bloco_enquanto: ENQUANTO LPARENTESES expressao . RPARENTESES EXECUTE LCHAVE $@25 sentencas $@26 RCHAVE
+  146 ids_leia: ID .
+  147         | ID . VIRGULA ids_leia
 
-    RPARENTESES  shift, and go to state 197
+    VIRGULA  shift, and go to state 197
+
+    $default  reduce using rule 146 (ids_leia)
 
 
 State 184
 
-   96 bloco_para: PARA LPARENTESES $@29 . declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+  106 leia: LEIA LPARENTESES ids_leia . RPARENTESES
+
+    RPARENTESES  shift, and go to state 198
+
+
+State 185
+
+   90 bloco_enquanto: ENQUANTO LPARENTESES expressao . RPARENTESES EXECUTE LCHAVE $@25 sentencas $@26 RCHAVE
+
+    RPARENTESES  shift, and go to state 199
+
+
+State 186
+
+   96 bloco_para: PARA LPARENTESES $@29 . declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
 
     BOOL       shift, and go to state 4
     TEXTO      shift, and go to state 5
@@ -2370,15 +2389,15 @@ State 184
 
     $default  reduce using rule 97 (declaracao_para)
 
-    declaracao_para  go to state 198
-    declaracao       go to state 199
+    declaracao_para  go to state 200
+    declaracao       go to state 201
     tipo             go to state 15
     tipo_registro    go to state 16
     tipo_vetor       go to state 17
     tipo_primitivo   go to state 18
 
 
-State 185
+State 187
 
    93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 . sentencas $@28 RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES
 
@@ -2411,7 +2430,7 @@ State 185
 
     chamada_funcao       go to state 123
     retorne              go to state 124
-    sentencas            go to state 200
+    sentencas            go to state 202
     sentenca             go to state 126
     controle             go to state 127
     bloco_se             go to state 128
@@ -2435,130 +2454,128 @@ State 185
     literal              go to state 42
 
 
-State 186
+State 188
 
    52 bloco_principal: BPRINCIPAL LCHAVE $@19 sentencas $@20 RCHAVE .
 
     $default  reduce using rule 52 (bloco_principal)
 
 
-State 187
+State 189
 
    54 sentencas: sentenca PONTOVIRGULA sentencas .
 
     $default  reduce using rule 54 (sentencas)
 
 
-State 188
+State 190
 
    63 bloco_se: se_simplificado SENAO LCHAVE . $@21 sentencas $@22 RCHAVE
 
     $default  reduce using rule 61 ($@21)
 
-    $@21  go to state 201
+    $@21  go to state 203
 
 
-State 189
+State 191
 
    64 bloco_se: se_simplificado SENAO bloco_se .
 
     $default  reduce using rule 64 (bloco_se)
 
 
-State 190
+State 192
 
    36 definicao_funcao: FUNCAO tipo ID . $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE
 
     $default  reduce using rule 32 ($@10)
 
-    $@10  go to state 202
-
-
-State 191
-
-   41 definicao_procedimento: PROC ID $@14 . LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 sentencas $@17 RCHAVE
-
-    LPARENTESES  shift, and go to state 203
-
-
-State 192
-
-   67 se_simplificado: SE LPARENTESES expressao RPARENTESES . EXECUTE LCHAVE $@23 sentencas $@24 RCHAVE
-
-    EXECUTE  shift, and go to state 204
+    $@10  go to state 204
 
 
 State 193
 
-  101 imprime: IMPRIMA LPARENTESES termos RPARENTESES .
+   41 definicao_procedimento: PROC ID $@14 . LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 sentencas $@17 RCHAVE
 
-    $default  reduce using rule 101 (imprime)
+    LPARENTESES  shift, and go to state 205
 
 
 State 194
 
-  143 termos: termo VIRGULA . termos
+   67 se_simplificado: SE LPARENTESES expressao RPARENTESES . EXECUTE LCHAVE $@23 sentencas $@24 RCHAVE
 
-    ID         shift, and go to state 36
+    EXECUTE  shift, and go to state 206
+
+
+State 195
+
+  101 imprime: IMPRIMA LPARENTESES termos_imprime RPARENTESES .
+
+    $default  reduce using rule 101 (imprime)
+
+
+State 196
+
+  103 termos_imprime: termo_imprime VIRGULA . termos_imprime
+
+    ID         shift, and go to state 179
     LIT_TEXTO  shift, and go to state 37
     LIT_BOOL   shift, and go to state 38
     LIT_REAL   shift, and go to state 39
     LIT_INT    shift, and go to state 40
 
-    termos   go to state 205
-    termo    go to state 180
-    literal  go to state 42
-
-
-State 195
-
-  145 ids_leia: ID VIRGULA . ids_leia
-
-    ID  shift, and go to state 181
-
-    ids_leia  go to state 206
-
-
-State 196
-
-  102 leia: LEIA LPARENTESES ids_leia RPARENTESES .
-
-    $default  reduce using rule 102 (leia)
+    termos_imprime  go to state 207
+    termo_imprime   go to state 181
+    literal         go to state 182
 
 
 State 197
 
-   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES . EXECUTE LCHAVE $@25 sentencas $@26 RCHAVE
+  147 ids_leia: ID VIRGULA . ids_leia
 
-    EXECUTE  shift, and go to state 207
+    ID  shift, and go to state 183
+
+    ids_leia  go to state 208
 
 
 State 198
 
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para . $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+  106 leia: LEIA LPARENTESES ids_leia RPARENTESES .
 
-    $default  reduce using rule 95 ($@30)
-
-    $@30  go to state 208
+    $default  reduce using rule 106 (leia)
 
 
 State 199
+
+   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES . EXECUTE LCHAVE $@25 sentencas $@26 RCHAVE
+
+    EXECUTE  shift, and go to state 209
+
+
+State 200
+
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para . PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
+
+    PONTOVIRGULA  shift, and go to state 210
+
+
+State 201
 
    98 declaracao_para: declaracao .
 
     $default  reduce using rule 98 (declaracao_para)
 
 
-State 200
+State 202
 
    93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas . $@28 RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES
 
     $default  reduce using rule 92 ($@28)
 
-    $@28  go to state 209
+    $@28  go to state 211
 
 
-State 201
+State 203
 
    63 bloco_se: se_simplificado SENAO LCHAVE $@21 . sentencas $@22 RCHAVE
 
@@ -2591,7 +2608,7 @@ State 201
 
     chamada_funcao       go to state 123
     retorne              go to state 124
-    sentencas            go to state 210
+    sentencas            go to state 212
     sentenca             go to state 126
     controle             go to state 127
     bloco_se             go to state 128
@@ -2615,83 +2632,97 @@ State 201
     literal              go to state 42
 
 
-State 202
+State 204
 
    36 definicao_funcao: FUNCAO tipo ID $@10 . LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE
 
-    LPARENTESES  shift, and go to state 211
+    LPARENTESES  shift, and go to state 213
 
 
-State 203
+State 205
 
    41 definicao_procedimento: PROC ID $@14 LPARENTESES . $@15 parametros RPARENTESES LCHAVE $@16 sentencas $@17 RCHAVE
 
     $default  reduce using rule 38 ($@15)
 
-    $@15  go to state 212
-
-
-State 204
-
-   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE . LCHAVE $@23 sentencas $@24 RCHAVE
-
-    LCHAVE  shift, and go to state 213
-
-
-State 205
-
-  143 termos: termo VIRGULA termos .
-
-    $default  reduce using rule 143 (termos)
+    $@15  go to state 214
 
 
 State 206
 
-  145 ids_leia: ID VIRGULA ids_leia .
+   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE . LCHAVE $@23 sentencas $@24 RCHAVE
 
-    $default  reduce using rule 145 (ids_leia)
+    LCHAVE  shift, and go to state 215
 
 
 State 207
 
-   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE . LCHAVE $@25 sentencas $@26 RCHAVE
+  103 termos_imprime: termo_imprime VIRGULA termos_imprime .
 
-    LCHAVE  shift, and go to state 214
+    $default  reduce using rule 103 (termos_imprime)
 
 
 State 208
 
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 . PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+  147 ids_leia: ID VIRGULA ids_leia .
 
-    PONTOVIRGULA  shift, and go to state 215
+    $default  reduce using rule 147 (ids_leia)
 
 
 State 209
 
-   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 . RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES
+   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE . LCHAVE $@25 sentencas $@26 RCHAVE
 
-    RCHAVE  shift, and go to state 216
+    LCHAVE  shift, and go to state 216
 
 
 State 210
+
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA . expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
+
+    ID           shift, and go to state 49
+    LIT_TEXTO    shift, and go to state 37
+    LIT_BOOL     shift, and go to state 38
+    LIT_REAL     shift, and go to state 39
+    LIT_INT      shift, and go to state 40
+    NEGACAO      shift, and go to state 50
+    ARROBA       shift, and go to state 51
+    SUB          shift, and go to state 52
+    LPARENTESES  shift, and go to state 53
+
+    chamada_funcao   go to state 54
+    expressao        go to state 217
+    operador_unario  go to state 56
+    termo            go to state 57
+    literal          go to state 42
+
+
+State 211
+
+   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 . RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES
+
+    RCHAVE  shift, and go to state 218
+
+
+State 212
 
    63 bloco_se: se_simplificado SENAO LCHAVE $@21 sentencas . $@22 RCHAVE
 
     $default  reduce using rule 62 ($@22)
 
-    $@22  go to state 217
+    $@22  go to state 219
 
 
-State 211
+State 213
 
    36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES . $@11 parametros RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE
 
     $default  reduce using rule 33 ($@11)
 
-    $@11  go to state 218
+    $@11  go to state 220
 
 
-State 212
+State 214
 
    41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 . parametros RPARENTESES LCHAVE $@16 sentencas $@17 RCHAVE
 
@@ -2705,7 +2736,7 @@ State 212
 
     $default  reduce using rule 22 (parametros)
 
-    parametros      go to state 219
+    parametros      go to state 221
     parametro       go to state 59
     tipo            go to state 60
     tipo_registro   go to state 16
@@ -2713,60 +2744,46 @@ State 212
     tipo_primitivo  go to state 18
 
 
-State 213
+State 215
 
    67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE . $@23 sentencas $@24 RCHAVE
 
     $default  reduce using rule 65 ($@23)
 
-    $@23  go to state 220
+    $@23  go to state 222
 
 
-State 214
+State 216
 
    90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE . $@25 sentencas $@26 RCHAVE
 
     $default  reduce using rule 88 ($@25)
 
-    $@25  go to state 221
-
-
-State 215
-
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA . expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
-
-    ID           shift, and go to state 49
-    LIT_TEXTO    shift, and go to state 37
-    LIT_BOOL     shift, and go to state 38
-    LIT_REAL     shift, and go to state 39
-    LIT_INT      shift, and go to state 40
-    NEGACAO      shift, and go to state 50
-    ARROBA       shift, and go to state 51
-    SUB          shift, and go to state 52
-    LPARENTESES  shift, and go to state 53
-
-    chamada_funcao   go to state 54
-    expressao        go to state 222
-    operador_unario  go to state 56
-    termo            go to state 57
-    literal          go to state 42
-
-
-State 216
-
-   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE . ENQUANTO LPARENTESES expressao RPARENTESES
-
-    ENQUANTO  shift, and go to state 223
+    $@25  go to state 223
 
 
 State 217
 
-   63 bloco_se: se_simplificado SENAO LCHAVE $@21 sentencas $@22 . RCHAVE
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao . PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
 
-    RCHAVE  shift, and go to state 224
+    PONTOVIRGULA  shift, and go to state 224
 
 
 State 218
+
+   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE . ENQUANTO LPARENTESES expressao RPARENTESES
+
+    ENQUANTO  shift, and go to state 225
+
+
+State 219
+
+   63 bloco_se: se_simplificado SENAO LCHAVE $@21 sentencas $@22 . RCHAVE
+
+    RCHAVE  shift, and go to state 226
+
+
+State 220
 
    36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 . parametros RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE
 
@@ -2780,7 +2797,7 @@ State 218
 
     $default  reduce using rule 22 (parametros)
 
-    parametros      go to state 225
+    parametros      go to state 227
     parametro       go to state 59
     tipo            go to state 60
     tipo_registro   go to state 16
@@ -2788,14 +2805,14 @@ State 218
     tipo_primitivo  go to state 18
 
 
-State 219
+State 221
 
    41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros . RPARENTESES LCHAVE $@16 sentencas $@17 RCHAVE
 
-    RPARENTESES  shift, and go to state 226
+    RPARENTESES  shift, and go to state 228
 
 
-State 220
+State 222
 
    67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@23 . sentencas $@24 RCHAVE
 
@@ -2828,7 +2845,7 @@ State 220
 
     chamada_funcao       go to state 123
     retorne              go to state 124
-    sentencas            go to state 227
+    sentencas            go to state 229
     sentenca             go to state 126
     controle             go to state 127
     bloco_se             go to state 128
@@ -2852,7 +2869,7 @@ State 220
     literal              go to state 42
 
 
-State 221
+State 223
 
    90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@25 . sentencas $@26 RCHAVE
 
@@ -2885,7 +2902,7 @@ State 221
 
     chamada_funcao       go to state 123
     retorne              go to state 124
-    sentencas            go to state 228
+    sentencas            go to state 230
     sentenca             go to state 126
     controle             go to state 127
     bloco_se             go to state 128
@@ -2909,62 +2926,9 @@ State 221
     literal              go to state 42
 
 
-State 222
-
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao . PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
-
-    PONTOVIRGULA  shift, and go to state 229
-
-
-State 223
-
-   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE ENQUANTO . LPARENTESES expressao RPARENTESES
-
-    LPARENTESES  shift, and go to state 230
-
-
 State 224
 
-   63 bloco_se: se_simplificado SENAO LCHAVE $@21 sentencas $@22 RCHAVE .
-
-    $default  reduce using rule 63 (bloco_se)
-
-
-State 225
-
-   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros . RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE
-
-    RPARENTESES  shift, and go to state 231
-
-
-State 226
-
-   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES . LCHAVE $@16 sentencas $@17 RCHAVE
-
-    LCHAVE  shift, and go to state 232
-
-
-State 227
-
-   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@23 sentencas . $@24 RCHAVE
-
-    $default  reduce using rule 66 ($@24)
-
-    $@24  go to state 233
-
-
-State 228
-
-   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@25 sentencas . $@26 RCHAVE
-
-    $default  reduce using rule 89 ($@26)
-
-    $@26  go to state 234
-
-
-State 229
-
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA . comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA . comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
 
     ID           shift, and go to state 114
     LIT_TEXTO    shift, and go to state 37
@@ -2990,9 +2954,9 @@ State 229
 
     chamada_funcao   go to state 123
     retorne          go to state 124
-    comando          go to state 235
+    comando          go to state 231
     atribuicao       go to state 131
-    comando_para     go to state 236
+    comando_para     go to state 232
     imprime          go to state 136
     leia             go to state 137
     declaracao       go to state 138
@@ -3006,7 +2970,67 @@ State 229
     literal          go to state 42
 
 
+State 225
+
+   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE ENQUANTO . LPARENTESES expressao RPARENTESES
+
+    LPARENTESES  shift, and go to state 233
+
+
+State 226
+
+   63 bloco_se: se_simplificado SENAO LCHAVE $@21 sentencas $@22 RCHAVE .
+
+    $default  reduce using rule 63 (bloco_se)
+
+
+State 227
+
+   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros . RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE
+
+    RPARENTESES  shift, and go to state 234
+
+
+State 228
+
+   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES . LCHAVE $@16 sentencas $@17 RCHAVE
+
+    LCHAVE  shift, and go to state 235
+
+
+State 229
+
+   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@23 sentencas . $@24 RCHAVE
+
+    $default  reduce using rule 66 ($@24)
+
+    $@24  go to state 236
+
+
 State 230
+
+   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@25 sentencas . $@26 RCHAVE
+
+    $default  reduce using rule 89 ($@26)
+
+    $@26  go to state 237
+
+
+State 231
+
+  100 comando_para: comando .
+
+    $default  reduce using rule 100 (comando_para)
+
+
+State 232
+
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para . RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE
+
+    RPARENTESES  shift, and go to state 238
+
+
+State 233
 
    93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE ENQUANTO LPARENTESES . expressao RPARENTESES
 
@@ -3021,160 +3045,68 @@ State 230
     LPARENTESES  shift, and go to state 53
 
     chamada_funcao   go to state 54
-    expressao        go to state 237
+    expressao        go to state 239
     operador_unario  go to state 56
     termo            go to state 57
     literal          go to state 42
 
 
-State 231
+State 234
 
    36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES . LCHAVE $@12 sentencas $@13 RCHAVE
 
-    LCHAVE  shift, and go to state 238
+    LCHAVE  shift, and go to state 240
 
 
-State 232
+State 235
 
    41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE . $@16 sentencas $@17 RCHAVE
 
     $default  reduce using rule 39 ($@16)
 
-    $@16  go to state 239
-
-
-State 233
-
-   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@23 sentencas $@24 . RCHAVE
-
-    RCHAVE  shift, and go to state 240
-
-
-State 234
-
-   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@25 sentencas $@26 . RCHAVE
-
-    RCHAVE  shift, and go to state 241
-
-
-State 235
-
-  100 comando_para: comando .
-
-    $default  reduce using rule 100 (comando_para)
+    $@16  go to state 241
 
 
 State 236
 
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para . RPARENTESES EXECUTE LCHAVE sentencas RCHAVE
+   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@23 sentencas $@24 . RCHAVE
 
-    RPARENTESES  shift, and go to state 242
+    RCHAVE  shift, and go to state 242
 
 
 State 237
 
-   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE ENQUANTO LPARENTESES expressao . RPARENTESES
+   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@25 sentencas $@26 . RCHAVE
 
-    RPARENTESES  shift, and go to state 243
+    RCHAVE  shift, and go to state 243
 
 
 State 238
+
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES . EXECUTE LCHAVE sentencas $@30 RCHAVE
+
+    EXECUTE  shift, and go to state 244
+
+
+State 239
+
+   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE ENQUANTO LPARENTESES expressao . RPARENTESES
+
+    RPARENTESES  shift, and go to state 245
+
+
+State 240
 
    36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE . $@12 sentencas $@13 RCHAVE
 
     $default  reduce using rule 34 ($@12)
 
-    $@12  go to state 244
-
-
-State 239
-
-   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 . sentencas $@17 RCHAVE
-
-    ID           shift, and go to state 114
-    LIT_TEXTO    shift, and go to state 37
-    LIT_BOOL     shift, and go to state 38
-    LIT_REAL     shift, and go to state 39
-    LIT_INT      shift, and go to state 40
-    NEGACAO      shift, and go to state 50
-    ARROBA       shift, and go to state 51
-    SUB          shift, and go to state 52
-    BOOL         shift, and go to state 4
-    TEXTO        shift, and go to state 5
-    CARACTERE    shift, and go to state 6
-    REAL         shift, and go to state 7
-    INTEIRO      shift, and go to state 8
-    PARE         shift, and go to state 115
-    LPARENTESES  shift, and go to state 53
-    SE           shift, and go to state 116
-    IMPRIMA      shift, and go to state 117
-    LEIA         shift, and go to state 118
-    ENQUANTO     shift, and go to state 119
-    PARA         shift, and go to state 120
-    EXECUTE      shift, and go to state 121
-    RETORNE      shift, and go to state 122
-    MEU_TIPO     shift, and go to state 44
-    VETOR        shift, and go to state 10
-
-    $default  reduce using rule 53 (sentencas)
-
-    chamada_funcao       go to state 123
-    retorne              go to state 124
-    sentencas            go to state 245
-    sentenca             go to state 126
-    controle             go to state 127
-    bloco_se             go to state 128
-    se_simplificado      go to state 129
-    comando              go to state 130
-    atribuicao           go to state 131
-    repeticao            go to state 132
-    bloco_enquanto       go to state 133
-    bloco_faca_enquanto  go to state 134
-    bloco_para           go to state 135
-    imprime              go to state 136
-    leia                 go to state 137
-    declaracao           go to state 138
-    expressao            go to state 139
-    operador_unario      go to state 56
-    tipo                 go to state 15
-    tipo_registro        go to state 16
-    tipo_vetor           go to state 17
-    tipo_primitivo       go to state 18
-    termo                go to state 57
-    literal              go to state 42
-
-
-State 240
-
-   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@23 sentencas $@24 RCHAVE .
-
-    $default  reduce using rule 67 (se_simplificado)
+    $@12  go to state 246
 
 
 State 241
 
-   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@25 sentencas $@26 RCHAVE .
-
-    $default  reduce using rule 90 (bloco_enquanto)
-
-
-State 242
-
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES . EXECUTE LCHAVE sentencas RCHAVE
-
-    EXECUTE  shift, and go to state 246
-
-
-State 243
-
-   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES .
-
-    $default  reduce using rule 93 (bloco_faca_enquanto)
-
-
-State 244
-
-   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 . sentencas $@13 RCHAVE
+   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 . sentencas $@17 RCHAVE
 
     ID           shift, and go to state 114
     LIT_TEXTO    shift, and go to state 37
@@ -3229,41 +3161,37 @@ State 244
     literal              go to state 42
 
 
+State 242
+
+   67 se_simplificado: SE LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@23 sentencas $@24 RCHAVE .
+
+    $default  reduce using rule 67 (se_simplificado)
+
+
+State 243
+
+   90 bloco_enquanto: ENQUANTO LPARENTESES expressao RPARENTESES EXECUTE LCHAVE $@25 sentencas $@26 RCHAVE .
+
+    $default  reduce using rule 90 (bloco_enquanto)
+
+
+State 244
+
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE . LCHAVE sentencas $@30 RCHAVE
+
+    LCHAVE  shift, and go to state 248
+
+
 State 245
 
-   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 sentencas . $@17 RCHAVE
+   93 bloco_faca_enquanto: EXECUTE LCHAVE $@27 sentencas $@28 RCHAVE ENQUANTO LPARENTESES expressao RPARENTESES .
 
-    $default  reduce using rule 40 ($@17)
-
-    $@17  go to state 248
+    $default  reduce using rule 93 (bloco_faca_enquanto)
 
 
 State 246
 
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE . LCHAVE sentencas RCHAVE
-
-    LCHAVE  shift, and go to state 249
-
-
-State 247
-
-   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas . $@13 RCHAVE
-
-    $default  reduce using rule 35 ($@13)
-
-    $@13  go to state 250
-
-
-State 248
-
-   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 sentencas $@17 . RCHAVE
-
-    RCHAVE  shift, and go to state 251
-
-
-State 249
-
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE . sentencas RCHAVE
+   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 . sentencas $@13 RCHAVE
 
     ID           shift, and go to state 114
     LIT_TEXTO    shift, and go to state 37
@@ -3294,7 +3222,7 @@ State 249
 
     chamada_funcao       go to state 123
     retorne              go to state 124
-    sentencas            go to state 252
+    sentencas            go to state 249
     sentenca             go to state 126
     controle             go to state 127
     bloco_se             go to state 128
@@ -3318,36 +3246,127 @@ State 249
     literal              go to state 42
 
 
+State 247
+
+   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 sentencas . $@17 RCHAVE
+
+    $default  reduce using rule 40 ($@17)
+
+    $@17  go to state 250
+
+
+State 248
+
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE . sentencas $@30 RCHAVE
+
+    ID           shift, and go to state 114
+    LIT_TEXTO    shift, and go to state 37
+    LIT_BOOL     shift, and go to state 38
+    LIT_REAL     shift, and go to state 39
+    LIT_INT      shift, and go to state 40
+    NEGACAO      shift, and go to state 50
+    ARROBA       shift, and go to state 51
+    SUB          shift, and go to state 52
+    BOOL         shift, and go to state 4
+    TEXTO        shift, and go to state 5
+    CARACTERE    shift, and go to state 6
+    REAL         shift, and go to state 7
+    INTEIRO      shift, and go to state 8
+    PARE         shift, and go to state 115
+    LPARENTESES  shift, and go to state 53
+    SE           shift, and go to state 116
+    IMPRIMA      shift, and go to state 117
+    LEIA         shift, and go to state 118
+    ENQUANTO     shift, and go to state 119
+    PARA         shift, and go to state 120
+    EXECUTE      shift, and go to state 121
+    RETORNE      shift, and go to state 122
+    MEU_TIPO     shift, and go to state 44
+    VETOR        shift, and go to state 10
+
+    $default  reduce using rule 53 (sentencas)
+
+    chamada_funcao       go to state 123
+    retorne              go to state 124
+    sentencas            go to state 251
+    sentenca             go to state 126
+    controle             go to state 127
+    bloco_se             go to state 128
+    se_simplificado      go to state 129
+    comando              go to state 130
+    atribuicao           go to state 131
+    repeticao            go to state 132
+    bloco_enquanto       go to state 133
+    bloco_faca_enquanto  go to state 134
+    bloco_para           go to state 135
+    imprime              go to state 136
+    leia                 go to state 137
+    declaracao           go to state 138
+    expressao            go to state 139
+    operador_unario      go to state 56
+    tipo                 go to state 15
+    tipo_registro        go to state 16
+    tipo_vetor           go to state 17
+    tipo_primitivo       go to state 18
+    termo                go to state 57
+    literal              go to state 42
+
+
+State 249
+
+   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas . $@13 RCHAVE
+
+    $default  reduce using rule 35 ($@13)
+
+    $@13  go to state 252
+
+
 State 250
 
-   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas $@13 . RCHAVE
+   41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 sentencas $@17 . RCHAVE
 
     RCHAVE  shift, and go to state 253
 
 
 State 251
 
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas . $@30 RCHAVE
+
+    $default  reduce using rule 95 ($@30)
+
+    $@30  go to state 254
+
+
+State 252
+
+   36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas $@13 . RCHAVE
+
+    RCHAVE  shift, and go to state 255
+
+
+State 253
+
    41 definicao_procedimento: PROC ID $@14 LPARENTESES $@15 parametros RPARENTESES LCHAVE $@16 sentencas $@17 RCHAVE .
 
     $default  reduce using rule 41 (definicao_procedimento)
 
 
-State 252
+State 254
 
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas . RCHAVE
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 . RCHAVE
 
-    RCHAVE  shift, and go to state 254
+    RCHAVE  shift, and go to state 256
 
 
-State 253
+State 255
 
    36 definicao_funcao: FUNCAO tipo ID $@10 LPARENTESES $@11 parametros RPARENTESES LCHAVE $@12 sentencas $@13 RCHAVE .
 
     $default  reduce using rule 36 (definicao_funcao)
 
 
-State 254
+State 256
 
-   96 bloco_para: PARA LPARENTESES $@29 declaracao_para $@30 PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas RCHAVE .
+   96 bloco_para: PARA LPARENTESES $@29 declaracao_para PONTOVIRGULA expressao PONTOVIRGULA comando_para RPARENTESES EXECUTE LCHAVE sentencas $@30 RCHAVE .
 
     $default  reduce using rule 96 (bloco_para)

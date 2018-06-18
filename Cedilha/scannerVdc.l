@@ -23,23 +23,23 @@ void comment();
 ("Verdadeiro"|"Falso")  { yylval.sValue = strdup(yytext); return(LIT_BOOL);}
 #.*\n                   {}
 "Se"                    { return(SE);}
-"Inteiro"               { yylval.sValue = strdup(yytext); return(INTEIRO);}
-"Booleano"				{ yylval.sValue = strdup(yytext); return(BOOL);}
+"Inteiro"               { yylval.sValue = strdup("int"); return(INTEIRO);}
+"Booleano"				{ yylval.sValue = strdup("/*bool*/int"); return(BOOL);}
 "Imprima"               { return(IMPRIMA);}
 "Leia"            		{ return(LEIA);}
 "Vetor"                 { yylval.sValue = strdup(yytext); return(VETOR);}
-"Pare"                  { yylval.sValue = strdup(yytext); return(PARE);}
+"Pare"                  { yylval.sValue = strdup("stop"); return(PARE);}
 "Enquanto"              { return(ENQUANTO);}
 "Proc"		            { return(PROC);}
 "Para"                  { return(PARA);}
 "Execute"               { return(EXECUTE);}
 "Senao"                 { return(SENAO);}
-"Caractere"				{ yylval.sValue = strdup(yytext); return(CARACTERE);}
+"Caractere"				{ yylval.sValue = strdup("char"); return(CARACTERE);}
 "Constante"				{ return(CONSTANTE);}
-"Real"					{ yylval.sValue = strdup(yytext); return(REAL);}
+"Real"					{ yylval.sValue = strdup("double"); return(REAL);}
 "MeuTipo"				{ return(MEU_TIPO);}
 "Retorne"				{ return(RETORNE);}
-"Texto"					{ yylval.sValue = strdup(yytext); return(TEXTO);}
+"Texto"					{ yylval.sValue = strdup("char*"); return(TEXTO);}
 "Funcao"				{ return(FUNCAO);}
 "BlocoPrincipal"		{ return(BPRINCIPAL);}
 "BlocoFuncoes"			{ return(BFUNCOES);}
@@ -66,13 +66,13 @@ void comment();
 "+"                     { yylval.sValue = strdup(yytext); return(SOMA);}
 "/"                     { yylval.sValue = strdup(yytext); return(DIV);}
 "%"                     { yylval.sValue = strdup(yytext); return(MOD);}
-"^"                     { yylval.sValue = strdup(yytext); return(EXP);}
+"^"                     { yylval.sValue = strdup(yytext); return(EXP);} //TODO resolver quando é exponenciação
 ">"                     { yylval.sValue = strdup(yytext); return(MAIOR);}
 "<"                     { yylval.sValue = strdup(yytext); return(MENOR);}
 "="                     { yylval.sValue = strdup(yytext); return(ATRIB);}
 "=="					{ yylval.sValue = strdup(yytext); return (IGUAL); }
 "!="					{ yylval.sValue = strdup(yytext); return (DIFERENTE); }
-"@"                     { yylval.sValue = strdup(yytext); return(ARROBA);}
+"@"                     { yylval.sValue = strdup("&"); return(ARROBA);} //Acho que é isso para passar por referencia ne?
 ","                     { return(VIRGULA);}
 ";"                     { return(PONTOVIRGULA);}
 "["                     { return(LCOLCHETE);}

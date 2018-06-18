@@ -1,16 +1,20 @@
+ #include <stdio.h>
+
  
  
-BlocoPrincipal {
-	double mrk;
-	double mrk;
-	double resultadmrk;
-	double mrk;
-	Imprima("Digite o numero Real X:");
-	Leia(x);
-	Imprima("Digite o numero Real Y:");
-	Leia(y);
-	Imprima("Digite o numero Inteiro c:");
-	Leia(c);
-	resultado = c - y + (x * x);
-	Imprima("O resultado da operacao eh: ", resultado);
- }
+int main() {
+	double x;
+		double y;
+		double resultado;
+		double c;
+		printf("%s","Digite o numero Real X:");
+		scanf("%lf",&x);
+		printf("%s","Digite o numero Real Y:");
+		scanf("%lf",&y);
+		printf("%s","Digite o numero Inteiro c:");
+		scanf("%lf",&c);
+		resultado = c - y + (x * x);
+		printf("%s","O resultado da operacao eh: ");printf("%lf",resultado);
+	 
+return 0;
+}
